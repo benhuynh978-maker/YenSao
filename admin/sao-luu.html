@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Sao lưu dữ liệu | Admin Yến Duyên</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/admin-notifications.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/security-gate.js"></script>
+  <script src="../js/admin-notifications.js"></script>
+  <style>
+    .backup-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; margin-bottom:28px; }
+    .backup-card {
+      background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:24px;
+      display:flex; flex-direction:column; gap:14px;
+    }
+    .backup-card__icon {
+      width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .ic-blue  { background:#eff6ff; color:#3b82f6; }
+    .ic-green { background:#f0fdf4; color:#22c55e; }
+    .ic-amber { background:#fffbeb; color:#f59e0b; }
+    .backup-card__title { font-weight:700; color:#111827; font-size:1.02rem; }
+    .backup-card__desc  { font-size:.86rem; color:#6b7280; line-height:1.5; flex:1; }
+    .backup-card__count { font-size:.8rem; color:#9ca3af; }
+    .backup-card__count strong { color:#111827; font-size:1rem; }
+    .backup-btn {
+      width:100%; padding:11px 16px; border:none; border-radius:8px; cursor:pointer;
+      font-weight:700; font-size:.9rem; display:flex; align-items:center; justify-content:center; gap:8px;
+      background:var(--color-brand); color:#fff; transition:opacity .2s;
+    }
+    .backup-btn:hover { opacity:.9; }
+    .backup-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .backup-btn--outline { background:#fff; color:var(--color-brand); border:1px solid var(--color-brand); }
+
+    .hero-backup {
+      background:linear-gradient(135deg,#3E2723,#5D4037); color:#fff; border-radius:14px;
+      padding:28px 32px; margin-bottom:28px; display:flex; flex-wrap:wrap; gap:20px;
+      align-items:center; justify-content:space-between;
+    }
+    .hero-backup h1 { font-size:1.4rem; margin:0 0 6px; }
+    .hero-backup p { margin:0; opacity:.85; font-size:.92rem; max-width:560px; line-height:1.55; }
+    .hero-backup .backup-btn { width:auto; padding:14px 28px; background:#D4AF37; color:#3E2723; font-size:1rem; }
+
+    .status-box {
+      border-radius:10px; padding:14px 18px; margin-bottom:20px; font-size:.9rem; font-weight:600;
+      display:none; align-items:center; gap:10px;
+    }
+    .status-box.is-show { display:flex; }
+    .status-box--ok   { background:#dcfce7; color:#166534; border:1px solid #86efac; }
+    .status-box--err  { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
+    .status-box--load { background:#eff6ff; color:#1d4ed8; border:1px solid #93c5fd; }
+
+    .guide {
+      background:#fffbeb; border:1px solid #fde68a; border-radius:12px; padding:22px 26px; margin-top:8px;
+    }
+    .guide h2 { font-size:1.05rem; color:#92400e; margin:0 0 14px; }
+    .guide ol { margin:0; padding-left:20px; color:#78350f; font-size:.9rem; line-height:1.85; }
+    .guide li strong { color:#451a03; }
+    .guide .tip { margin-top:14px; font-size:.85rem; color:#92400e; background:#fef3c7; border-radius:8px; padding:10px 14px; }
+    .guide .warn { margin-top:10px; font-size:.85rem; color:#991b1b; background:#fee2e2; border:1px solid #fca5a5; border-radius:8px; padding:10px 14px; }
+
+    .last-backup { font-size:.82rem; color:#6b7280; margin-bottom:18px; }
+    .last-backup strong { color:#111827; }
+  </style>
+</head>
+<body class="admin-body">
+<div class="admin-wrapper" id="admin-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <a href="dashboard.html" class="admin-sidebar__logo">
+      <div class="admin-sidebar__logo-mark">YD</div>
+      <div class="admin-sidebar__logo-text"><strong>Yến Duyên</strong><span>Admin Panel</span></div>
+    </a>
+    <nav class="admin-sidebar__nav">
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Tổng quan</p>
+        <a href="dashboard.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="thong-bao.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span>Thông báo</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Kinh doanh</p>
+        <a href="don-hang.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span>Đơn hàng</span>
+        </a>
+        <a href="san-pham.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          <span>Sản phẩm</span>
+        </a>
+        <a href="voucher.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          <span>Voucher</span>
+        </a>
+        <a href="flash-sale.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <span>Flash Sale</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Nội dung</p>
+        <a href="blog.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>Blog</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Khách hàng</p>
+        <a href="khach-hang.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <span>Khách hàng</span>
+        </a>
+        <a href="phan-hoi.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Phản hồi</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Hệ thống</p>
+        <a href="sao-luu.html" class="admin-nav-link is-active" aria-current="page">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Sao lưu dữ liệu</span>
+        </a>
+        <a href="cai-dat.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+          <span>Cài đặt</span>
+        </a>
+      </div>
+    </nav>
+    <div class="admin-sidebar__footer">
+      <button onclick="logout()" class="admin-nav-link" style="width:100%;background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:.875rem;text-align:left;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Đăng xuất</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="admin-topbar">
+    <div class="admin-topbar__left">
+      <button class="admin-sidebar-toggle" id="sidebar-toggle" aria-label="Thu/mở sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="admin-topbar__title">Sao lưu dữ liệu</span>
+    </div>
+    <div class="admin-topbar__right">
+      <div class="admin-user-menu">
+        <div class="admin-user-avatar" id="user-avatar">A</div>
+        <span class="admin-user-name" id="user-name">Admin</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+
+    <div class="hero-backup">
+      <div>
+        <h1>Giữ một bản sao dữ liệu trong tay bạn</h1>
+        <p>Bấm nút bên dưới để tải <strong>toàn bộ đơn hàng, khách hàng và địa chỉ</strong> về máy. Dù chuyện gì xảy ra với hệ thống trên mạng, bạn vẫn luôn có dữ liệu của riêng mình.</p>
+      </div>
+      <button class="backup-btn" id="btn-full" onclick="downloadFullBackup()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Sao lưu TẤT CẢ ngay
+      </button>
+    </div>
+
+    <div class="status-box" id="status-box"></div>
+
+    <p class="last-backup" id="last-backup">Lần sao lưu gần nhất: <strong>chưa có</strong></p>
+
+    <div class="backup-grid">
+      <!-- ORDERS -->
+      <div class="backup-card">
+        <div class="backup-card__icon ic-blue">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <div class="backup-card__title">Đơn hàng</div>
+        <div class="backup-card__desc">Tải file Excel (.xlsx) chứa mọi đơn hàng: mã đơn, khách, SĐT, địa chỉ, sản phẩm, tổng tiền, trạng thái, ngày đặt. Mở đúng tiếng Việt bằng Excel / WPS / Google Sheets.</div>
+        <div class="backup-card__count">Đã có: <strong id="cnt-orders">…</strong> đơn</div>
+        <button class="backup-btn backup-btn--outline" onclick="downloadOrdersCSV()">Tải đơn hàng (Excel)</button>
+      </div>
+
+      <!-- CUSTOMERS -->
+      <div class="backup-card">
+        <div class="backup-card__icon ic-green">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        </div>
+        <div class="backup-card__title">Khách hàng</div>
+        <div class="backup-card__desc">Tải danh sách khách hàng ĐẦY ĐỦ: mọi tài khoản (kể cả chưa mua) + tổng đơn, chi tiêu, nhóm, SĐT/email phụ. Mở được bằng Excel/WPS.</div>
+        <div class="backup-card__count">Đã có: <strong id="cnt-profiles">…</strong> khách</div>
+        <button class="backup-btn backup-btn--outline" onclick="downloadProfilesCSV()">Tải khách hàng (Excel)</button>
+      </div>
+
+      <!-- ADDRESSES -->
+      <div class="backup-card">
+        <div class="backup-card__icon ic-amber">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="backup-card__title">Địa chỉ giao hàng</div>
+        <div class="backup-card__desc">Tải sổ địa chỉ khách đã lưu: người nhận, SĐT, địa chỉ chi tiết, địa chỉ mặc định. Mở được bằng Excel.</div>
+        <div class="backup-card__count">Đã có: <strong id="cnt-addresses">…</strong> địa chỉ</div>
+        <button class="backup-btn backup-btn--outline" onclick="downloadAddressesCSV()">Tải địa chỉ (Excel)</button>
+      </div>
+    </div>
+
+    <div class="guide">
+      <h2>📌 Cách dùng & lời khuyên</h2>
+      <ol>
+        <li><strong>Nút vàng "Sao lưu TẤT CẢ ngay"</strong> tải về 1 file <strong>.json</strong> chứa toàn bộ dữ liệu. Đây là bản sao đầy đủ nhất — giữ kỹ file này, sau này có thể dùng để khôi phục.</li>
+        <li>Các nút <strong>"Tải … (Excel)"</strong> tải từng bảng riêng dưới dạng file mở được bằng <strong>Excel / Google Sheets</strong> để bạn xem cho dễ.</li>
+        <li>Nên sao lưu <strong>mỗi tuần 1 lần</strong> (hoặc sau những ngày bán nhiều đơn). Lưu file vào máy + thêm 1 bản lên Google Drive (chế độ riêng tư) cho chắc.</li>
+        <li>Đặt tên thư mục theo tháng, ví dụ <em>Sao luu Yen Duyen / 2026-06 /</em> để dễ tìm lại.</li>
+      </ol>
+      <div class="tip">💡 Mẹo: File .json là bản gốc đầy đủ; file Excel là để bạn đọc. Khi cần khôi phục hoặc đưa cho người kỹ thuật, hãy dùng file .json.</div>
+      <div class="warn">🔒 Lưu ý bảo mật: File tải về chứa thông tin thật của khách (tên, SĐT, địa chỉ). Hãy cất nơi an toàn, máy có mật khẩu; không gửi lung tung hay đăng lên mạng.</div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─── XÁC THỰC ADMIN (giống các trang admin khác) ──────────────
+SecurityGate.requireAdmin().then(function(){
+  var session = JSON.parse(localStorage.getItem('yen-duyen-admin') || 'null');
+  if(session){ document.getElementById('user-name').textContent = session.name||'Admin'; document.getElementById('user-avatar').textContent = (session.name||'A')[0]; }
+  loadCounts();
+});
+document.getElementById('sidebar-toggle').addEventListener('click', function(){ document.getElementById('admin-wrapper').classList.toggle('sidebar-collapsed'); });
+function logout(){ getSupabase().auth.signOut().then(function(){ localStorage.removeItem('yen-duyen-admin'); window.location.replace('index.html'); }); }
+
+// ─── TRẠNG THÁI HIỂN THỊ ──────────────────────────────────────
+function showStatus(type, msg){
+  var box = document.getElementById('status-box');
+  box.className = 'status-box is-show status-box--' + type;
+  box.textContent = msg;
+}
+
+// ─── LẤY TOÀN BỘ 1 BẢNG (vượt giới hạn 1000 dòng) ─────────────
+// Supabase trả tối đa 1000 dòng/lần → lặp theo trang cho tới hết.
+function fetchAll(table, orderCol){
+  return new Promise(function(resolve, reject){
+    var all = [];
+    var size = 1000;
+    function page(from){
+      var q = getSupabase().from(table).select('*').range(from, from + size - 1);
+      if(orderCol) q = q.order(orderCol, { ascending:true });
+      q.then(function(res){
+        if(res.error){ reject(res.error); return; }
+        var rows = res.data || [];
+        all = all.concat(rows);
+        if(rows.length < size) resolve(all);
+        else page(from + size);
+      });
+    }
+    page(0);
+  });
+}
+
+// ─── ĐẾM SỐ DÒNG ĐỂ HIỂN THỊ ──────────────────────────────────
+function countOf(table){
+  return getSupabase().from(table).select('*', { count:'exact', head:true })
+    .then(function(res){ return (res && typeof res.count === 'number') ? res.count : '?'; })
+    .catch(function(){ return '?'; });
+}
+function loadCounts(){
+  countOf('orders').then(function(n){ document.getElementById('cnt-orders').textContent = n; });
+  countOf('profiles').then(function(n){ document.getElementById('cnt-profiles').textContent = n; });
+  countOf('addresses').then(function(n){ document.getElementById('cnt-addresses').textContent = n; });
+  var last = localStorage.getItem('yen-duyen-last-backup');
+  if(last) document.getElementById('last-backup').innerHTML = 'Lần sao lưu gần nhất: <strong>' + last + '</strong>';
+}
+
+// ─── CÔNG CỤ TẢI FILE ─────────────────────────────────────────
+function todayStamp(){
+  var d = new Date();
+  var p = function(n){ return (n<10?'0':'')+n; };
+  return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate());
+}
+function download(filename, content, mime){
+  var blob = new Blob(['﻿' + content], { type: mime + ';charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+// Xuất .xlsx bằng SheetJS (js/vendor/xlsx.full.min.js). Thay CSV cũ vì:
+//  - .xlsx là OOXML Unicode → MỌI app (MS Excel/WPS/Google Sheets/LibreOffice) đọc
+//    đúng tiếng Việt như nhau, không phụ thuộc BOM/dấu phân tách/locale (hết vỡ chữ).
+//  - SheetJS ghi ô dạng TEXT → dữ liệu như "=1+1" hay "=HYPERLINK(...)" KHÔNG bị chạy
+//    thành công thức khi mở bằng Excel (chống CSV injection ngay từ gốc).
+function exportSheet(filename, sheetName, headers, rows, mapper){
+  var aoa = [ headers ];
+  rows.forEach(function(r){ aoa.push(mapper(r)); });
+  var ws = XLSX.utils.aoa_to_sheet(aoa);
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName || 'Sheet1');
+  XLSX.writeFile(wb, filename);
+}
+function itemsToText(items){
+  if(!Array.isArray(items) || !items.length) return '';
+  return items.map(function(i){ return (i.name||'SP') + ' x' + (i.qty||1) + ' (' + (i.price||0) + 'đ)'; }).join(' | ');
+}
+function markBackedUp(){
+  var stamp = new Date().toLocaleString('vi-VN');
+  localStorage.setItem('yen-duyen-last-backup', stamp);
+  document.getElementById('last-backup').innerHTML = 'Lần sao lưu gần nhất: <strong>' + stamp + '</strong>';
+}
+
+// ─── 1) SAO LƯU TẤT CẢ → 1 FILE JSON ──────────────────────────
+function downloadFullBackup(){
+  var btn = document.getElementById('btn-full');
+  btn.disabled = true;
+  showStatus('load', 'Đang tải toàn bộ dữ liệu về… vui lòng đợi vài giây.');
+  Promise.all([
+    fetchAll('orders', 'created_at'),
+    fetchAll('profiles', null),
+    fetchAll('addresses', null)
+  ]).then(function(res){
+    var backup = {
+      _meta: {
+        site: 'Yen Sao Yen Duyen',
+        created_at: new Date().toISOString(),
+        note: 'Ban sao luu day du. Giu ky file nay de khoi phuc khi can.',
+        counts: { orders: res[0].length, profiles: res[1].length, addresses: res[2].length }
+      },
+      orders: res[0],
+      profiles: res[1],
+      addresses: res[2]
+    };
+    download('yenduyen-saoluu-' + todayStamp() + '.json', JSON.stringify(backup, null, 2), 'application/json');
+    markBackedUp();
+    showStatus('ok', '✓ Đã sao lưu xong! ' + res[0].length + ' đơn, ' + res[1].length + ' khách, ' + res[2].length + ' địa chỉ. File đã tải về máy bạn.');
+    btn.disabled = false;
+  }).catch(function(err){
+    showStatus('err', '✗ Lỗi khi tải dữ liệu: ' + (err.message || err) + '. Vui lòng thử lại.');
+    btn.disabled = false;
+  });
+}
+
+// ─── 2) ĐƠN HÀNG → CSV ────────────────────────────────────────
+function downloadOrdersCSV(){
+  showStatus('load', 'Đang tải đơn hàng…');
+  fetchAll('orders', 'created_at').then(function(rows){
+    var headers = ['Mã đơn','Khách hàng','SĐT','Địa chỉ','Sản phẩm','Tổng tiền','Trạng thái','Ghi chú','Ngày đặt'];
+    exportSheet('yenduyen-don-hang-' + todayStamp() + '.xlsx', 'Đơn hàng', headers, rows, function(o){
+      return [ o.order_code, o.customer_name, o.customer_phone, o.customer_address,
+        itemsToText(o.items), o.total_amount, o.status, o.note, o.created_at ];
+    });
+    markBackedUp();
+    showStatus('ok', '✓ Đã tải ' + rows.length + ' đơn hàng (file .xlsx, mở bằng Excel/WPS).');
+  }).catch(function(err){ showStatus('err', '✗ Lỗi: ' + (err.message || err)); });
+}
+
+// ─── 3) KHÁCH HÀNG → XLSX (GỘP profiles + số liệu từ orders) ──
+// Trước đây trang này chỉ xuất "profiles" (mọi tài khoản, kể cả 0 đơn) còn trang
+// khach-hang.html xuất riêng "tổng hợp từ orders" (chỉ khách đã mua, có tổng đơn/
+// chi tiêu/nhóm) — 2 tệp lệch phạm vi nhau. Nút này giờ GỘP cả 2 làm 1 bản đầy đủ:
+// mọi tài khoản (kể cả chưa mua) + số liệu đơn hàng cho ai đã mua.
+// Join đúng khoá quan hệ profiles.id = orders.user_id (không đoán theo SĐT).
+function buildMergedCustomerRows(profiles, orders){
+  // Gộp đơn theo user_id trước (khoá đúng); đơn KHÔNG có user_id (khách vãng
+  // lai/đơn cũ) gộp riêng theo SĐT để không bị mất khỏi báo cáo.
+  var byUser = {}, byPhone = {};
+  orders.forEach(function(o){
+    var bucket;
+    if(o.user_id){ byUser[o.user_id] = byUser[o.user_id] || []; bucket = byUser[o.user_id]; }
+    else { var pk = (o.customer_phone && normalizePhone(o.customer_phone)) || ('unknown-'+o.id); byPhone[pk] = byPhone[pk] || []; bucket = byPhone[pk]; }
+    bucket.push(o);
+  });
+
+  // Cùng công thức tính Nhóm với admin/khach-hang.html (buildCustomers) để 2 nơi
+  // không lệch nhau: quá 30 ngày im ắng → Có nguy cơ rời; >=3 đơn/tháng bất kỳ
+  // + tổng chi tiêu >=10tr → VIP; <=2 đơn → Mới; còn lại → Thường xuyên.
+  function statsFromOrders(list){
+    if(!list || !list.length) return null;
+    list = list.slice().sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
+    var latest = list[0];
+    var validOrders = list.filter(function(o){ return o.status !== 'cancelled'; });
+    var revenue = validOrders.reduce(function(s,o){ return s + Number(o.total_amount||0); }, 0);
+    var monthCounts = {};
+    validOrders.forEach(function(o){
+      var d = new Date(o.created_at); var mk = d.getFullYear()+'-'+d.getMonth();
+      monthCounts[mk] = (monthCounts[mk]||0) + 1;
+    });
+    var maxMonthly = 0;
+    Object.keys(monthCounts).forEach(function(k){ if(monthCounts[k] > maxMonthly) maxMonthly = monthCounts[k]; });
+    var daysSinceLast = (Date.now() - new Date(latest.created_at).getTime()) / 86400000;
+    var tier;
+    if(daysSinceLast > 30) tier = 'Có nguy cơ rời';
+    else if(maxMonthly >= 3 && revenue >= 10000000) tier = 'VIP';
+    else if(list.length <= 2) tier = 'Mới';
+    else tier = 'Thường xuyên';
+    var province = (latest.customer_address || '').split(',').pop().trim() || '—';
+    return { latest:latest, totalOrders:list.length, revenue:revenue, lastOrderDate:latest.created_at, tier:tier, province:province };
+  }
+
+  var rows = [];
+  var usedUserIds = {};
+
+  // (a) Mọi profile — kèm số liệu đơn nếu có, "Chưa mua hàng" nếu 0 đơn.
+  profiles.forEach(function(p){
+    usedUserIds[p.id] = true;
+    var s = statsFromOrders(byUser[p.id]);
+    rows.push({
+      id: p.id,
+      name: p.full_name || (s ? s.latest.customer_name : '') || '—',
+      phone: s ? s.latest.customer_phone : (p.phone || '—'),
+      role: p.role || 'customer',
+      province: s ? s.province : '—',
+      totalOrders: s ? s.totalOrders : 0,
+      revenue: s ? s.revenue : 0,
+      lastOrderDate: s ? s.lastOrderDate : '',
+      tier: s ? s.tier : 'Chưa mua hàng',
+      extraPhones: Array.isArray(p.extra_phones) ? p.extra_phones.join('; ') : '',
+      extraEmails: Array.isArray(p.extra_emails) ? p.extra_emails.join('; ') : '',
+      updatedAt: p.updated_at
+    });
+  });
+
+  // (b) Đơn có user_id nhưng KHÔNG khớp profile nào còn tồn tại (tài khoản đã bị
+  // xoá — FK on delete set null lẽ ra đã dọn, phòng hờ dữ liệu cũ còn sót).
+  Object.keys(byUser).forEach(function(uid){
+    if(usedUserIds[uid]) return;
+    var s = statsFromOrders(byUser[uid]);
+    rows.push({ id:uid, name:s.latest.customer_name||'—', phone:s.latest.customer_phone||'—', role:'—',
+      province:s.province, totalOrders:s.totalOrders, revenue:s.revenue, lastOrderDate:s.lastOrderDate,
+      tier:s.tier, extraPhones:'', extraEmails:'', updatedAt:'' });
+  });
+
+  // (c) Đơn KHÔNG có user_id (khách vãng lai/đơn cũ) — gộp theo SĐT.
+  Object.keys(byPhone).forEach(function(pk){
+    var s = statsFromOrders(byPhone[pk]);
+    rows.push({ id:'—', name:s.latest.customer_name||'—', phone:s.latest.customer_phone||'—', role:'—',
+      province:s.province, totalOrders:s.totalOrders, revenue:s.revenue, lastOrderDate:s.lastOrderDate,
+      tier:s.tier, extraPhones:'', extraEmails:'', updatedAt:'' });
+  });
+
+  return rows;
+}
+
+function downloadProfilesCSV(){
+  showStatus('load', 'Đang tải khách hàng…');
+  Promise.all([ fetchAll('profiles', null), fetchAll('orders', 'created_at') ]).then(function(res){
+    var rows = buildMergedCustomerRows(res[0], res[1]);
+    var headers = ['ID','Họ tên','SĐT','Vai trò','Tỉnh/Thành','Tổng đơn','Chi tiêu (đ)','Đơn gần nhất','Nhóm','SĐT phụ','Email phụ','Cập nhật hồ sơ'];
+    exportSheet('yenduyen-khach-hang-' + todayStamp() + '.xlsx', 'Khách hàng', headers, rows, function(c){
+      return [ c.id, c.name, c.phone, c.role, c.province, c.totalOrders, c.revenue,
+        c.lastOrderDate, c.tier, c.extraPhones, c.extraEmails, c.updatedAt ];
+    });
+    markBackedUp();
+    showStatus('ok', '✓ Đã tải ' + rows.length + ' khách hàng — gồm cả tài khoản chưa mua hàng (file .xlsx, mở bằng Excel/WPS).');
+  }).catch(function(err){ showStatus('err', '✗ Lỗi: ' + (err.message || err)); });
+}
+
+// ─── 4) ĐỊA CHỈ → CSV ─────────────────────────────────────────
+function downloadAddressesCSV(){
+  showStatus('load', 'Đang tải địa chỉ…');
+  fetchAll('addresses', null).then(function(rows){
+    var headers = ['ID','Mã khách (user_id)','Người nhận','SĐT','Địa chỉ chi tiết','Mặc định','Ngày tạo'];
+    exportSheet('yenduyen-dia-chi-' + todayStamp() + '.xlsx', 'Địa chỉ', headers, rows, function(a){
+      return [ a.id, a.user_id, a.recipient_name, a.phone, a.full_address,
+        (a.is_default ? 'Có' : ''), a.created_at ];
+    });
+    markBackedUp();
+    showStatus('ok', '✓ Đã tải ' + rows.length + ' địa chỉ (file .xlsx, mở bằng Excel/WPS).');
+  }).catch(function(err){ showStatus('err', '✗ Lỗi: ' + (err.message || err)); });
+}
+</script>
+<script src="../js/vendor/xlsx.full.min.js"></script>
+<script src="../js/admin-status.js"></script>
+</body>
+</html>

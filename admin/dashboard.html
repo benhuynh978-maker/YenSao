@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dashboard | Admin Yến Duyên</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/admin-notifications.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/security-gate.js"></script>
+  <script src="../js/admin-notifications.js"></script>
+  <style>
+    /* Stat cards */
+    .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-bottom:32px; }
+    .stat-card {
+      background:#fff; border-radius:12px; padding:24px; border:1px solid #e5e7eb;
+      box-shadow:0 1px 4px rgba(0,0,0,.04); display:flex; flex-direction:column; gap:12px;
+    }
+    .stat-card-top { display:flex; justify-content:space-between; align-items:flex-start; }
+    .stat-card-icon {
+      width:48px; height:48px; border-radius:10px;
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .stat-card-icon--blue { background:#eff6ff; color:#3b82f6; }
+    .stat-card-icon--green { background:#f0fdf4; color:#22c55e; }
+    .stat-card-icon--amber { background:#fffbeb; color:#f59e0b; }
+    .stat-card-icon--red { background:#fef2f2; color:#ef4444; }
+    .stat-card-badge {
+      font-size:.75rem; font-weight:700; padding:3px 8px; border-radius:20px;
+    }
+    .stat-card-badge--up { background:#dcfce7; color:#16a34a; }
+    .stat-card-badge--down { background:#fee2e2; color:#dc2626; }
+    .stat-card-value { font-size:1.75rem; font-weight:700; color:#111827; line-height:1; }
+    .stat-card-label { font-size:.875rem; color:#6b7280; }
+    .stat-card-sub { font-size:.8rem; color:#9ca3af; }
+
+    /* Charts area */
+    .dashboard-grid { display:grid; grid-template-columns:2fr 1fr; gap:24px; margin-bottom:24px; }
+    .dashboard-card { background:#fff; border-radius:12px; border:1px solid #e5e7eb; overflow:hidden; }
+    .dashboard-card-header {
+      padding:20px 24px; border-bottom:1px solid #f3f4f6;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .dashboard-card-title { font-weight:700; color:#111827; font-size:.975rem; }
+    .dashboard-card-body { padding:24px; }
+
+    /* Orders table */
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:.875rem; }
+    thead th {
+      padding:10px 16px; background:#f9fafb; font-weight:600; color:#374151;
+      text-align:left; border-bottom:1px solid #e5e7eb; white-space:nowrap;
+    }
+    tbody td { padding:12px 16px; border-bottom:1px solid #f3f4f6; color:#374151; }
+    tbody tr:hover { background:#fafafa; }
+    tbody tr:last-child td { border-bottom:none; }
+    .badge {
+      display:inline-block; padding:3px 10px; border-radius:20px;
+      font-size:.75rem; font-weight:700;
+    }
+    .badge--new { background:#dbeafe; color:#1d4ed8; }
+    .badge--confirmed { background:#d1fae5; color:#065f46; }
+    .badge--waiting { background:#f3e8ff; color:#7c3aed; }
+    .badge--shipping { background:#e0e7ff; color:#4338ca; }
+    .badge--done { background:#dcfce7; color:#166534; }
+    .badge--cancelled { background:#fee2e2; color:#991b1b; }
+
+    /* Top products */
+    .top-product-list { display:flex; flex-direction:column; gap:14px; }
+    .top-product-item { display:flex; align-items:center; gap:12px; }
+    .top-product-rank {
+      width:24px; height:24px; border-radius:50%; background:var(--gradient-brand);
+      color:#fff; font-size:.75rem; font-weight:700; display:flex;
+      align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .top-product-img { width:40px; height:40px; border-radius:6px; object-fit:cover; flex-shrink:0; }
+    .top-product-info { flex:1; min-width:0; }
+    .top-product-name { font-size:.875rem; font-weight:600; color:#111827; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .top-product-sold { font-size:.75rem; color:#6b7280; }
+
+    /* Bar chart simple */
+    .simple-bar { display:flex; flex-direction:column; gap:12px; }
+    .simple-bar-item label { font-size:.8rem; color:#6b7280; margin-bottom:4px; display:block; }
+    .simple-bar-track { height:8px; background:#f3f4f6; border-radius:4px; overflow:hidden; }
+    .simple-bar-fill { height:100%; border-radius:4px; background:var(--gradient-brand); }
+
+    @media(max-width:1200px){ .stat-grid{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:900px){ .dashboard-grid{grid-template-columns:1fr;} }
+    @media(max-width:600px){ .stat-grid{grid-template-columns:1fr;} }
+
+    /* Global search dropdown */
+    #global-search-results {
+      position:absolute; top:calc(100% + 6px); left:0; min-width:320px; max-width:420px;
+      max-height:360px; overflow-y:auto; background:#fff; border:1px solid #e5e7eb;
+      border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.12); z-index:50; padding:6px 0;
+    }
+    .gsr-section-title { font-size:.7rem; text-transform:uppercase; letter-spacing:.03em; color:#9ca3af; padding:8px 14px 4px; margin:0; }
+    .gsr-item { display:block; padding:8px 14px; font-size:.85rem; color:#374151; text-decoration:none; }
+    .gsr-item:hover { background:#f9fafb; }
+    .gsr-empty { padding:14px; font-size:.85rem; color:#9ca3af; text-align:center; }
+  </style>
+</head>
+<body class="admin-body">
+<div class="admin-wrapper" id="admin-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" id="admin-sidebar" aria-label="Menu quản trị">
+    <a href="dashboard.html" class="admin-sidebar__logo">
+      <div class="admin-sidebar__logo-mark">YD</div>
+      <div class="admin-sidebar__logo-text">
+        <strong>Yến Duyên</strong>
+        <span>Admin Panel</span>
+      </div>
+    </a>
+    <nav class="admin-sidebar__nav" aria-label="Điều hướng admin">
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Tổng quan</p>
+        <a href="dashboard.html" class="admin-nav-link is-active" aria-current="page">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="thong-bao.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span>Thông báo</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Kinh doanh</p>
+        <a href="don-hang.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span>Đơn hàng</span>
+        </a>
+        <a href="san-pham.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          <span>Sản phẩm</span>
+        </a>
+        <a href="voucher.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          <span>Voucher</span>
+        </a>
+        <a href="flash-sale.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <span>Flash Sale</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Nội dung</p>
+        <a href="blog.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>Blog</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Khách hàng</p>
+        <a href="khach-hang.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Khách hàng</span>
+        </a>
+        <a href="phan-hoi.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Phản hồi</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Hệ thống</p>
+        <a href="sao-luu.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Sao lưu dữ liệu</span>
+        </a>
+        <a href="cai-dat.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+          <span>Cài đặt</span>
+        </a>
+        <a href="../index.html" class="admin-nav-link" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span>Xem website</span>
+        </a>
+      </div>
+    </nav>
+    <div class="admin-sidebar__footer">
+      <button onclick="logout()" class="admin-nav-link" style="width:100%;background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:.875rem;text-align:left;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Đăng xuất</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="admin-topbar">
+    <div class="admin-topbar__left">
+      <button class="admin-sidebar-toggle" id="sidebar-toggle" aria-label="Thu/mở sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="admin-topbar__title">Dashboard</span>
+    </div>
+    <div class="admin-topbar__right">
+      <div class="admin-topbar__search" id="global-search-wrap" style="position:relative;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="global-search" placeholder="Tìm đơn, sản phẩm, khách hàng, voucher..." aria-label="Tìm kiếm" autocomplete="off" oninput="onGlobalSearchInput()">
+        <div id="global-search-results" style="display:none;"></div>
+      </div>
+      <a class="admin-notif-btn" href="don-hang.html" aria-label="Đơn đang chờ xác nhận" title="Đơn đang chờ xác nhận">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="admin-notif-badge" id="notif-badge" style="display:none;"></span>
+      </a>
+      <div class="admin-user-menu" id="user-menu">
+        <div class="admin-user-avatar" id="user-avatar">A</div>
+        <span class="admin-user-name" id="user-name">Admin</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="admin-main" id="admin-main">
+    <div class="admin-page-header">
+      <div>
+        <h1 class="admin-page-title">Tổng quan hôm nay</h1>
+        <p class="admin-page-sub" id="today-date">Đang tải...</p>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="admin-btn admin-btn--outline" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          In báo cáo
+        </button>
+        <a href="don-hang.html" class="admin-btn admin-btn--primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tạo đơn mới
+        </a>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon stat-card-icon--blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+          </div>
+          <span class="stat-card-badge stat-card-badge--up" id="stat-orders-badge" style="display:none;"></span>
+        </div>
+        <div class="stat-card-value" id="stat-orders-value">—</div>
+        <div class="stat-card-label">Đơn hàng hôm nay</div>
+        <div class="stat-card-sub" id="stat-orders-sub">Đang tải...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon stat-card-icon--green">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <span class="stat-card-badge stat-card-badge--up" id="stat-revenue-badge" style="display:none;"></span>
+        </div>
+        <div class="stat-card-value" id="stat-revenue-value">—</div>
+        <div class="stat-card-label">Doanh thu hôm nay</div>
+        <div class="stat-card-sub" id="stat-revenue-sub">Đang tải...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon stat-card-icon--amber">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <span class="stat-card-badge stat-card-badge--up" id="stat-customers-badge" style="display:none;"></span>
+        </div>
+        <div class="stat-card-value" id="stat-customers-value">—</div>
+        <div class="stat-card-label">Khách hàng mới</div>
+        <div class="stat-card-sub" id="stat-customers-sub">Đang tải...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-card-icon stat-card-icon--red">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <span class="stat-card-badge stat-card-badge--down" id="stat-cancelled-badge" style="display:none;"></span>
+        </div>
+        <div class="stat-card-value" id="stat-cancelled-value">—</div>
+        <div class="stat-card-label">Đơn bị hủy</div>
+        <div class="stat-card-sub" id="stat-cancelled-sub">Đang tải...</div>
+      </div>
+    </div>
+
+    <!-- CHARTS + TOP PRODUCTS -->
+    <div class="dashboard-grid">
+      <!-- Revenue chart placeholder -->
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <span class="dashboard-card-title" id="revenue-chart-title">Doanh thu 7 ngày qua</span>
+          <select id="chart-period" style="font-size:.8rem;border:1px solid #e5e7eb;border-radius:6px;padding:4px 8px;" onchange="loadRevenueChart(this.value)">
+            <option value="7d">7 ngày</option>
+            <option value="30d">30 ngày</option>
+            <option value="3m">3 tháng</option>
+          </select>
+        </div>
+        <div class="dashboard-card-body">
+          <div class="simple-bar" id="revenue-chart-bars">
+            <p style="color:#9ca3af;font-size:.875rem;">Đang tải...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top products -->
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <span class="dashboard-card-title">Sản phẩm bán chạy</span>
+          <a href="san-pham.html" style="font-size:.8rem;color:var(--color-primary);text-decoration:none;">Xem tất cả</a>
+        </div>
+        <div class="dashboard-card-body">
+          <div class="top-product-list" id="top-product-list">
+            <p style="color:#9ca3af;font-size:.875rem;">Đang tải...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT ORDERS -->
+    <div class="dashboard-card">
+      <div class="dashboard-card-header">
+        <span class="dashboard-card-title">Đơn hàng gần đây</span>
+        <a href="don-hang.html" style="font-size:.8rem;color:var(--color-primary);text-decoration:none;">Xem tất cả →</a>
+      </div>
+      <div class="table-wrap">
+        <table aria-label="Đơn hàng gần đây">
+          <thead>
+            <tr>
+              <th>Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>Sản phẩm</th>
+              <th>Tổng tiền</th>
+              <th>Thời gian</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="recent-orders-body">
+            <tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Đang tải...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Xác thực admin thật bằng Supabase (chống giả mạo localStorage) trước khi hiện gì cả
+SecurityGate.requireAdmin().then(function(){
+  var session = JSON.parse(localStorage.getItem('yen-duyen-admin') || 'null');
+  if(session){
+    var initials = (session.name || 'A').split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+    var nameEl = document.getElementById('user-name');
+    var avatarEl = document.getElementById('user-avatar');
+    if(nameEl) nameEl.textContent = session.name || 'Admin';
+    if(avatarEl) avatarEl.textContent = initials;
+  }
+});
+
+// Today date
+var dateEl = document.getElementById('today-date');
+if(dateEl){
+  var d = new Date();
+  var days = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+  dateEl.textContent = days[d.getDay()] + ', ' + d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
+}
+
+// Sidebar toggle
+document.getElementById('sidebar-toggle').addEventListener('click', function(){
+  document.getElementById('admin-wrapper').classList.toggle('sidebar-collapsed');
+});
+
+// Logout
+function logout(){
+  getSupabase().auth.signOut().then(function(){
+    localStorage.removeItem('yen-duyen-admin');
+    window.location.replace('index.html');
+  });
+}
+
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function sanitizeSearchTerm(s){ return (s||'').replace(/[,()."\\]/g, '').trim(); }
+
+var statusMap = {
+  pending:         { label:'Đợi xác nhận',        cls:'badge--new' },
+  preparing:       { label:'Đang chuẩn bị hàng',   cls:'badge--confirmed' },
+  waiting_shipper: { label:'Đợi shipper lấy hàng', cls:'badge--waiting' },
+  shipping:        { label:'Đang giao hàng',       cls:'badge--shipping' },
+  delivered:       { label:'Giao thành công',      cls:'badge--done' },
+  cancelled:       { label:'Đã hủy',               cls:'badge--cancelled' }
+};
+
+function fmtPrice(n){ return Number(n||0).toLocaleString('vi-VN') + 'đ'; }
+function fmtVND(n){
+  n = Number(n||0);
+  if (n >= 1000000000) return (n/1000000000).toLocaleString('vi-VN',{maximumFractionDigits:1}) + ' tỷ';
+  if (n >= 1000000) return (n/1000000).toLocaleString('vi-VN',{maximumFractionDigits:1}) + 'tr';
+  return n.toLocaleString('vi-VN') + 'đ';
+}
+function fmtDate(iso){
+  if(!iso) return '—';
+  var d = new Date(iso);
+  return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+}
+function fmtDM(d){ return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0'); }
+function itemsSummary(items){
+  if(!Array.isArray(items) || !items.length) return '—';
+  return items.map(function(i){ return (i.name||'SP') + ' x' + (i.qty||1); }).join(', ');
+}
+
+// ─── THẺ THỐNG KÊ (đơn hôm nay, doanh thu, khách mới, đơn hủy) ──
+function setStatCard(key, todayVal, yestVal, subText, fmt){
+  fmt = fmt || function(n){ return String(n); };
+  var valueEl = document.getElementById('stat-' + key + '-value');
+  var badgeEl = document.getElementById('stat-' + key + '-badge');
+  var subEl = document.getElementById('stat-' + key + '-sub');
+  if(valueEl) valueEl.textContent = fmt(todayVal);
+  if(subEl) subEl.textContent = subText;
+  if(badgeEl){
+    if(!yestVal){ badgeEl.style.display = 'none'; }
+    else {
+      var pct = Math.round((todayVal - yestVal) / yestVal * 100);
+      badgeEl.style.display = '';
+      badgeEl.className = 'stat-card-badge ' + (pct >= 0 ? 'stat-card-badge--up' : 'stat-card-badge--down');
+      badgeEl.textContent = (pct >= 0 ? '↑ ' : '↓ ') + Math.abs(pct) + '%';
+    }
+  }
+}
+function sumRevenue(rows){
+  return rows.filter(function(o){ return o.status !== 'cancelled'; })
+    .reduce(function(s,o){ return s + Number(o.total_amount||0); }, 0);
+}
+function loadDashboardStats(){
+  var sb = getSupabase();
+  var now = new Date();
+  var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var yestStart = new Date(todayStart); yestStart.setDate(yestStart.getDate() - 1);
+  var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  sb.from('orders').select('customer_phone,total_amount,status,created_at')
+    .gte('created_at', monthStart.toISOString())
+    .then(function(res){
+      if(res.error){ console.warn('Lỗi tải thống kê đơn hàng:', res.error.message); return; }
+      var rows = res.data || [];
+      var todayRows = rows.filter(function(o){ return new Date(o.created_at) >= todayStart; });
+      var yestRows = rows.filter(function(o){ var d = new Date(o.created_at); return d >= yestStart && d < todayStart; });
+
+      var pendingToday = todayRows.filter(function(o){ return o.status === 'pending'; }).length;
+      setStatCard('orders', todayRows.length, yestRows.length, pendingToday + ' đơn chờ xác nhận');
+
+      var revToday = sumRevenue(todayRows);
+      var revYest = sumRevenue(yestRows);
+      var revMonth = sumRevenue(rows);
+      setStatCard('revenue', revToday, revYest, 'Tháng này: ' + fmtVND(revMonth), fmtVND);
+
+      var cancelToday = todayRows.filter(function(o){ return o.status === 'cancelled'; }).length;
+      var cancelYest = yestRows.filter(function(o){ return o.status === 'cancelled'; }).length;
+      var cancelRate = todayRows.length ? (cancelToday / todayRows.length * 100) : 0;
+      setStatCard('cancelled', cancelToday, cancelYest, 'Tỉ lệ hủy: ' + cancelRate.toFixed(1) + '%');
+    });
+
+  // Khách hàng mới — cần đơn đầu tiên của mỗi khách (theo SĐT) nên phải xem toàn bộ lịch sử
+  sb.from('orders').select('customer_phone,created_at').order('created_at', {ascending:true})
+    .then(function(res){
+      if(res.error){ console.warn('Lỗi tải khách hàng mới:', res.error.message); return; }
+      var rows = res.data || [];
+      var firstSeen = {};
+      rows.forEach(function(o){
+        var phone = (o.customer_phone || '').replace(/\D/g, '');
+        if(phone && !firstSeen[phone]) firstSeen[phone] = o.created_at;
+      });
+      var newToday = 0, newYest = 0, newMonth = 0;
+      Object.keys(firstSeen).forEach(function(phone){
+        var d = new Date(firstSeen[phone]);
+        if(d >= todayStart) newToday++;
+        else if(d >= yestStart && d < todayStart) newYest++;
+        if(d >= monthStart) newMonth++;
+      });
+      setStatCard('customers', newToday, newYest, 'Tháng này: ' + newMonth);
+    });
+
+  // Số đơn "Đợi xác nhận" toàn hệ thống (chuông thông báo)
+  sb.from('orders').select('id', {count:'exact', head:true}).eq('status', 'pending')
+    .then(function(res){
+      var badge = document.getElementById('notif-badge');
+      if(!badge || res.error) return;
+      badge.style.display = (res.count || 0) > 0 ? '' : 'none';
+    });
+}
+
+// ─── BIỂU ĐỒ DOANH THU ─────────────────────────────────────
+var CHART_TITLES = { '7d':'Doanh thu 7 ngày qua', '30d':'Doanh thu 30 ngày qua', '3m':'Doanh thu 3 tháng qua' };
+function loadRevenueChart(period){
+  period = period || '7d';
+  var titleEl = document.getElementById('revenue-chart-title');
+  if(titleEl) titleEl.textContent = CHART_TITLES[period] || CHART_TITLES['7d'];
+
+  var now = new Date();
+  var since;
+  if(period === '3m') since = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+  else since = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ((period === '30d' ? 30 : 7) - 1));
+
+  getSupabase().from('orders').select('total_amount,status,created_at')
+    .gte('created_at', since.toISOString()).neq('status', 'cancelled')
+    .then(function(res){
+      var wrap = document.getElementById('revenue-chart-bars');
+      if(res.error){ if(wrap) wrap.innerHTML = '<p style="color:#9ca3af;font-size:.875rem;">Không tải được dữ liệu biểu đồ.</p>'; return; }
+      renderRevenueChart(period, res.data || [], now);
+    });
+}
+function renderRevenueChart(period, rows, now){
+  var buckets = [];
+  if(period === '3m'){
+    for(var i=2;i>=0;i--){
+      var mStart = new Date(now.getFullYear(), now.getMonth()-i, 1);
+      var mEnd = new Date(now.getFullYear(), now.getMonth()-i+1, 1);
+      var total = rows.filter(function(o){ var d=new Date(o.created_at); return d>=mStart && d<mEnd; })
+                       .reduce(function(s,o){ return s+Number(o.total_amount||0); },0);
+      buckets.push({ label:'Tháng ' + (mStart.getMonth()+1) + '/' + mStart.getFullYear(), total:total, isLast: i===0 });
+    }
+  } else if(period === '30d'){
+    var bucketDays = 6;
+    for(var b=4;b>=0;b--){
+      var bStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (b*bucketDays + bucketDays - 1));
+      var bEndExcl = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (b*bucketDays) + 1);
+      var totalB = rows.filter(function(o){ var d=new Date(o.created_at); return d>=bStart && d<bEndExcl; })
+                        .reduce(function(s,o){ return s+Number(o.total_amount||0); },0);
+      buckets.push({ label: fmtDM(bStart) + ' - ' + fmtDM(new Date(bEndExcl - 86400000)), total: totalB, isLast: b===0 });
+    }
+  } else {
+    var dayAbbr = ['CN','T2','T3','T4','T5','T6','T7'];
+    for(var d2=6;d2>=0;d2--){
+      var dStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()-d2);
+      var dEndExcl = new Date(now.getFullYear(), now.getMonth(), now.getDate()-d2+1);
+      var totalD = rows.filter(function(o){ var dd=new Date(o.created_at); return dd>=dStart && dd<dEndExcl; })
+                        .reduce(function(s,o){ return s+Number(o.total_amount||0); },0);
+      buckets.push({ label: dayAbbr[dStart.getDay()] + ' (' + fmtDM(dStart) + ')' + (d2===0?' — hôm nay':''), total: totalD, isLast: d2===0 });
+    }
+  }
+  var max = Math.max.apply(null, buckets.map(function(b){ return b.total; }).concat([1]));
+  var wrap = document.getElementById('revenue-chart-bars');
+  if(!wrap) return;
+  wrap.innerHTML = buckets.map(function(b){
+    var pct = Math.round(b.total / max * 100);
+    return '<div class="simple-bar-item">'
+      + '<label>' + esc(b.label) + ' — ' + fmtVND(b.total) + '</label>'
+      + '<div class="simple-bar-track"><div class="simple-bar-fill" style="width:' + pct + '%;' + (b.isLast ? 'background:var(--color-gold)' : '') + '"></div></div>'
+      + '</div>';
+  }).join('');
+}
+
+// ─── SẢN PHẨM BÁN CHẠY (theo sold_count, không kể doanh thu) ──
+function loadTopProducts(){
+  getSupabase().from('products').select('id,name,image_url,sold_count')
+    .order('sold_count', {ascending:false}).limit(5)
+    .then(function(res){
+      var wrap = document.getElementById('top-product-list');
+      if(!wrap) return;
+      if(res.error){ wrap.innerHTML = '<p style="color:#9ca3af;font-size:.875rem;">Không tải được dữ liệu.</p>'; return; }
+      var list = res.data || [];
+      if(!list.length){ wrap.innerHTML = '<p style="color:#9ca3af;font-size:.875rem;">Chưa có dữ liệu bán hàng.</p>'; return; }
+      wrap.innerHTML = list.map(function(p, idx){
+        return '<div class="top-product-item">'
+          + '<span class="top-product-rank">' + (idx+1) + '</span>'
+          + '<img src="' + esc(p.image_url || '') + '" class="top-product-img" alt="' + esc(p.name) + '" onerror="this.style.visibility=\'hidden\'">'
+          + '<div class="top-product-info"><p class="top-product-name">' + esc(p.name) + '</p><p class="top-product-sold">' + (p.sold_count||0) + ' đã bán</p></div>'
+          + '</div>';
+      }).join('');
+    });
+}
+
+// ─── ĐƠN HÀNG GẦN ĐÂY ────────────────────────────────────────
+function loadRecentOrders(){
+  getSupabase().from('orders').select('order_code,customer_name,customer_phone,items,total_amount,status,created_at')
+    .order('created_at', {ascending:false}).limit(5)
+    .then(function(res){
+      var tbody = document.getElementById('recent-orders-body');
+      if(!tbody) return;
+      if(res.error){ tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Không tải được đơn hàng.</td></tr>'; return; }
+      var list = res.data || [];
+      if(!list.length){ tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Chưa có đơn hàng nào</td></tr>'; return; }
+      tbody.innerHTML = list.map(function(o){
+        var st = statusMap[o.status] || statusMap.pending;
+        return '<tr>'
+          + '<td><strong>#' + esc(o.order_code) + '</strong></td>'
+          + '<td>' + esc(o.customer_name) + '<br><small style="color:#9ca3af;">' + esc(o.customer_phone) + '</small></td>'
+          + '<td>' + esc(itemsSummary(o.items)) + '</td>'
+          + '<td style="font-weight:700;color:var(--color-primary);">' + fmtPrice(o.total_amount) + '</td>'
+          + '<td><small>' + fmtDate(o.created_at) + '</small></td>'
+          + '<td><span class="badge ' + st.cls + '">' + esc(st.label) + '</span></td>'
+          + '<td><a href="don-hang.html?search=' + encodeURIComponent(o.order_code) + '" style="color:var(--color-primary);font-size:.8rem;">Xem</a></td>'
+          + '</tr>';
+      }).join('');
+    });
+}
+
+// ─── TÌM KIẾM TỔNG HỢP (gộp tìm kiếm của các trang admin lại) ──
+var globalSearchDebounce;
+function onGlobalSearchInput(){
+  clearTimeout(globalSearchDebounce);
+  var raw = document.getElementById('global-search').value.trim();
+  if(!raw){ hideSearchDropdown(); return; }
+  globalSearchDebounce = setTimeout(function(){ runGlobalSearch(raw); }, 300);
+}
+function runGlobalSearch(raw){
+  var q = sanitizeSearchTerm(raw);
+  if(!q){ hideSearchDropdown(); return; }
+  var sb = getSupabase();
+  Promise.all([
+    sb.from('orders').select('order_code,customer_name,customer_phone').or('order_code.ilike.%'+q+'%,customer_name.ilike.%'+q+'%,customer_phone.ilike.%'+q+'%').limit(5),
+    sb.from('products').select('id,name').ilike('name', '%'+q+'%').limit(5),
+    sb.from('profiles').select('id,full_name,phone').or('full_name.ilike.%'+q+'%,phone.ilike.%'+q+'%').limit(5),
+    sb.from('vouchers').select('id,code').ilike('code', '%'+q+'%').limit(5)
+  ]).then(function(results){
+    renderSearchDropdown(raw, results);
+  });
+}
+function gsrSection(title, items){
+  return '<div class="gsr-section"><p class="gsr-section-title">' + esc(title) + '</p>'
+    + items.map(function(it){ return '<a class="gsr-item" href="' + esc(it.href) + '">' + esc(it.text) + '</a>'; }).join('')
+    + '</div>';
+}
+function renderSearchDropdown(raw, results){
+  var orders = (results[0] && results[0].data) || [];
+  var products = (results[1] && results[1].data) || [];
+  var customers = (results[2] && results[2].data) || [];
+  var vouchers = (results[3] && results[3].data) || [];
+
+  var sections = [];
+  if(orders.length) sections.push(gsrSection('Đơn hàng', orders.map(function(o){
+    return { text:'#' + o.order_code + ' — ' + o.customer_name, href:'don-hang.html?search=' + encodeURIComponent(o.order_code) };
+  })));
+  if(products.length) sections.push(gsrSection('Sản phẩm', products.map(function(p){
+    return { text:p.name, href:'san-pham.html?search=' + encodeURIComponent(p.name) };
+  })));
+  if(customers.length) sections.push(gsrSection('Khách hàng', customers.map(function(c){
+    return { text:(c.full_name || '(chưa có tên)') + ' — ' + (c.phone || ''), href:'khach-hang.html?search=' + encodeURIComponent(c.phone || c.full_name || '') };
+  })));
+  if(vouchers.length) sections.push(gsrSection('Voucher', vouchers.map(function(v){
+    return { text:v.code, href:'voucher.html?search=' + encodeURIComponent(v.code) };
+  })));
+
+  var box = document.getElementById('global-search-results');
+  if(!box) return;
+  box.innerHTML = sections.length ? sections.join('') : ('<div class="gsr-empty">Không tìm thấy kết quả cho "' + esc(raw) + '"</div>');
+  box.style.display = 'block';
+}
+function hideSearchDropdown(){
+  var box = document.getElementById('global-search-results');
+  if(box){ box.style.display = 'none'; box.innerHTML = ''; }
+}
+document.addEventListener('click', function(e){
+  var wrap = document.getElementById('global-search-wrap');
+  if(wrap && !wrap.contains(e.target)) hideSearchDropdown();
+});
+
+// Tải dữ liệu thật cho toàn bộ dashboard
+loadDashboardStats();
+loadRevenueChart('7d');
+loadTopProducts();
+loadRecentOrders();
+</script>
+<script src="../js/admin-status.js"></script>
+</body>
+</html>

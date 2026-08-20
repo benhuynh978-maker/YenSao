@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cẩm nang yến sào — kiến thức, công thức, hướng dẫn chọn mua và bảo quản yến sào từ chuyên gia Yến Sào Yến Duyên.">
+  <meta name="keywords" content="cẩm nang yến sào, lợi ích yến sào, cách nấu yến sào, chọn yến sào, bảo quản yến sào">
+  <title>Cẩm Nang Yến Sào — Yến Sào Yến Duyên</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/sections.css">
+  <link rel="stylesheet" href="css/ai-chat.css">
+
+  <a href="#main-content" class="skip-link">Chuyển đến nội dung chính</a>
+
+  <style>
+    /* =============================================
+       PAGE BANNER
+    ============================================= */
+    .page-banner {
+      background: var(--gradient-brand);
+      padding: 80px 0 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+    .page-banner__label {
+      font-family: var(--font-accent);
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--color-gold);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .page-banner__title {
+      font-family: var(--font-heading);
+      font-size: clamp(28px, 5vw, 48px);
+      color: #fff;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .page-banner__desc {
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: rgba(255,255,255,0.8);
+      max-width: 560px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      position: relative;
+    }
+    .breadcrumb a { color: rgba(255,255,255,0.8); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--color-gold); }
+    .breadcrumb span { color: rgba(255,255,255,0.4); }
+
+    /* =============================================
+       FEATURED POST
+    ============================================= */
+    .featured-section {
+      background: var(--color-cream);
+      padding: 64px 0 0;
+    }
+    .featured-post {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(62,39,35,0.12);
+      background: #fff;
+    }
+    .featured-post__img-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+    .featured-post__img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .featured-post:hover .featured-post__img-wrap img { transform: scale(1.05); }
+    .featured-post__badge {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: var(--color-gold);
+      color: var(--color-brand);
+      font-family: var(--font-accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+    .featured-post__body {
+      padding: 48px 48px 48px 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .featured-post__cat {
+      display: inline-block;
+      background: rgba(139,0,0,0.08);
+      color: var(--color-primary);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+    .featured-post__title {
+      font-family: var(--font-heading);
+      font-size: clamp(20px, 2.5vw, 28px);
+      color: var(--color-brand);
+      line-height: 1.35;
+      margin-bottom: 16px;
+    }
+    .featured-post__excerpt {
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .featured-post__meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 28px;
+    }
+    .featured-post__meta svg { color: var(--color-gold); flex-shrink: 0; }
+    .featured-post__meta span { display: flex; align-items: center; gap: 6px; }
+    .btn-read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gradient-brand);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 28px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+      align-self: flex-start;
+    }
+    .btn-read-more:hover { opacity: 0.9; transform: translateX(4px); }
+    .btn-read-more svg { transition: transform 0.2s; }
+    .btn-read-more:hover svg { transform: translateX(3px); }
+
+    /* =============================================
+       BLOG LAYOUT (2-col: main + sidebar)
+    ============================================= */
+    .blog-page-layout {
+      padding: 56px 0 80px;
+      background: var(--color-cream);
+    }
+    .blog-page-inner {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* Filter tabs */
+    .blog-filter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .blog-filter-btn {
+      background: #fff;
+      border: 1.5px solid #e0d6cc;
+      color: #666;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .blog-filter-btn:hover {
+      border-color: var(--color-brand);
+      color: var(--color-brand);
+    }
+    .blog-filter-btn.is-active {
+      background: var(--color-brand);
+      border-color: var(--color-brand);
+      color: #fff;
+    }
+
+    /* Article grid */
+    .blog-articles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+
+    .blog-article-card {
+      background: #fff;
+      border: 1.5px solid #e0d6cc;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(62,39,35,.16);
+      transition: transform 0.25s, box-shadow 0.25s;
+      display: flex;
+      flex-direction: column;
+    }
+    .blog-article-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 32px rgba(62,39,35,0.14);
+    }
+    .blog-article-card.is-hidden { display: none; }
+    .blog-article-card__img-wrap {
+      position: relative;
+      aspect-ratio: 16/10;
+      overflow: hidden;
+    }
+    .blog-article-card__img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .blog-article-card:hover .blog-article-card__img-wrap img { transform: scale(1.06); }
+    .blog-article-card__cat {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: var(--color-brand);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .blog-article-card__body {
+      padding: 20px 20px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .blog-article-card__meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+    .blog-article-card__meta .dot { color: #d0c4bb; }
+    .blog-article-card__title {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      color: var(--color-brand);
+      line-height: 1.4;
+      margin-bottom: 10px;
+      flex: 1;
+    }
+    .blog-article-card__title a {
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.2s;
+    }
+    .blog-article-card__title a:hover { color: var(--color-primary); }
+    .blog-article-card__excerpt {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: #777;
+      line-height: 1.65;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .blog-article-card__read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-primary);
+      text-decoration: none;
+      margin-top: auto;
+      transition: gap 0.2s;
+    }
+    .blog-article-card__read-more:hover { gap: 10px; }
+
+    /* No results */
+    .blog-no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 64px 32px;
+      display: none;
+    }
+    .blog-no-results.is-visible { display: block; }
+    .blog-no-results p {
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: #999;
+    }
+
+    /* =============================================
+       SIDEBAR
+    ============================================= */
+    .blog-sidebar {
+      position: sticky;
+      top: 96px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .sidebar-widget {
+      background: #fff;
+      border: 1.5px solid #e0d6cc;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(62,39,35,.16);
+    }
+    .sidebar-widget__title {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      color: var(--color-brand);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--color-gold);
+    }
+
+    /* Search widget */
+    .sidebar-search {
+      display: flex;
+      gap: 8px;
+    }
+    .sidebar-search input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1.5px solid #e0d6cc;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: #333;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .sidebar-search input:focus { border-color: var(--color-brand); }
+    .sidebar-search input::placeholder { color: #bbb; }
+    .sidebar-search-btn {
+      background: var(--color-brand);
+      border: none;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .sidebar-search-btn:hover { background: var(--color-primary); }
+
+    /* Category list widget */
+    .sidebar-cat-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sidebar-cat-list li a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: #555;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .sidebar-cat-list li a:hover {
+      background: rgba(62,39,35,0.06);
+      color: var(--color-brand);
+    }
+    .sidebar-cat-list li a .count {
+      background: var(--color-cream);
+      color: #888;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    /* Popular posts widget */
+    .sidebar-popular-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .sidebar-popular-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .sidebar-popular-item__img {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .sidebar-popular-item__img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .sidebar-popular-item__info { flex: 1; }
+    .sidebar-popular-item__title {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-brand);
+      line-height: 1.4;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 4px;
+      transition: color 0.2s;
+    }
+    .sidebar-popular-item__title:hover { color: var(--color-primary); }
+    .sidebar-popular-item__date {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    /* =============================================
+       NEWSLETTER CTA
+    ============================================= */
+    .blog-cta-section {
+      background: var(--gradient-brand);
+      padding: 72px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .blog-cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .blog-cta-label {
+      font-family: var(--font-accent);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--color-gold);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .blog-cta-title {
+      font-family: var(--font-heading);
+      font-size: clamp(22px, 4vw, 36px);
+      color: #fff;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .blog-cta-desc {
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: rgba(255,255,255,0.8);
+      max-width: 500px;
+      margin: 0 auto 32px;
+      line-height: 1.7;
+      position: relative;
+    }
+    .blog-cta-form {
+      display: flex;
+      max-width: 440px;
+      margin: 0 auto;
+      gap: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    .blog-cta-form input {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      outline: none;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: #333;
+    }
+    .blog-cta-form input::placeholder { color: #bbb; }
+    .blog-cta-form button {
+      background: var(--color-gold);
+      color: var(--color-brand);
+      border: none;
+      padding: 14px 24px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .blog-cta-form button:hover { background: #c4a028; }
+    .blog-cta-note {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 12px;
+      position: relative;
+    }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 1024px) {
+      .blog-page-inner {
+        grid-template-columns: 1fr 260px;
+        gap: 32px;
+      }
+    }
+    @media (max-width: 900px) {
+      .blog-page-inner {
+        grid-template-columns: 1fr;
+      }
+      .blog-sidebar {
+        position: static;
+      }
+      .featured-post {
+        grid-template-columns: 1fr;
+      }
+      .featured-post__img-wrap {
+        aspect-ratio: 16/9;
+      }
+      .featured-post__body {
+        padding: 32px;
+      }
+    }
+    @media (max-width: 640px) {
+      .blog-articles-grid {
+        grid-template-columns: 1fr;
+      }
+      .featured-section { padding-top: 40px; }
+      .blog-page-layout { padding: 40px 0 60px; }
+    }
+
+    /* =============================================
+       NHÃN DEMO — đánh dấu nội dung mẫu, chưa phải bài viết thật
+    ============================================= */
+    .demo-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      background: #fde68a;
+      color: #92400e;
+      font-family: var(--font-body);
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 3px 10px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    }
+    .demo-tag-inline {
+      display: inline-block;
+      background: #fde68a;
+      color: #92400e;
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      padding: 2px 8px;
+      border-radius: 10px;
+      vertical-align: middle;
+    }
+    .section-subheading {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: #999;
+      margin: -20px 0 24px;
+    }
+
+    /* =============================================
+       BÀI NỔI BẬT THẬT — carousel (main + thumbnail, giống trang chi tiết sản phẩm)
+    ============================================= */
+    .real-featured-section { background: var(--color-cream); padding: 56px 0 0; }
+    .real-featured-section__head { margin-bottom: 24px; }
+    .real-featured-section__label {
+      font-family: var(--font-accent); font-size: 12px; letter-spacing: 2px;
+      color: var(--color-gold); text-transform: uppercase; margin-bottom: 6px;
+    }
+    .real-featured-section__title { font-family: var(--font-heading); font-size: 24px; color: var(--color-brand); }
+    .rf-thumbs { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .rf-thumb {
+      width: 84px; height: 62px; border-radius: 8px; overflow: hidden; cursor: pointer;
+      border: 2px solid transparent; background: var(--color-cream); flex-shrink: 0; padding: 0;
+      transition: border-color .15s;
+    }
+    .rf-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .rf-thumb.is-active { border-color: var(--color-gold); }
+    .real-featured-main { position: relative; }
+    .rf-arrow {
+      position: absolute; top: 40%; transform: translateY(-50%); width: 42px; height: 42px;
+      border-radius: 50%; border: none; cursor: pointer; background: rgba(255,255,255,.92);
+      color: var(--color-brand); display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 12px rgba(0,0,0,.18); z-index: 3;
+    }
+    .rf-arrow--prev { left: 14px; } .rf-arrow--next { right: 14px; }
+    @media (max-width: 900px) { .rf-arrow { display: none; } }
+
+    /* ── Pagination (Bài Viết Mới Nhất) — cùng quy ước san-pham.html ── */
+    .pagination { display: flex; justify-content: center; align-items: center; gap: var(--space-8); margin-top: var(--space-64); }
+    .page-btn {
+      width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+      border: var(--border-light); border-radius: var(--radius-sm); background: var(--color-white);
+      color: var(--color-text-medium); font-family: var(--font-body); font-size: var(--text-sm);
+      font-weight: 500; cursor: pointer; transition: all var(--transition-fast); text-decoration: none;
+    }
+    .page-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .page-btn.is-active { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-white); }
+    .page-btn--icon { color: var(--color-text-muted); }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header" id="site-header" role="banner">
+    <div class="header-inner container">
+      <a href="index.html" class="logo" aria-label="Yến Duyên - Trang chủ">
+        <img src="images/logo/logo.png" alt="Yến Sào Yến Duyên" class="logo-img" width="120" height="60">
+      </a>
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <ul class="nav-list" role="list">
+          <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+          <li><a href="san-pham.html" class="nav-link">Sản phẩm</a></li>
+          <li><a href="combo-qua-tang.html" class="nav-link">Combo quà tặng</a></li>
+          <li><a href="khoi-nghiep.html" class="nav-link active" aria-current="page">Cẩm nang</a></li>
+          <li><a href="gioi-thieu.html" class="nav-link">Giới thiệu</a></li>
+          <li><a href="lien-he.html" class="nav-link">Liên hệ</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a href="tel:+840986012754" class="header-hotline" aria-label="Gọi hotline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>0986.012.754</span>
+        </a>
+        <a href="gio-hang.html" class="cart-btn" aria-label="Giỏ hàng">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-badge" id="cart-badge" aria-live="polite">0</span>
+        </a>
+        <div id="auth-slot"></div>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-nav">
+          <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Menu di động" aria-hidden="true">
+      <ul class="mobile-nav-list" role="list">
+        <li><a href="index.html" class="mobile-nav-link">Trang chủ</a></li>
+        <li><a href="san-pham.html" class="mobile-nav-link">Sản phẩm</a></li>
+        <li><a href="combo-qua-tang.html" class="mobile-nav-link">Combo quà tặng</a></li>
+        <li><a href="khoi-nghiep.html" class="mobile-nav-link">Cẩm nang</a></li>
+        <li><a href="gioi-thieu.html" class="mobile-nav-link">Giới thiệu</a></li>
+        <li><a href="lien-he.html" class="mobile-nav-link">Liên hệ</a></li>
+        <li class="mobile-nav-cta">
+          <a href="tel:+840986012754" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Gọi ngay
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content">
+
+    <!-- PAGE BANNER -->
+    <section class="page-banner" aria-label="Cẩm nang yến sào">
+      <div class="container">
+        <p class="page-banner__label">Kiến thức bổ ích</p>
+        <h1 class="page-banner__title">Cẩm Nang Yến Sào</h1>
+        <p class="page-banner__desc">Bí quyết chọn mua, chế biến và bảo quản yến sào từ chuyên gia — giúp bạn khai thác tối đa giá trị dinh dưỡng của món ăn quý hiếm này.</p>
+        <nav class="breadcrumb" aria-label="Đường dẫn trang">
+          <a href="index.html">Trang chủ</a>
+          <span aria-hidden="true">›</span>
+          <span aria-current="page">Cẩm nang</span>
+        </nav>
+      </div>
+    </section>
+
+    <!-- BÀI NỔI BẬT THẬT (Supabase) — chỉ hiện khi có bài is_featured đã xuất bản -->
+    <section class="real-featured-section" id="real-featured-section" hidden>
+      <div class="container">
+        <div class="real-featured-section__head">
+          <p class="real-featured-section__label">Đừng bỏ lỡ</p>
+          <h2 class="real-featured-section__title">Bài Viết Nổi Bật</h2>
+        </div>
+        <div class="real-featured-main" id="real-featured-main">
+          <div id="rf-article-slot"></div>
+          <button class="rf-arrow rf-arrow--prev" id="rf-prev" aria-label="Bài trước" hidden>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="rf-arrow rf-arrow--next" id="rf-next" aria-label="Bài kế" hidden>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="rf-thumbs" id="rf-thumbs"></div>
+      </div>
+    </section>
+
+    <!-- FEATURED POST (DEMO — minh hoạ giao diện, chưa phải bài viết thật) -->
+    <section class="featured-section">
+      <div class="container">
+        <article class="featured-post animate-on-scroll" aria-labelledby="featured-title" style="position:relative;">
+          <div class="featured-post__img-wrap">
+            <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop" alt="Lợi ích của yến sào đối với sức khoẻ" loading="eager" width="800" height="600">
+            <span class="featured-post__badge">Bài nổi bật</span>
+          </div>
+          <span class="demo-tag">Demo</span>
+          <div class="featured-post__body">
+            <span class="featured-post__cat">Sức khoẻ</span>
+            <h2 class="featured-post__title" id="featured-title">Lợi Ích Của Yến Sào Đối Với Sức Khoẻ Toàn Diện — Khoa Học Đã Chứng Minh</h2>
+            <p class="featured-post__excerpt">Yến sào không chỉ là món ăn bổ dưỡng lâu đời trong y học cổ truyền mà còn được nghiên cứu khoa học hiện đại xác nhận với hàm lượng protein cao, axit amin thiết yếu và các glycoprotein quý giá. Bài viết tổng hợp đầy đủ tác dụng với từng độ tuổi, từ trẻ sơ sinh đến người cao tuổi.</p>
+            <div class="featured-post__meta">
+              <span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                10/01/2025
+              </span>
+              <span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                5 phút đọc
+              </span>
+              <span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                1.248 lượt xem
+              </span>
+            </div>
+            <a href="#" class="btn-read-more">
+              Đọc bài viết
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- BLOG GRID + SIDEBAR -->
+    <section class="blog-page-layout">
+      <div class="container">
+        <div class="blog-page-inner">
+
+          <!-- MAIN: filter + articles -->
+          <div class="blog-main">
+
+            <!-- Bài viết thật (Supabase) — chỉ hiện khi đã có bài đã xuất bản -->
+            <div id="real-posts-section" hidden>
+              <h2 style="font-family:var(--font-heading);font-size:22px;color:var(--color-brand);margin-bottom:20px;">Bài Viết Mới Nhất</h2>
+              <div class="blog-articles-grid" id="real-posts-grid" style="margin-bottom:24px;"></div>
+              <p class="blog-no-results" id="real-posts-no-results" hidden>Không tìm thấy bài viết nào khớp với từ khoá tìm kiếm.</p>
+              <nav class="pagination" id="real-posts-pagination" aria-label="Phân trang bài viết" style="margin-bottom:48px;"></nav>
+            </div>
+
+            <!-- Category filter (lọc thật lưới bài viết thật phía trên + lưới demo bên dưới) -->
+            <div class="blog-filter" role="tablist" aria-label="Lọc bài viết theo chủ đề">
+              <button class="blog-filter-btn is-active" data-filter="all" role="tab" aria-selected="true">Tất cả</button>
+              <button class="blog-filter-btn" data-filter="suc-khoe" role="tab" aria-selected="false">Sức khoẻ</button>
+              <button class="blog-filter-btn" data-filter="am-thuc" role="tab" aria-selected="false">Ẩm thực</button>
+              <button class="blog-filter-btn" data-filter="qua-tang" role="tab" aria-selected="false">Quà tặng</button>
+              <button class="blog-filter-btn" data-filter="kien-thuc" role="tab" aria-selected="false">Kiến thức</button>
+            </div>
+            <p class="section-subheading">Các bài bên dưới là <strong>DEMO</strong> — nội dung mẫu minh hoạ giao diện, chưa phải bài viết thật.</p>
+
+            <!-- Articles grid -->
+            <div class="blog-articles-grid" id="blog-articles-grid">
+
+              <!-- Article 2 -->
+              <article class="blog-article-card animate-on-scroll" data-category="am-thuc">
+                <div class="blog-article-card__img-wrap">
+                  <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=600&h=375&fit=crop" alt="Bí quyết nấu chè yến sào" loading="lazy" width="600" height="375">
+                  <span class="blog-article-card__cat">Ẩm thực</span>
+                  <span class="demo-tag">Demo</span>
+                </div>
+                <div class="blog-article-card__body">
+                  <div class="blog-article-card__meta">
+                    <time>05/01/2025</time>
+                    <span class="dot">·</span>
+                    <span>7 phút đọc</span>
+                  </div>
+                  <h3 class="blog-article-card__title">
+                    <a href="#">Bí Quyết Nấu Chè Yến Sào Ngon Đúng Điệu Huế</a>
+                  </h3>
+                  <p class="blog-article-card__excerpt">Chè yến sào là món tráng miệng truyền thống của người Huế. Để có bát chè trong vắt, thơm ngon, cần tuân theo đúng các bước sơ chế và nấu nướng — từ ngâm, đến lửa, đến tỉ lệ đường.</p>
+                  <a href="#" class="blog-article-card__read-more">
+                    Đọc thêm
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+              </article>
+
+              <!-- Article 3 -->
+              <article class="blog-article-card animate-on-scroll" data-category="qua-tang" style="animation-delay:0.05s">
+                <div class="blog-article-card__img-wrap">
+                  <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&h=375&fit=crop" alt="Quà tặng yến sào dịp Tết" loading="lazy" width="600" height="375">
+                  <span class="blog-article-card__cat">Quà tặng</span>
+                  <span class="demo-tag">Demo</span>
+                </div>
+                <div class="blog-article-card__body">
+                  <div class="blog-article-card__meta">
+                    <time>28/12/2024</time>
+                    <span class="dot">·</span>
+                    <span>4 phút đọc</span>
+                  </div>
+                  <h3 class="blog-article-card__title">
+                    <a href="#">Ý Tưởng Quà Tặng Yến Sào Dịp Tết Nguyên Đán 2025</a>
+                  </h3>
+                  <p class="blog-article-card__excerpt">Yến sào là món quà biếu ý nghĩa nhất trong dịp Tết, thể hiện sự trân trọng và quan tâm đến sức khoẻ của người thân. Cùng khám phá các set quà được yêu thích nhất năm nay.</p>
+                  <a href="#" class="blog-article-card__read-more">
+                    Đọc thêm
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+              </article>
+
+              <!-- Article 4 -->
+              <article class="blog-article-card animate-on-scroll" data-category="kien-thuc" style="animation-delay:0.1s">
+                <div class="blog-article-card__img-wrap">
+                  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=375&fit=crop" alt="Cách chọn yến sào chất lượng" loading="lazy" width="600" height="375">
+                  <span class="blog-article-card__cat">Kiến thức</span>
+                  <span class="demo-tag">Demo</span>
+                </div>
+                <div class="blog-article-card__body">
+                  <div class="blog-article-card__meta">
+                    <time>20/12/2024</time>
+                    <span class="dot">·</span>
+                    <span>6 phút đọc</span>
+                  </div>
+                  <h3 class="blog-article-card__title">
+                    <a href="#">Cách Chọn Yến Sào Chất Lượng — 5 Điều Không Được Bỏ Qua</a>
+                  </h3>
+                  <p class="blog-article-card__excerpt">Thị trường yến sào ngày càng nhiều hàng giả, hàng kém chất lượng. Bài viết hướng dẫn 5 tiêu chí kiểm tra đơn giản ngay tại nhà để không bị mua nhầm hàng tẩy trắng hay tẩm hoá chất.</p>
+                  <a href="#" class="blog-article-card__read-more">
+                    Đọc thêm
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+              </article>
+
+              <!-- Article 5 -->
+              <article class="blog-article-card animate-on-scroll" data-category="suc-khoe" style="animation-delay:0.15s">
+                <div class="blog-article-card__img-wrap">
+                  <img src="https://images.unsplash.com/photo-1493770348161-369560ae357d?w=600&h=375&fit=crop" alt="Yến sào cho bà bầu" loading="lazy" width="600" height="375">
+                  <span class="blog-article-card__cat">Sức khoẻ</span>
+                  <span class="demo-tag">Demo</span>
+                </div>
+                <div class="blog-article-card__body">
+                  <div class="blog-article-card__meta">
+                    <time>15/12/2024</time>
+                    <span class="dot">·</span>
+                    <span>8 phút đọc</span>
+                  </div>
+                  <h3 class="blog-article-card__title">
+                    <a href="#">Yến Sào Cho Bà Bầu — Ăn Bao Nhiêu Là Đủ Và Khi Nào Nên Tránh?</a>
+                  </h3>
+                  <p class="blog-article-card__excerpt">Yến sào rất tốt cho phụ nữ mang thai nhờ hàm lượng protein và khoáng chất cao, nhưng cần dùng đúng liều lượng và đúng thời điểm. Bác sĩ dinh dưỡng giải đáp mọi thắc mắc.</p>
+                  <a href="#" class="blog-article-card__read-more">
+                    Đọc thêm
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+              </article>
+
+              <!-- Article 6 -->
+              <article class="blog-article-card animate-on-scroll" data-category="kien-thuc" style="animation-delay:0.2s">
+                <div class="blog-article-card__img-wrap">
+                  <img src="https://images.unsplash.com/photo-1585615711529-6e3b6cb91ab8?w=600&h=375&fit=crop" alt="Cách bảo quản yến sào" loading="lazy" width="600" height="375">
+                  <span class="blog-article-card__cat">Kiến thức</span>
+                  <span class="demo-tag">Demo</span>
+                </div>
+                <div class="blog-article-card__body">
+                  <div class="blog-article-card__meta">
+                    <time>10/12/2024</time>
+                    <span class="dot">·</span>
+                    <span>4 phút đọc</span>
+                  </div>
+                  <h3 class="blog-article-card__title">
+                    <a href="#">Cách Bảo Quản Yến Sào Đúng Cách Để Giữ Nguyên Dưỡng Chất</a>
+                  </h3>
+                  <p class="blog-article-card__excerpt">Yến sào là thực phẩm nhạy cảm với nhiệt độ và độ ẩm. Bảo quản sai cách có thể làm mất đi đến 60% dưỡng chất. Học ngay cách lưu trữ đúng chuẩn cho từng dạng yến.</p>
+                  <a href="#" class="blog-article-card__read-more">
+                    Đọc thêm
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+              </article>
+
+              <!-- Article 7 -->
+              <article class="blog-article-card animate-on-scroll" data-category="kien-thuc" style="animation-delay:0.25s">
+                <div class="blog-article-card__img-wrap">
+                  <img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=600&h=375&fit=crop" alt="Sự khác biệt yến thô và yến tinh chế" loading="lazy" width="600" height="375">
+                  <span class="blog-article-card__cat">Kiến thức</span>
+                  <span class="demo-tag">Demo</span>
+                </div>
+                <div class="blog-article-card__body">
+                  <div class="blog-article-card__meta">
+                    <time>05/12/2024</time>
+                    <span class="dot">·</span>
+                    <span>5 phút đọc</span>
+                  </div>
+                  <h3 class="blog-article-card__title">
+                    <a href="#">Yến Thô Và Yến Tinh Chế — Khác Nhau Thế Nào? Nên Mua Loại Nào?</a>
+                  </h3>
+                  <p class="blog-article-card__excerpt">Nhiều người băn khoăn không biết nên mua yến thô hay yến tinh chế. Bài viết so sánh chi tiết về giá trị dinh dưỡng, cách chế biến, giá cả và phù hợp với mục đích sử dụng nào.</p>
+                  <a href="#" class="blog-article-card__read-more">
+                    Đọc thêm
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+              </article>
+
+              <!-- Article 8 -->
+              <article class="blog-article-card animate-on-scroll" data-category="am-thuc" style="animation-delay:0.3s">
+                <div class="blog-article-card__img-wrap">
+                  <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=600&h=375&fit=crop" alt="Cách chế biến yến sào" loading="lazy" width="600" height="375">
+                  <span class="blog-article-card__cat">Ẩm thực</span>
+                  <span class="demo-tag">Demo</span>
+                </div>
+                <div class="blog-article-card__body">
+                  <div class="blog-article-card__meta">
+                    <time>01/12/2024</time>
+                    <span class="dot">·</span>
+                    <span>9 phút đọc</span>
+                  </div>
+                  <h3 class="blog-article-card__title">
+                    <a href="#">Top 5 Cách Chế Biến Yến Sào Đơn Giản Tại Nhà Cực Ngon</a>
+                  </h3>
+                  <p class="blog-article-card__excerpt">Từ yến chưng đường phèn truyền thống, chè yến táo đỏ, đến sinh tố yến thanh mát — 5 công thức đơn giản mà ai cũng làm được, giúp bạn tận hưởng yến sào theo nhiều cách khác nhau.</p>
+                  <a href="#" class="blog-article-card__read-more">
+                    Đọc thêm
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+              </article>
+
+              <!-- Article 9 -->
+              <article class="blog-article-card animate-on-scroll" data-category="qua-tang" style="animation-delay:0.35s">
+                <div class="blog-article-card__img-wrap">
+                  <img src="https://images.unsplash.com/photo-1607897782009-7e3e18b7dcb5?w=600&h=375&fit=crop" alt="Quà tặng yến sào cho người lớn tuổi" loading="lazy" width="600" height="375">
+                  <span class="blog-article-card__cat">Quà tặng</span>
+                  <span class="demo-tag">Demo</span>
+                </div>
+                <div class="blog-article-card__body">
+                  <div class="blog-article-card__meta">
+                    <time>25/11/2024</time>
+                    <span class="dot">·</span>
+                    <span>5 phút đọc</span>
+                  </div>
+                  <h3 class="blog-article-card__title">
+                    <a href="#">Tặng Yến Sào Cho Bố Mẹ — Lựa Chọn Ý Nghĩa Nhất Thể Hiện Hiếu Thảo</a>
+                  </h3>
+                  <p class="blog-article-card__excerpt">Với người lớn tuổi, yến sào không chỉ là món ăn bổ dưỡng mà còn là món quà chứa đựng tâm ý của con cái. Hướng dẫn chọn loại yến phù hợp và ngân sách tham khảo theo từng dịp.</p>
+                  <a href="#" class="blog-article-card__read-more">
+                    Đọc thêm
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+              </article>
+
+              <!-- No results message -->
+              <div class="blog-no-results" id="blog-no-results" aria-live="polite">
+                <p>Không tìm thấy bài viết phù hợp. Vui lòng thử chủ đề khác.</p>
+              </div>
+
+            </div><!-- /.blog-articles-grid -->
+
+          </div><!-- /.blog-main -->
+
+          <!-- SIDEBAR -->
+          <aside class="blog-sidebar" aria-label="Bảng phụ blog">
+
+            <!-- Search widget -->
+            <div class="sidebar-widget">
+              <h2 class="sidebar-widget__title">Tìm kiếm</h2>
+              <div class="sidebar-search" role="search">
+                <label for="blog-search" class="sr-only">Tìm bài viết</label>
+                <input type="search" id="blog-search" placeholder="Từ khoá..." autocomplete="off">
+                <button class="sidebar-search-btn" id="search-btn" aria-label="Tìm kiếm">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Category widget -->
+            <div class="sidebar-widget">
+              <h2 class="sidebar-widget__title">Danh mục</h2>
+              <ul class="sidebar-cat-list" role="list">
+                <li>
+                  <a href="#" data-filter-sidebar="all">
+                    Tất cả bài viết
+                    <span class="count" id="cat-count-all">0</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" data-filter-sidebar="suc-khoe">
+                    Sức khoẻ
+                    <span class="count" id="cat-count-suc-khoe">0</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" data-filter-sidebar="am-thuc">
+                    Ẩm thực
+                    <span class="count" id="cat-count-am-thuc">0</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" data-filter-sidebar="qua-tang">
+                    Quà tặng
+                    <span class="count" id="cat-count-qua-tang">0</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" data-filter-sidebar="kien-thuc">
+                    Kiến thức
+                    <span class="count" id="cat-count-kien-thuc">0</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Latest posts widget (bài thật — ẩn nếu chưa có bài đã đăng) -->
+            <div class="sidebar-widget" id="sidebar-latest-widget" hidden>
+              <h2 class="sidebar-widget__title">Bài Viết Mới Nhất</h2>
+              <ul class="sidebar-popular-list" id="sidebar-latest-list" role="list"></ul>
+            </div>
+
+            <!-- CTA widget -->
+            <div class="sidebar-widget" style="background: var(--gradient-brand); color: #fff;">
+              <h2 class="sidebar-widget__title" style="color: var(--color-gold);">Tư vấn miễn phí</h2>
+              <p style="font-family: var(--font-body); font-size: 14px; color: rgba(255,255,255,0.85); line-height: 1.65; margin-bottom: 16px;">Không biết nên chọn loại yến nào? Chúng tôi tư vấn miễn phí theo nhu cầu và ngân sách.</p>
+              <a href="lien-he.html" class="btn btn-gold" style="display: block; text-align: center; text-decoration: none;">Liên hệ ngay</a>
+            </div>
+
+          </aside><!-- /.blog-sidebar -->
+
+        </div><!-- /.blog-page-inner -->
+      </div><!-- /.container -->
+    </section>
+
+    <!-- NEWSLETTER CTA -->
+    <section class="blog-cta-section" aria-labelledby="blog-cta-title">
+      <div class="container">
+        <p class="blog-cta-label">Không bỏ lỡ bài viết mới <span class="demo-tag-inline" title="Form minh hoạ, hiện chưa lưu email vào hệ thống">Demo</span></p>
+        <h2 class="blog-cta-title" id="blog-cta-title">Đăng Ký Nhận Cẩm Nang Yến Sào Hàng Tuần</h2>
+        <p class="blog-cta-desc">Nhận ngay công thức mới, kiến thức chuyên sâu và ưu đãi độc quyền dành riêng cho thành viên đăng ký bản tin.</p>
+        <form class="blog-cta-form" id="blog-cta-form" novalidate aria-label="Form đăng ký nhận tin">
+          <label for="cta-email" class="sr-only">Địa chỉ email</label>
+          <input type="email" id="cta-email" placeholder="Nhập địa chỉ email của bạn..." autocomplete="email" required>
+          <button type="submit">Đăng ký ngay</button>
+        </form>
+        <p class="blog-cta-note">Chúng tôi tôn trọng quyền riêng tư. Không spam, hủy đăng ký bất kỳ lúc nào.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-divider" aria-hidden="true"></div>
+    <div class="footer-main">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col footer-col--brand">
+            <a href="index.html" class="footer-logo" aria-label="Yến Duyên - Trang chủ">
+              <img src="images/logo/logo.png" alt="Yến Sào Yến Duyên" class="logo-img logo-img--footer" width="140" height="70">
+            </a>
+            <p class="footer-brand-desc">Tinh hoa yến sào thiên nhiên. Sản phẩm 100% thiên nhiên, chứng nhận an toàn thực phẩm, quà tặng sức khỏe ý nghĩa cho người thân.</p>
+            <div class="footer-social" aria-label="Mạng xã hội">
+              <a href="https://facebook.com/yensaoyenduyen" class="social-link" aria-label="Facebook Yến Duyên" target="_blank" rel="noopener noreferrer">
+                <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path fill="#fff" d="M29.9,19.5h-4v-2.6c0-1,0.7-1.2,1.1-1.2c0.5,0,2.8,0,2.8,0v-4.4l-3.9,0c-4.4,0-5.3,3.3-5.3,5.3v2.9h-2.5V24h2.5c0,5.8,0,12.7,0,12.7h5.3c0,0,0-7,0-12.7h3.6L29.9,19.5z"/></svg>
+              </a>
+              <a href="https://zalo.me/0986012754" class="social-link" aria-label="Zalo Yến Duyên" target="_blank" rel="noopener noreferrer">
+                <svg width="20" height="20" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+              </a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-col-title">Liên kết nhanh</h3>
+            <ul class="footer-links" role="list">
+              <li><a href="san-pham.html">Sản phẩm</a></li>
+              <li><a href="combo-qua-tang.html">Combo quà tặng</a></li>
+              <li><a href="khoi-nghiep.html">Cẩm nang yến sào</a></li>
+              <li><a href="gioi-thieu.html">Về Yến Duyên</a></li>
+              <li><a href="lien-he.html">Liên hệ</a></li>
+              <li><a href="chinh-sach.html">Chính sách mua hàng</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-col-title">Danh mục sản phẩm</h3>
+            <ul class="footer-links" role="list">
+              <li><a href="san-pham.html?category=to-yen-tho">Tổ yến thô</a></li>
+              <li><a href="san-pham.html?category=yen-tinh-che">Yến tinh chế</a></li>
+              <li><a href="san-pham.html?category=yen-chung">Yến chưng sẵn</a></li>
+              <li><a href="combo-qua-tang.html">Set quà biếu</a></li>
+            </ul>
+          </div>
+          <div class="footer-col footer-col--contact">
+            <h3 class="footer-col-title">Liên hệ & Hỗ trợ</h3>
+            <ul class="footer-contact-list" role="list">
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <a href="tel:+840986012754">0986.012.754</a>
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+                <a href="https://zalo.me/0986012754" target="_blank" rel="noopener noreferrer">Zalo: 0986.012.754</a>
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <a href="mailto:lienhe@yensaoyenduyen.vn">lienhe@yensaoyenduyen.vn</a>
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <address style="font-style:normal">503 ĐH507, Phước Thành, Hồ Chí Minh, Vietnam</address>
+              </li>
+            </ul>
+            <div class="footer-hours">
+              <strong>Giờ làm việc:</strong>
+              <span>Thứ 2 – Chủ nhật: 8:00 – 18:00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="footer-bottom-inner">
+          <p class="footer-copy">© 2026 Yến Sào Yến Duyên. Bảo lưu mọi quyền.</p>
+          <div class="footer-legal">
+            <a href="chinh-sach.html">Chính sách bảo mật</a>
+            <span aria-hidden="true">·</span>
+            <a href="chinh-sach.html#doi-tra">Đổi trả</a>
+            <span aria-hidden="true">·</span>
+            <a href="chinh-sach.html#van-chuyen">Vận chuyển</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING CTA -->
+  <div class="float-cta" aria-label="Liên hệ nhanh" role="complementary">
+    <a href="tel:+840986012754" class="float-btn float-btn--call" aria-label="Gọi điện ngay">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Gọi ngay</span>
+    </a>
+    <a href="https://zalo.me/0986012754" class="float-btn float-btn--zalo" aria-label="Nhắn Zalo" target="_blank" rel="noopener noreferrer">
+      <svg width="26" height="26" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+      <span>Zalo</span>
+    </a>
+    <a href="https://m.me/yensaoyenduyen" class="float-btn float-btn--fb" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+      <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path fill="#fff" d="M29.9,19.5h-4v-2.6c0-1,0.7-1.2,1.1-1.2c0.5,0,2.8,0,2.8,0v-4.4l-3.9,0c-4.4,0-5.3,3.3-5.3,5.3v2.9h-2.5V24h2.5c0,5.8,0,12.7,0,12.7h5.3c0,0,0-7,0-12.7h3.6L29.9,19.5z"/></svg>
+      <span>Facebook</span>
+    </a>
+  </div>
+
+  <!-- BACK TO TOP -->
+  <button class="back-to-top" id="back-to-top" aria-label="Về đầu trang" hidden>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- JS -->
+  <script>
+  // ---- CART ----
+  var cart = JSON.parse(localStorage.getItem('yen-duyen-cart') || '[]');
+  function saveCart(){ localStorage.setItem('yen-duyen-cart', JSON.stringify(cart)); }
+  function getCartCount(){ return cart.reduce(function(s,i){ return s+i.qty; }, 0); }
+  function updateCartBadge(){
+    var c = getCartCount();
+    document.querySelectorAll('.cart-badge').forEach(function(b){ b.textContent = c; b.hidden = c === 0; });
+  }
+
+  // ---- TOAST ----
+  function showToast(msg, type){
+    var c = document.getElementById('toast-container');
+    if(!c){ c = document.createElement('div'); c.id = 'toast-container'; c.className = 'toast-container'; document.body.appendChild(c); }
+    var t = document.createElement('div'); t.className = 'toast toast--'+(type||'info');
+    t.innerHTML = '<span class="toast__msg">'+msg+'</span><button class="toast__close" onclick="this.parentNode.remove()">✕</button>';
+    c.appendChild(t);
+    setTimeout(function(){ t.classList.add('toast--visible'); }, 10);
+    setTimeout(function(){ t.classList.remove('toast--visible'); setTimeout(function(){ t.remove(); }, 300); }, 3500);
+  }
+
+  // ---- HEADER SCROLL ----
+  var hdr = document.getElementById('site-header');
+  window.addEventListener('scroll', function(){ if(hdr) hdr.classList.toggle('scrolled', scrollY > 50); }, {passive:true});
+
+  // ---- MOBILE NAV ----
+  var navToggle = document.getElementById('menu-toggle');
+  var mobileNav = document.getElementById('mobile-nav');
+  if(navToggle && mobileNav){
+    navToggle.addEventListener('click', function(){
+      var open = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-expanded', String(!open));
+      mobileNav.classList.toggle('is-open', !open);
+      document.body.style.overflow = open ? '' : 'hidden';
+    });
+  }
+
+  // ---- BACK TO TOP ----
+  var btt = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){ if(btt) btt.classList.toggle('is-visible', scrollY > 400); }, {passive:true});
+  if(btt) btt.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+  // ---- SCROLL ANIMATIONS ----
+  var animEls = document.querySelectorAll('.animate-on-scroll');
+  if(animEls.length && 'IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('is-visible'); obs.unobserve(e.target); }
+      });
+    }, {threshold:0.1, rootMargin:'0px 0px -40px 0px'});
+    animEls.forEach(function(el){ obs.observe(el); });
+  }
+
+  // ---- BLOG FILTER (category tabs) ----
+  var filterBtns = document.querySelectorAll('.blog-filter-btn');
+  var articles = document.querySelectorAll('.blog-article-card');
+  var noResults = document.getElementById('blog-no-results');
+  var currentFilter = 'all';
+
+  function applyFilter(filter){
+    currentFilter = filter;
+    var visible = 0;
+    articles.forEach(function(card){
+      var cat = card.dataset.category;
+      var show = filter === 'all' || cat === filter;
+      if(show){ card.classList.remove('is-hidden'); visible++; }
+      else { card.classList.add('is-hidden'); }
+    });
+    if(noResults){ noResults.classList.toggle('is-visible', visible === 0); }
+    filterBtns.forEach(function(btn){
+      var isActive = btn.dataset.filter === filter;
+      btn.classList.toggle('is-active', isActive);
+      btn.setAttribute('aria-selected', String(isActive));
+    });
+  }
+
+  filterBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){ applyFilter(btn.dataset.filter); });
+  });
+
+  // Sidebar category links
+  document.querySelectorAll('[data-filter-sidebar]').forEach(function(link){
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      applyFilter(link.dataset.filterSidebar);
+      var grid = document.getElementById('blog-articles-grid');
+      if(grid){ window.scrollTo({ top: grid.getBoundingClientRect().top + scrollY - 120, behavior:'smooth'}); }
+    });
+  });
+
+  // (Tìm kiếm blog: đã chuyển sang tìm bài viết THẬT — xem script Supabase phía cuối trang)
+
+  // ---- NEWSLETTER CTA ----
+  var ctaForm = document.getElementById('blog-cta-form');
+  if(ctaForm){
+    ctaForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var emailInput = ctaForm.querySelector('input[type="email"]');
+      var email = emailInput ? emailInput.value.trim() : '';
+      if(!email){ showToast('Vui lòng nhập địa chỉ email.', 'error'); return; }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ showToast('Email không hợp lệ. Vui lòng kiểm tra lại.', 'error'); return; }
+      showToast('Đăng ký nhận bản tin thành công! Cảm ơn bạn.', 'success');
+      ctaForm.reset();
+    });
+  }
+
+  // Init
+  updateCartBadge();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/site-contact.js"></script>
+  <script src="js/auth-widget.js"></script>
+  <script>
+  /* ============================================================
+     BÀI VIẾT THẬT TỪ SUPABASE (blog_posts) — carousel nổi bật + lưới bài
+     Không đụng tới nội dung DEMO tĩnh phía dưới (giữ nguyên theo yêu cầu).
+     ============================================================ */
+  (function(){
+    if (typeof getSupabase !== 'function') return;
+
+    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString('vi-VN'); } catch(e){ return ''; } }
+    function calcReadTime(html){
+      var text = String(html||'').replace(/<[^>]*>/g, ' ');
+      var words = text.trim().split(/\s+/).filter(Boolean).length;
+      return Math.max(1, Math.ceil(words / 200));
+    }
+    var PLACEHOLDER_IMG = 'images/products/yen-tinh-che.jpg';
+
+    function buildCard(p){
+      var img = p.cover_image || PLACEHOLDER_IMG;
+      var catHtml = p.topic ? '<span class="blog-article-card__cat">'+esc(p.topic)+'</span>' : '';
+      return '<article class="blog-article-card">'
+        + '<div class="blog-article-card__img-wrap">'
+        +   '<img src="'+esc(img)+'" alt="'+esc(p.title)+'" loading="lazy" width="600" height="375">'
+        +   catHtml
+        + '</div>'
+        + '<div class="blog-article-card__body">'
+        +   '<div class="blog-article-card__meta"><span>'+fmtDate(p.created_at)+'</span><span class="dot">·</span><span>'+calcReadTime(p.content)+' phút đọc</span></div>'
+        +   '<h3 class="blog-article-card__title"><a href="chi-tiet-bai-viet.html?id='+p.id+'">'+esc(p.title)+'</a></h3>'
+        +   '<p class="blog-article-card__excerpt">'+esc(p.excerpt||'')+'</p>'
+        +   '<a href="chi-tiet-bai-viet.html?id='+p.id+'" class="blog-article-card__read-more">Đọc tiếp'
+        +     '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        +   '</a>'
+        + '</div>'
+        + '</article>';
+    }
+
+
+    // ---- SIDEBAR: TÌM KIẾM (bài thật, chỉ so khớp theo TÊN bài) + LỌC CHỦ ĐỀ THẬT ----
+    // 2 bộ lọc kết hợp AND với nhau (đang tìm "yến" + đang lọc "Sức khoẻ" thì chỉ
+    // hiện bài vừa khớp tên vừa đúng chủ đề), dùng chung 1 state + 1 hàm render.
+    var realFilterState = { topic: 'all', query: '' };
+    var TOPIC_SLUG_MAP = { 'suc-khoe': 'Sức khoẻ', 'am-thuc': 'Ẩm thực', 'qua-tang': 'Quà tặng', 'kien-thuc': 'Kiến thức' };
+
+    // ── Lưới "Bài Viết Mới Nhất" — phân trang thật, gọi lại Supabase mỗi trang
+    // (khác widget sidebar/carousel bên dưới, vẫn dùng đúng 1 lần tải toàn bộ
+    // vì chúng cần biết TOÀN BỘ bài để đếm danh mục/lấy bài nổi bật) ──
+    var GRID_PAGE_SIZE = 12;
+    var gridCurrentPage = 1;
+    var gridTotalCount = 0;
+    var gridSearchDebounceTimer = null;
+
+    function buildGridQuery(){
+      var q = getSupabase().from('blog_posts').select('*', { count: 'exact' }).eq('is_published', true);
+      var topicName = TOPIC_SLUG_MAP[realFilterState.topic];
+      if(realFilterState.topic !== 'all' && topicName) q = q.eq('topic', topicName);
+      var term = realFilterState.query.trim().replace(/[,()%*]/g, '');
+      if(term) q = q.ilike('title', '%'+term+'%');
+      return q.order('created_at', { ascending: false });
+    }
+
+    function loadGridPage(page){
+      var grid = document.getElementById('real-posts-grid');
+      var noRes = document.getElementById('real-posts-no-results');
+      if(!grid) return;
+      gridCurrentPage = page || 1;
+      var from = (gridCurrentPage - 1) * GRID_PAGE_SIZE;
+      var to = from + GRID_PAGE_SIZE - 1;
+      buildGridQuery().range(from, to).then(function(res){
+        var list = (res.error || !res.data) ? [] : res.data;
+        gridTotalCount = res.count || 0;
+        grid.innerHTML = list.map(buildCard).join('');
+        if(noRes) noRes.hidden = list.length !== 0;
+        renderGridPagination();
+      });
+    }
+
+    function renderGridPagination(){
+      var wrap = document.getElementById('real-posts-pagination');
+      if(!wrap) return;
+      var totalPages = Math.max(1, Math.ceil(gridTotalCount / GRID_PAGE_SIZE));
+      if(gridCurrentPage > totalPages) gridCurrentPage = totalPages;
+      if(totalPages <= 1){ wrap.innerHTML = ''; return; }
+
+      function pageLink(n, label, extraClass, disabled){
+        return '<a href="#" class="page-btn '+(extraClass||'')+'" data-page="'+n+'"'
+          + (disabled ? ' aria-disabled="true" tabindex="-1"' : '')
+          + (n===gridCurrentPage ? ' aria-current="page"' : '')
+          + ' aria-label="'+(label||('Trang '+n))+'">'+(label||n)+'</a>';
+      }
+      var prevIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+      var nextIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
+
+      var html = pageLink(gridCurrentPage-1, prevIcon, 'page-btn--icon', gridCurrentPage<=1);
+      var nums = [];
+      for(var i=1;i<=totalPages;i++){
+        if(i===1 || i===totalPages || Math.abs(i-gridCurrentPage)<=1) nums.push(i);
+        else if(nums[nums.length-1] !== '…') nums.push('…');
+      }
+      nums.forEach(function(n){
+        if(n==='…'){ html += '<span class="page-btn" style="border:none;cursor:default;color:var(--color-text-muted)">…</span>'; return; }
+        html += '<a href="#" class="page-btn'+(n===gridCurrentPage?' is-active':'')+'" data-page="'+n+'"'+(n===gridCurrentPage?' aria-current="page"':'')+' aria-label="Trang '+n+'">'+n+'</a>';
+      });
+      html += pageLink(gridCurrentPage+1, nextIcon, 'page-btn--icon', gridCurrentPage>=totalPages);
+      wrap.innerHTML = html;
+
+      wrap.querySelectorAll('a.page-btn[data-page]').forEach(function(a){
+        a.addEventListener('click', function(e){
+          e.preventDefault();
+          var n = parseInt(a.dataset.page, 10);
+          if(!n || n < 1 || n > totalPages || n === gridCurrentPage) return;
+          loadGridPage(n);
+          var gridEl = document.getElementById('real-posts-grid');
+          if(gridEl) gridEl.scrollIntoView({behavior:'smooth', block:'start'});
+        });
+      });
+    }
+
+    function filterRealPostsByTopic(slug){
+      realFilterState.topic = slug || 'all';
+      loadGridPage(1);
+    }
+    var blogSearchInput = document.getElementById('blog-search');
+    var blogSearchBtn = document.getElementById('search-btn');
+    function runRealSearch(){
+      realFilterState.query = blogSearchInput.value;
+      loadGridPage(1);
+      var section = document.getElementById('real-posts-section');
+      if(section && !section.hidden){
+        window.scrollTo({ top: section.getBoundingClientRect().top + scrollY - 120, behavior: 'smooth' });
+      }
+    }
+    if(blogSearchBtn && blogSearchInput){
+      blogSearchBtn.addEventListener('click', runRealSearch);
+      blogSearchInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); runRealSearch(); } });
+      blogSearchInput.addEventListener('input', function(){
+        clearTimeout(gridSearchDebounceTimer);
+        if(!blogSearchInput.value.trim()){ realFilterState.query = ''; loadGridPage(1); return; }
+        gridSearchDebounceTimer = setTimeout(runRealSearch, 300);
+      });
+    }
+
+    // Tab lọc chủ đề + link chủ đề ở sidebar — nối thêm 1 listener riêng để lọc
+    // LƯỚI BÀI THẬT (không đụng listener cũ trong script phía trên, vốn chỉ lọc lưới demo).
+    document.querySelectorAll('.blog-filter-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){ filterRealPostsByTopic(btn.dataset.filter); });
+    });
+    document.querySelectorAll('[data-filter-sidebar]').forEach(function(link){
+      link.addEventListener('click', function(){ filterRealPostsByTopic(link.dataset.filterSidebar); });
+    });
+    function updateCategoryCounts(posts){
+      var counts = { all: posts.length, 'suc-khoe': 0, 'am-thuc': 0, 'qua-tang': 0, 'kien-thuc': 0 };
+      posts.forEach(function(p){
+        Object.keys(TOPIC_SLUG_MAP).forEach(function(slug){
+          if(p.topic === TOPIC_SLUG_MAP[slug]) counts[slug]++;
+        });
+      });
+      Object.keys(counts).forEach(function(key){
+        var el = document.getElementById('cat-count-' + key);
+        if(el) el.textContent = counts[key];
+      });
+    }
+
+    // ---- SIDEBAR: BÀI VIẾT MỚI NHẤT (3 bài thật gần nhất, mở trang chi tiết ở tab mới) ----
+    function renderLatestSidebar(posts){
+      var widget = document.getElementById('sidebar-latest-widget');
+      var list = document.getElementById('sidebar-latest-list');
+      if(!widget || !list) return;
+      if(!posts.length){ widget.hidden = true; return; }
+      list.innerHTML = posts.slice(0, 3).map(function(p){
+        var img = p.cover_image || PLACEHOLDER_IMG;
+        return '<li class="sidebar-popular-item">'
+          + '<div class="sidebar-popular-item__img"><img src="'+esc(img)+'" alt="'+esc(p.title)+'" loading="lazy" width="64" height="64"></div>'
+          + '<div class="sidebar-popular-item__info">'
+          +   '<a href="chi-tiet-bai-viet.html?id='+p.id+'" class="sidebar-popular-item__title" target="_blank" rel="noopener">'+esc(p.title)+'</a>'
+          +   '<span class="sidebar-popular-item__date">'+fmtDate(p.created_at)+'</span>'
+          + '</div>'
+          + '</li>';
+      }).join('');
+      widget.hidden = false;
+    }
+
+    // ---- CAROUSEL BÀI NỔI BẬT THẬT ----
+    var featuredPosts = [];
+    var featuredIdx = 0;
+    var featuredTimer = null;
+
+    function renderFeaturedSlide(){
+      var p = featuredPosts[featuredIdx];
+      var slot = document.getElementById('rf-article-slot');
+      if(!p || !slot) return;
+      var img = p.cover_image || PLACEHOLDER_IMG;
+      var catHtml = p.topic ? '<span class="featured-post__cat">'+esc(p.topic)+'</span>' : '';
+      slot.innerHTML = '<article class="featured-post">'
+        + '<div class="featured-post__img-wrap"><img src="'+esc(img)+'" alt="'+esc(p.title)+'" width="800" height="600" loading="eager"><span class="featured-post__badge">Bài nổi bật</span></div>'
+        + '<div class="featured-post__body">'
+        +   catHtml
+        +   '<h3 class="featured-post__title">'+esc(p.title)+'</h3>'
+        +   '<p class="featured-post__excerpt">'+esc(p.excerpt||'')+'</p>'
+        +   '<div class="featured-post__meta">'
+        +     '<span>'+fmtDate(p.created_at)+'</span>'
+        +     '<span>'+calcReadTime(p.content)+' phút đọc</span>'
+        +   '</div>'
+        +   '<a href="chi-tiet-bai-viet.html?id='+p.id+'" class="btn-read-more">Đọc bài viết'
+        +     '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        +   '</a>'
+        + '</div>'
+        + '</article>';
+      document.querySelectorAll('.rf-thumb').forEach(function(t, i){ t.classList.toggle('is-active', i === featuredIdx); });
+    }
+
+    function goToFeatured(i){
+      featuredIdx = (i + featuredPosts.length) % featuredPosts.length;
+      renderFeaturedSlide();
+    }
+
+    function startAutoAdvance(){
+      stopAutoAdvance();
+      if(featuredPosts.length < 2) return;
+      featuredTimer = setInterval(function(){ goToFeatured(featuredIdx + 1); }, 3000);
+    }
+    function stopAutoAdvance(){
+      if(featuredTimer){ clearInterval(featuredTimer); featuredTimer = null; }
+    }
+
+    function renderFeaturedCarousel(posts){
+      featuredPosts = posts;
+      if(!featuredPosts.length) return; // 0 bài nổi bật → bỏ qua hẳn khu vực (giữ [hidden] mặc định)
+
+      document.getElementById('real-featured-section').hidden = false;
+      featuredIdx = 0;
+      renderFeaturedSlide();
+
+      var prevBtn = document.getElementById('rf-prev');
+      var nextBtn = document.getElementById('rf-next');
+      var thumbsWrap = document.getElementById('rf-thumbs');
+
+      if(featuredPosts.length > 1){
+        prevBtn.hidden = false;
+        nextBtn.hidden = false;
+        prevBtn.addEventListener('click', function(){ goToFeatured(featuredIdx - 1); startAutoAdvance(); });
+        nextBtn.addEventListener('click', function(){ goToFeatured(featuredIdx + 1); startAutoAdvance(); });
+
+        thumbsWrap.innerHTML = featuredPosts.map(function(p, i){
+          var img = p.cover_image || PLACEHOLDER_IMG;
+          return '<button type="button" class="rf-thumb'+(i===0?' is-active':'')+'" data-idx="'+i+'"><img src="'+esc(img)+'" alt="'+esc(p.title)+'" width="84" height="62"></button>';
+        }).join('');
+        thumbsWrap.querySelectorAll('.rf-thumb').forEach(function(btn){
+          btn.addEventListener('click', function(){ goToFeatured(parseInt(btn.dataset.idx, 10)); startAutoAdvance(); });
+        });
+
+        var main = document.getElementById('real-featured-main');
+        main.addEventListener('mouseenter', stopAutoAdvance);
+        main.addEventListener('mouseleave', startAutoAdvance);
+        startAutoAdvance();
+      }
+      // Chỉ 1 bài nổi bật → hiện tĩnh, không mũi tên/không thumbnail/không tự lướt (giữ [hidden] mặc định trên nút + thumbs rỗng)
+    }
+
+    // ---- TẢI DỮ LIỆU ----
+    getSupabase().from('blog_posts').select('*').eq('is_published', true).order('created_at', {ascending:false}).then(function(res){
+      var all = (res.error || !res.data) ? [] : res.data;
+
+      // Đếm danh mục + widget "Bài viết mới nhất" luôn chạy, kể cả khi 0 bài (hiển thị số 0 / tự ẩn)
+      updateCategoryCounts(all);
+      renderLatestSidebar(all);
+
+      if(!all.length) return;
+      var featured = all.filter(function(p){ return p.is_featured; });
+      renderFeaturedCarousel(featured);
+      document.getElementById('real-posts-section').hidden = false;
+      loadGridPage(1);
+    });
+  })();
+  </script>
+  <script src="js/ai-chat-widget.js"></script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Lịch sử thông báo | Admin Yến Duyên</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/admin-notifications.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/security-gate.js"></script>
+  <style>
+    .admin-btn2 { padding:9px 16px; border-radius:8px; font-size:.85rem; font-weight:600; cursor:pointer; border:1px solid var(--color-brand); color:#fff; background:var(--color-brand); transition:opacity .15s; }
+    .admin-btn2:hover { opacity:.88; }
+    .admin-btn2--ghost { background:#fff; color:var(--color-brand); }
+    .admin-btn2--ghost:hover { background:var(--color-cream); opacity:1; }
+
+    .filter-bar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:20px; }
+    .filter-search { position:relative; flex:1; min-width:220px; }
+    .filter-search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#9ca3af; pointer-events:none; }
+    .filter-search input { width:100%; padding:9px 12px 9px 36px; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; outline:none; box-sizing:border-box; }
+    .filter-search input:focus { border-color:var(--color-brand); }
+    .filter-select { padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; background:#fff; }
+
+    .pagination { display:flex; gap:4px; align-items:center; justify-content:center; margin-top:24px; }
+    .pagination a, .pagination span {
+      display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px;
+      border-radius:6px; border:1px solid #e5e7eb; color:#374151; text-decoration:none; font-size:.85rem;
+    }
+    .pagination a:hover { border-color:var(--color-brand); color:var(--color-brand); }
+    .pagination span.is-active { background:none; color:#374151; border:none; width:auto; padding:0 8px; font-weight:600; }
+    .pagination a.is-disabled { opacity:.4; pointer-events:none; }
+
+    .tb-empty { text-align:center; color:#9ca3af; padding:40px 0; font-size:.9rem; }
+
+    .tb-card {
+      display:flex; align-items:flex-start; gap:14px;
+      background:#fff; border:1px solid #e5e7eb; border-radius:12px;
+      padding:14px 16px; margin-bottom:10px; border-left:4px solid #d1d5db;
+    }
+    .tb-card.is-unread { border-left-color:var(--color-primary); background:#fffaf7; }
+    .tb-card__icon {
+      flex:0 0 auto; width:34px; height:34px; border-radius:50%;
+      background:linear-gradient(135deg, var(--color-brand), var(--color-gold));
+      color:#fff; display:flex; align-items:center; justify-content:center;
+    }
+    .tb-card__icon svg { width:16px; height:16px; }
+    .tb-card__body { flex:1 1 auto; min-width:0; }
+    .tb-card__top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px; }
+    .tb-card__sys {
+      font-size:.66rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em;
+      background:var(--color-cream); color:var(--color-brand); padding:2px 8px; border-radius:20px;
+    }
+    .tb-card__title { font-weight:700; color:#1f2937; font-size:.9rem; }
+    .tb-card__content-wrap { overflow-x:auto; max-width:100%; }
+    .tb-card__content { color:#4b5563; font-size:.84rem; line-height:1.5; white-space:nowrap; }
+    .tb-card__meta { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+    .tb-chip { font-size:.7rem; background:#f3f4f6; color:#374151; padding:3px 8px; border-radius:6px; }
+    .tb-card__side { flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+    .tb-card__time { font-size:.72rem; color:#9ca3af; white-space:nowrap; }
+    .tb-card__read { display:flex; align-items:center; gap:6px; font-size:.78rem; color:#374151; cursor:pointer; white-space:nowrap; }
+    .tb-card__read input { cursor:pointer; }
+  </style>
+</head>
+<body class="admin-body">
+<div class="admin-wrapper" id="admin-wrapper">
+  <aside class="admin-sidebar">
+    <a href="dashboard.html" class="admin-sidebar__logo"><div class="admin-sidebar__logo-mark">YD</div><div class="admin-sidebar__logo-text"><strong>Yến Duyên</strong><span>Admin Panel</span></div></a>
+    <nav class="admin-sidebar__nav">
+      <div class="admin-nav-section"><p class="admin-nav-section-label">Tổng quan</p>
+        <a href="dashboard.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+        <a href="thong-bao.html" class="admin-nav-link is-active" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span>Thông báo</span></a>
+      </div>
+      <div class="admin-nav-section"><p class="admin-nav-section-label">Kinh doanh</p>
+        <a href="don-hang.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg><span>Đơn hàng</span></a>
+        <a href="san-pham.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>Sản phẩm</span></a>
+        <a href="voucher.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>Voucher</span></a>
+        <a href="flash-sale.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span>Flash Sale</span></a>
+      </div>
+      <div class="admin-nav-section"><p class="admin-nav-section-label">Nội dung</p><a href="blog.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Blog</span></a></div>
+      <div class="admin-nav-section"><p class="admin-nav-section-label">Khách hàng</p><a href="khach-hang.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Khách hàng</span></a><a href="phan-hoi.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Phản hồi</span></a></div>
+      <div class="admin-nav-section"><p class="admin-nav-section-label">Hệ thống</p><a href="sao-luu.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Sao lưu dữ liệu</span></a><a href="cai-dat.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg><span>Cài đặt</span></a></div>
+    </nav>
+    <div class="admin-sidebar__footer"><button onclick="logout()" class="admin-nav-link" style="width:100%;background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:.875rem;text-align:left;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Đăng xuất</span></button></div>
+  </aside>
+
+  <header class="admin-topbar">
+    <div class="admin-topbar__left">
+      <button class="admin-sidebar-toggle" id="sidebar-toggle" aria-label="Thu/mở sidebar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <span class="admin-topbar__title">Lịch sử thông báo</span>
+    </div>
+    <div class="admin-topbar__right">
+      <button class="admin-btn2 admin-btn2--ghost" onclick="markAllRead()">Đánh dấu tất cả đã đọc</button>
+      <div class="admin-user-menu"><div class="admin-user-avatar" id="user-avatar">A</div><span class="admin-user-name" id="user-name">Admin</span></div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-page-header">
+      <div><h1 class="admin-page-title">Thông báo hệ thống</h1><p class="admin-page-sub" id="page-sub">Đang tải…</p></div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="tb-search" placeholder="Tìm theo tên, SĐT, mã đơn, mã voucher, sản phẩm..." aria-label="Tìm thông báo" oninput="onFilterChange()">
+      </div>
+      <select class="filter-select" id="tb-system" onchange="onFilterChange()">
+        <option value="all">Tất cả hệ thống</option>
+        <option value="order">Đơn hàng</option>
+        <option value="customer">Khách hàng</option>
+        <option value="feedback">Phản hồi</option>
+        <option value="voucher">Voucher</option>
+        <option value="flashsale">Flash Sale</option>
+        <option value="product">Sản phẩm</option>
+      </select>
+      <select class="filter-select" id="tb-read" onchange="onFilterChange()">
+        <option value="all">Tất cả trạng thái</option>
+        <option value="unread">Chưa đọc</option>
+        <option value="read">Đã đọc</option>
+      </select>
+    </div>
+
+    <div id="tb-list"></div>
+    <div class="pagination" id="tb-pagination" aria-label="Điều hướng trang"></div>
+  </main>
+</div>
+
+<script src="../js/admin-notifications.js"></script>
+<script>
+SecurityGate.requireAdmin().then(function(){
+  var session = JSON.parse(localStorage.getItem('yen-duyen-admin') || 'null');
+  if(session){ document.getElementById('user-name').textContent = session.name||'Admin'; document.getElementById('user-avatar').textContent = (session.name||'A')[0]; }
+  loadNotifications(1);
+});
+document.getElementById('sidebar-toggle').addEventListener('click', function(){ document.getElementById('admin-wrapper').classList.toggle('sidebar-collapsed'); });
+function logout(){ getSupabase().auth.signOut().then(function(){ localStorage.removeItem('yen-duyen-admin'); window.location.replace('index.html'); }); }
+
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function fmtDateTime(iso){
+  if(!iso) return '—';
+  var d = new Date(iso);
+  return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+}
+
+var SYS_ICONS = {
+  order: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
+  customer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="3"/><path d="M4 19c0-3 2.3-5 5-5s5 2 5 5"/><circle cx="17" cy="10" r="2.4"/><path d="M15.5 14.2c2 .3 3.5 1.9 3.5 4"/></svg>',
+  feedback: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 9 9 0 0 1-3.6-.7L3 20l1-4.5A8.4 8.4 0 1 1 21 11.5Z"/></svg>',
+  voucher: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.9 12.9 20.6a2 2 0 0 1-2.8 0l-7-7a2 2 0 0 1 0-2.8L10.8 3a2 2 0 0 1 1.4-.6h5.4A2.4 2.4 0 0 1 20 4.8v5.4a2 2 0 0 1-.6 1.4Z"/><circle cx="15.5" cy="7.5" r="1.5"/></svg>',
+  flashsale: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 4 14h6l-1 7 9-11h-6l1-7Z"/></svg>',
+  product: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>'
+};
+var SYS_LABELS = { order:'Đơn hàng', customer:'Khách hàng', feedback:'Phản hồi', voucher:'Voucher', flashsale:'Flash Sale', product:'Sản phẩm' };
+
+var PAGE_SIZE = 20;
+var currentPage = 1;
+var totalCount = 0;
+
+function onFilterChange(){ loadNotifications(1); }
+
+function loadNotifications(page){
+  currentPage = page;
+  var from = (page - 1) * PAGE_SIZE;
+  var to = from + PAGE_SIZE - 1;
+  var system = document.getElementById('tb-system').value;
+  var readFilter = document.getElementById('tb-read').value;
+  var search = document.getElementById('tb-search').value.trim().replace(/[,()%*]/g, '');
+
+  var q = getSupabase().from('admin_notifications').select('*', { count: 'exact' })
+    .order('created_at', { ascending: false }).range(from, to);
+  if(system !== 'all') q = q.eq('system', system);
+  if(readFilter === 'unread') q = q.eq('is_read', false);
+  if(readFilter === 'read') q = q.eq('is_read', true);
+  if(search){
+    var s = '%' + search + '%';
+    q = q.or(['title.ilike.'+s, 'content.ilike.'+s, 'order_code.ilike.'+s, 'customer_name.ilike.'+s,
+      'customer_phone.ilike.'+s, 'voucher_code.ilike.'+s, 'product_name.ilike.'+s,
+      'flash_sale_name.ilike.'+s, 'feedback_customer_name.ilike.'+s, 'feedback_customer_phone.ilike.'+s].join(','));
+  }
+
+  q.then(function(res){
+    if(res.error){ document.getElementById('page-sub').textContent = 'Lỗi tải thông báo.'; return; }
+    totalCount = res.count || 0;
+    document.getElementById('page-sub').textContent = totalCount + ' thông báo';
+    renderList(res.data || []);
+    renderPagination();
+  });
+}
+
+function buildMetaChips(n){
+  var chips = [];
+  if(n.order_code) chips.push('Mã đơn: ' + esc(n.order_code));
+  if(n.customer_name) chips.push('Khách: ' + esc(n.customer_name));
+  if(n.customer_phone) chips.push('SĐT: ' + esc(n.customer_phone));
+  if(n.customer_tier) chips.push('Tier: ' + esc(n.customer_tier));
+  if(n.feedback_rating) chips.push(n.feedback_rating + ' sao');
+  if(n.feedback_product_name) chips.push('SP: ' + esc(n.feedback_product_name));
+  if(n.feedback_customer_name) chips.push('Khách: ' + esc(n.feedback_customer_name));
+  if(n.feedback_customer_phone) chips.push('SĐT: ' + esc(n.feedback_customer_phone));
+  if(n.voucher_code) chips.push('Mã voucher: ' + esc(n.voucher_code));
+  if(n.flash_sale_name) chips.push('Flash Sale: ' + esc(n.flash_sale_name));
+  if(n.flash_sale_product_name) chips.push('SP: ' + esc(n.flash_sale_product_name));
+  if(n.product_name) chips.push('Sản phẩm: ' + esc(n.product_name));
+  if(n.product_stock != null) chips.push('Tồn kho: ' + n.product_stock);
+  return chips.map(function(c){ return '<span class="tb-chip">' + c + '</span>'; }).join('');
+}
+
+function renderCard(n){
+  var icon = SYS_ICONS[n.system] || '';
+  var label = SYS_LABELS[n.system] || n.system;
+  var chips = buildMetaChips(n);
+  return '<div class="tb-card' + (n.is_read ? '' : ' is-unread') + '" data-id="' + n.id + '">'
+    + '<div class="tb-card__icon">' + icon + '</div>'
+    + '<div class="tb-card__body">'
+    +   '<div class="tb-card__top"><span class="tb-card__sys">' + esc(label) + '</span><span class="tb-card__title">' + esc(n.title) + '</span></div>'
+    +   '<div class="tb-card__content-wrap"><div class="tb-card__content">' + esc(n.content) + '</div></div>'
+    +   (chips ? '<div class="tb-card__meta">' + chips + '</div>' : '')
+    + '</div>'
+    + '<div class="tb-card__side">'
+    +   '<span class="tb-card__time">' + fmtDateTime(n.created_at) + '</span>'
+    +   '<label class="tb-card__read"><input type="checkbox" ' + (n.is_read ? 'checked' : '') + ' onchange="toggleRead(\'' + n.id + '\', this.checked)"> Đã đọc</label>'
+    + '</div>'
+    + '</div>';
+}
+
+function renderList(rows){
+  var wrap = document.getElementById('tb-list');
+  if(!rows.length){ wrap.innerHTML = '<p class="tb-empty">Không có thông báo nào.</p>'; return; }
+  wrap.innerHTML = rows.map(renderCard).join('');
+}
+
+function renderPagination(){
+  var wrap = document.getElementById('tb-pagination');
+  if(!wrap) return;
+  var totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  var prevDisabled = currentPage <= 1;
+  var nextDisabled = currentPage >= totalPages;
+  wrap.innerHTML =
+      '<a href="#" id="tb-page-prev" class="' + (prevDisabled ? 'is-disabled' : '') + '" aria-label="Trang trước">‹</a>'
+    + '<span class="is-active">Trang ' + currentPage + '/' + totalPages + '</span>'
+    + '<a href="#" id="tb-page-next" class="' + (nextDisabled ? 'is-disabled' : '') + '" aria-label="Trang sau">›</a>';
+  var prevEl = document.getElementById('tb-page-prev');
+  var nextEl = document.getElementById('tb-page-next');
+  if(prevEl) prevEl.addEventListener('click', function(e){ e.preventDefault(); if(!prevDisabled) loadNotifications(currentPage - 1); });
+  if(nextEl) nextEl.addEventListener('click', function(e){ e.preventDefault(); if(!nextDisabled) loadNotifications(currentPage + 1); });
+}
+
+function toggleRead(id, checked){
+  getSupabase().from('admin_notifications')
+    .update({ is_read: checked, read_at: checked ? new Date().toISOString() : null })
+    .eq('id', id)
+    .then(function(res){
+      if(res.error) return;
+      var card = document.querySelector('.tb-card[data-id="' + id + '"]');
+      if(card) card.classList.toggle('is-unread', !checked);
+    });
+}
+
+function markAllRead(){
+  getSupabase().from('admin_notifications')
+    .update({ is_read: true, read_at: new Date().toISOString() })
+    .eq('is_read', false)
+    .then(function(res){
+      if(res.error) return;
+      loadNotifications(currentPage);
+    });
+}
+</script>
+</body>
+</html>

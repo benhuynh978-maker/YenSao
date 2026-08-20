@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Đặt hàng — Yến Sào Yến Duyên. Điền thông tin giao hàng và hoàn tất đơn hàng.">
+  <title>Đặt Hàng — Yến Sào Yến Duyên</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/sections.css">
+  <link rel="stylesheet" href="css/ai-chat.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/site-contact.js"></script>
+  <script src="js/security-gate.js"></script>
+
+  <style>
+    /* ---- Page Banner ---- */
+    .page-banner {
+      background: var(--gradient-brand);
+      padding: 100px 0 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .page-banner__title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .page-banner__breadcrumb {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .page-banner__breadcrumb a { color: var(--color-gold); text-decoration: none; }
+    .page-banner__breadcrumb a:hover { text-decoration: underline; }
+    .page-banner__breadcrumb span { margin: 0 8px; }
+
+    /* ---- Progress Steps ---- */
+    .checkout-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 40px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #bbb;
+    }
+    .step.is-done { color: #22c55e; }
+    .step.is-active { color: var(--color-brand); font-weight: 700; }
+    .step__num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e8e3dc;
+      color: #aaa;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step.is-done .step__num { background: #22c55e; color: #fff; }
+    .step.is-active .step__num { background: var(--color-brand); color: #fff; }
+    .step-sep {
+      width: 48px;
+      height: 2px;
+      background: #e0d8d0;
+      margin: 0 4px;
+    }
+    @media (max-width: 480px) { .step__label { display: none; } .step-sep { width: 24px; } }
+
+    /* ---- Checkout Layout ---- */
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 960px) { .checkout-layout { grid-template-columns: 1fr; } }
+
+    /* ---- Form Box ---- */
+    .form-box {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 20px rgba(62,39,35,0.07);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .form-box__header {
+      padding: 18px 28px;
+      background: linear-gradient(135deg, var(--color-brand), #5D4037);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .form-box__header h2 {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .form-box__header-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-gold);
+      flex-shrink: 0;
+    }
+    .form-box__body { padding: 28px; }
+
+    /* ---- Form Fields ---- */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+    .form-row--full { grid-template-columns: 1fr; }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-brand);
+    }
+    .form-label .required { color: var(--color-primary); margin-left: 2px; }
+    .form-control {
+      border: 1.5px solid #e0d8d0;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 0.9rem;
+      font-family: var(--font-body);
+      color: var(--color-brand);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #fff;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .form-control:focus {
+      border-color: var(--color-brand);
+      box-shadow: 0 0 0 3px rgba(62,39,35,0.08);
+    }
+    .form-control.is-error { border-color: #e74c3c; }
+    .form-error {
+      font-size: 0.78rem;
+      color: #e74c3c;
+      display: none;
+    }
+    .form-error.is-visible { display: block; }
+    select.form-control { cursor: pointer; }
+    textarea.form-control { resize: vertical; min-height: 80px; }
+
+    /* ---- Payment Methods ---- */
+    .payment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .payment-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1.5px solid #e0d8d0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .payment-option:hover { border-color: var(--color-brand); background: #faf8f5; }
+    .payment-option input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+    .payment-option input[type="radio"]:checked + .payment-option__radio { border-color: var(--color-brand); }
+    .payment-option input[type="radio"]:checked + .payment-option__radio::after { opacity: 1; }
+    .payment-option:has(input:checked) { border-color: var(--color-brand); background: rgba(62,39,35,0.04); }
+    .payment-option__radio {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .payment-option__radio::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      background: var(--color-brand);
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .payment-option__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #f5f2ee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-brand);
+      flex-shrink: 0;
+    }
+    .payment-option__info { flex: 1; }
+    .payment-option__name {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--color-brand);
+    }
+    .payment-option__desc { font-size: 0.78rem; color: #888; margin-top: 2px; }
+
+    /* ---- Order Summary Sidebar ---- */
+    .order-sidebar {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 20px rgba(62,39,35,0.07);
+      padding: 28px;
+      position: sticky;
+      top: 96px;
+    }
+    .order-sidebar__title {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--color-brand);
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #f0ece6;
+    }
+    .order-item {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f5f2ee;
+    }
+    .order-item:last-of-type { border-bottom: none; }
+    .order-item__img {
+      width: 52px;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #ede9e3;
+      flex-shrink: 0;
+    }
+    .order-item__info { flex: 1; min-width: 0; }
+    .order-item__name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-brand);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .order-item__qty { font-size: 0.78rem; color: #888; margin-top: 2px; }
+    .order-item__price {
+      font-family: var(--font-heading);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .order-item__empty {
+      text-align: center;
+      padding: 24px 0;
+      color: #aaa;
+      font-size: 0.88rem;
+    }
+    .summary-divider { height: 1px; background: #f0ece6; margin: 16px 0; }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .summary-row--total {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-brand);
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 2px solid var(--color-brand);
+      margin-bottom: 0;
+    }
+    .summary-row--total .summary-total-price {
+      color: var(--color-primary);
+      font-size: 1.25rem;
+    }
+    .submit-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    .sidebar-note {
+      font-size: 0.76rem;
+      color: #aaa;
+      text-align: center;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* ---- Success Screen ---- */
+    .order-success {
+      display: none;
+      text-align: center;
+      padding: 80px 24px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 20px rgba(62,39,35,0.07);
+    }
+    .order-success.is-visible { display: block; }
+    .order-success__icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      color: #fff;
+    }
+    .order-success__title {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      color: var(--color-brand);
+      margin-bottom: 12px;
+    }
+    .order-success__desc {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      max-width: 420px;
+      margin: 0 auto 32px;
+    }
+    .order-success__code {
+      display: inline-block;
+      background: var(--color-cream);
+      border: 1px solid #e0d8d0;
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--color-brand);
+      margin-bottom: 32px;
+      letter-spacing: 0.08em;
+    }
+    .order-success__actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header" id="site-header" role="banner">
+    <div class="header-inner container">
+      <a href="index.html" class="logo" aria-label="Yến Duyên - Trang chủ">
+        <img src="images/logo/logo.png" alt="Yến Sào Yến Duyên" class="logo-img" width="120" height="60">
+      </a>
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <ul class="nav-list" role="list">
+          <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+          <li><a href="san-pham.html" class="nav-link">Sản phẩm</a></li>
+          <li><a href="combo-qua-tang.html" class="nav-link">Combo quà tặng</a></li>
+          <li><a href="khoi-nghiep.html" class="nav-link">Cẩm nang</a></li>
+          <li><a href="gioi-thieu.html" class="nav-link">Giới thiệu</a></li>
+          <li><a href="lien-he.html" class="nav-link">Liên hệ</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a href="tel:+840986012754" class="header-hotline" aria-label="Gọi hotline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>0986.012.754</span>
+        </a>
+        <a href="gio-hang.html" class="cart-btn" aria-label="Giỏ hàng">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-badge" id="cart-badge" aria-live="polite">0</span>
+        </a>
+        <div id="auth-slot"></div>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-nav">
+          <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Menu di động" aria-hidden="true">
+      <ul class="mobile-nav-list" role="list">
+        <li><a href="index.html" class="mobile-nav-link">Trang chủ</a></li>
+        <li><a href="san-pham.html" class="mobile-nav-link">Sản phẩm</a></li>
+        <li><a href="combo-qua-tang.html" class="mobile-nav-link">Combo quà tặng</a></li>
+        <li><a href="khoi-nghiep.html" class="mobile-nav-link">Cẩm nang</a></li>
+        <li><a href="gioi-thieu.html" class="mobile-nav-link">Giới thiệu</a></li>
+        <li><a href="lien-he.html" class="mobile-nav-link">Liên hệ</a></li>
+        <li class="mobile-nav-cta">
+          <a href="tel:+840986012754" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Gọi ngay
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content">
+
+    <!-- PAGE BANNER -->
+    <section class="page-banner" aria-label="Đặt hàng">
+      <div class="container">
+        <h1 class="page-banner__title">Đặt Hàng</h1>
+        <nav class="page-banner__breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Trang chủ</a>
+          <span aria-hidden="true">›</span>
+          <a href="gio-hang.html">Giỏ hàng</a>
+          <span aria-hidden="true">›</span>
+          <span aria-current="page">Đặt hàng</span>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section-padding" aria-label="Form đặt hàng">
+      <div class="container">
+
+        <!-- Progress Steps -->
+        <div class="checkout-steps animate-on-scroll" aria-label="Các bước đặt hàng">
+          <div class="step is-done">
+            <div class="step__num" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span class="step__label">Giỏ hàng</span>
+          </div>
+          <div class="step-sep" aria-hidden="true"></div>
+          <div class="step is-active" aria-current="step">
+            <div class="step__num">2</div>
+            <span class="step__label">Thông tin</span>
+          </div>
+          <div class="step-sep" aria-hidden="true"></div>
+          <div class="step">
+            <div class="step__num">3</div>
+            <span class="step__label">Xác nhận</span>
+          </div>
+        </div>
+
+        <!-- Success Screen (hidden by default) -->
+        <div class="order-success" id="order-success" role="alert" aria-live="polite">
+          <div class="order-success__icon" aria-hidden="true">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h2 class="order-success__title">Đặt Hàng Thành Công!</h2>
+          <p class="order-success__desc">Cảm ơn bạn đã tin tưởng Yến Duyên. Chúng tôi sẽ liên hệ xác nhận đơn hàng trong vòng <strong>30 phút</strong>.</p>
+          <div class="order-success__code" id="success-order-code">Mã đơn: #YD000001</div>
+          <div class="order-success__actions">
+            <a href="index.html" class="btn btn-primary">Về trang chủ</a>
+            <a href="san-pham.html" class="btn btn-outline-brown">Tiếp tục mua sắm</a>
+          </div>
+        </div>
+
+        <!-- Checkout Form -->
+        <form id="checkout-form" novalidate>
+          <div class="checkout-layout" id="checkout-layout">
+
+            <!-- LEFT: Form Fields -->
+            <div>
+
+              <!-- Thông tin giao hàng -->
+              <div class="form-box animate-on-scroll">
+                <div class="form-box__header">
+                  <div class="form-box__header-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                  <h2>Thông Tin Người Nhận</h2>
+                </div>
+                <div class="form-box__body">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label" for="fullname">Họ và tên <span class="required">*</span></label>
+                      <input type="text" id="fullname" name="fullname" class="form-control" placeholder="Nguyễn Văn A" autocomplete="name" required aria-required="true">
+                      <span class="form-error" id="err-fullname">Vui lòng nhập họ và tên</span>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="phone">Số điện thoại <span class="required">*</span></label>
+                      <input type="tel" id="phone" name="phone" class="form-control" placeholder="0912 345 678" autocomplete="tel" required aria-required="true">
+                      <span class="form-error" id="err-phone">Vui lòng nhập số điện thoại hợp lệ</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="email">Email <span style="font-weight:400;color:#999;">(không bắt buộc)</span></label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="email@example.com" autocomplete="email">
+                    <span class="form-error" id="err-email">Email không đúng định dạng</span>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label" for="province">Tỉnh / Thành phố <span class="required">*</span></label>
+                      <select id="province" name="province" class="form-control" required aria-required="true">
+                        <option value="" selected>-- Chọn tỉnh thành --</option>
+                        <option>Hà Nội</option>
+                        <option>TP. Hồ Chí Minh</option>
+                        <option>Đà Nẵng</option>
+                        <option>Thừa Thiên Huế</option>
+                        <option>Hải Phòng</option>
+                        <option>Cần Thơ</option>
+                        <option>An Giang</option>
+                        <option>Bà Rịa - Vũng Tàu</option>
+                        <option>Bắc Giang</option>
+                        <option>Bắc Kạn</option>
+                        <option>Bạc Liêu</option>
+                        <option>Bắc Ninh</option>
+                        <option>Bến Tre</option>
+                        <option>Bình Định</option>
+                        <option>Bình Dương</option>
+                        <option>Bình Phước</option>
+                        <option>Bình Thuận</option>
+                        <option>Cà Mau</option>
+                        <option>Cao Bằng</option>
+                        <option>Đắk Lắk</option>
+                        <option>Đắk Nông</option>
+                        <option>Điện Biên</option>
+                        <option>Đồng Nai</option>
+                        <option>Đồng Tháp</option>
+                        <option>Gia Lai</option>
+                        <option>Hà Giang</option>
+                        <option>Hà Nam</option>
+                        <option>Hà Tĩnh</option>
+                        <option>Hải Dương</option>
+                        <option>Hậu Giang</option>
+                        <option>Hòa Bình</option>
+                        <option>Hưng Yên</option>
+                        <option>Khánh Hòa</option>
+                        <option>Kiên Giang</option>
+                        <option>Kon Tum</option>
+                        <option>Lai Châu</option>
+                        <option>Lâm Đồng</option>
+                        <option>Lạng Sơn</option>
+                        <option>Lào Cai</option>
+                        <option>Long An</option>
+                        <option>Nam Định</option>
+                        <option>Nghệ An</option>
+                        <option>Ninh Bình</option>
+                        <option>Ninh Thuận</option>
+                        <option>Phú Thọ</option>
+                        <option>Phú Yên</option>
+                        <option>Quảng Bình</option>
+                        <option>Quảng Nam</option>
+                        <option>Quảng Ngãi</option>
+                        <option>Quảng Ninh</option>
+                        <option>Quảng Trị</option>
+                        <option>Sóc Trăng</option>
+                        <option>Sơn La</option>
+                        <option>Tây Ninh</option>
+                        <option>Thái Bình</option>
+                        <option>Thái Nguyên</option>
+                        <option>Thanh Hóa</option>
+                        <option>Tiền Giang</option>
+                        <option>Trà Vinh</option>
+                        <option>Tuyên Quang</option>
+                        <option>Vĩnh Long</option>
+                        <option>Vĩnh Phúc</option>
+                        <option>Yên Bái</option>
+                      </select>
+                      <span class="form-error" id="err-province">Vui lòng chọn tỉnh thành</span>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="district">Quận / Huyện <span class="required">*</span></label>
+                      <input type="text" id="district" name="district" class="form-control" placeholder="Quận / Huyện" required aria-required="true">
+                      <span class="form-error" id="err-district">Vui lòng nhập quận / huyện</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="address">Địa chỉ cụ thể <span class="required">*</span></label>
+                    <input type="text" id="address" name="address" class="form-control" placeholder="Số nhà, tên đường, phường/xã" autocomplete="street-address" required aria-required="true">
+                    <span class="form-error" id="err-address">Vui lòng nhập địa chỉ giao hàng</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="note">Ghi chú đơn hàng</label>
+                    <textarea id="note" name="note" class="form-control" placeholder="Thời gian nhận hàng, yêu cầu đặc biệt, nội dung thiệp chúc..."></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phương thức thanh toán -->
+              <div class="form-box animate-on-scroll" style="animation-delay:0.1s">
+                <div class="form-box__header">
+                  <div class="form-box__header-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  </div>
+                  <h2>Phương Thức Thanh Toán</h2>
+                </div>
+                <div class="form-box__body">
+                  <div class="payment-list" role="radiogroup" aria-label="Chọn phương thức thanh toán">
+
+                    <label class="payment-option">
+                      <input type="radio" name="payment" value="cod" checked>
+                      <div class="payment-option__radio"></div>
+                      <div class="payment-option__icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                      </div>
+                      <div class="payment-option__info">
+                        <div class="payment-option__name">Thanh toán khi nhận hàng (COD)</div>
+                        <div class="payment-option__desc">Trả tiền mặt khi nhận hàng tại nhà</div>
+                      </div>
+                    </label>
+
+                    <label class="payment-option">
+                      <input type="radio" name="payment" value="transfer">
+                      <div class="payment-option__radio"></div>
+                      <div class="payment-option__icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                      </div>
+                      <div class="payment-option__info">
+                        <div class="payment-option__name">Chuyển khoản ngân hàng</div>
+                        <div class="payment-option__desc">Vui lòng liên hệ Zalo 0986.012.754 để được hướng dẫn chuyển khoản</div>
+                      </div>
+                    </label>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- RIGHT: Order Summary -->
+            <aside class="order-sidebar animate-on-scroll" aria-label="Tóm tắt đơn hàng">
+              <h2 class="order-sidebar__title">
+                Đơn Hàng Của Bạn
+                <span style="font-size:0.8rem;font-weight:400;color:#999;" id="sidebar-count"></span>
+              </h2>
+              <div id="sidebar-items">
+                <div class="order-item__empty">Giỏ hàng đang trống</div>
+              </div>
+              <div class="summary-divider"></div>
+              <div class="summary-row">
+                <span>Tạm tính</span>
+                <span id="sidebar-subtotal">0đ</span>
+              </div>
+              <div class="summary-row">
+                <span>Phí vận chuyển</span>
+                <span id="sidebar-shipping">—</span>
+              </div>
+              <div class="summary-row" id="sidebar-discount-row" style="display:none;color:#16a085;">
+                <span id="sidebar-discount-label">Giảm giá</span>
+                <span id="sidebar-discount">0đ</span>
+              </div>
+              <div class="summary-row summary-row--total">
+                <span>Tổng cộng</span>
+                <span class="summary-total-price" id="sidebar-total">0đ</span>
+              </div>
+              <button type="submit" class="btn btn-primary submit-btn" id="submit-btn">
+                Xác Nhận Đặt Hàng
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+              <p class="sidebar-note">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Đặt hàng an toàn · Hàng chính hãng 100%<br>Chúng tôi sẽ gọi xác nhận trong 30 phút
+              </p>
+            </aside>
+
+          </div>
+        </form>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-divider" aria-hidden="true"></div>
+    <div class="footer-main">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col footer-col--brand">
+            <a href="index.html" class="footer-logo" aria-label="Yến Duyên - Trang chủ">
+              <img src="images/logo/logo.png" alt="Yến Sào Yến Duyên" class="logo-img logo-img--footer" width="140" height="70">
+            </a>
+            <p class="footer-brand-desc">Tinh hoa yến sào thiên nhiên. Sản phẩm 100% thiên nhiên, chứng nhận an toàn thực phẩm, quà tặng sức khỏe ý nghĩa cho người thân.</p>
+            <div class="footer-social" aria-label="Mạng xã hội">
+              <a href="https://facebook.com/yensaoyenduyen" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path fill="#fff" d="M29.9,19.5h-4v-2.6c0-1,0.7-1.2,1.1-1.2c0.5,0,2.8,0,2.8,0v-4.4l-3.9,0c-4.4,0-5.3,3.3-5.3,5.3v2.9h-2.5V24h2.5c0,5.8,0,12.7,0,12.7h5.3c0,0,0-7,0-12.7h3.6L29.9,19.5z"/></svg>
+              </a>
+              <a href="https://zalo.me/0986012754" class="social-link" aria-label="Zalo" target="_blank" rel="noopener noreferrer">
+                <svg width="20" height="20" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+              </a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-col-title">Liên kết nhanh</h3>
+            <ul class="footer-links" role="list">
+              <li><a href="san-pham.html">Sản phẩm</a></li>
+              <li><a href="combo-qua-tang.html">Combo quà tặng</a></li>
+              <li><a href="khoi-nghiep.html">Cẩm nang yến sào</a></li>
+              <li><a href="gioi-thieu.html">Về Yến Duyên</a></li>
+              <li><a href="lien-he.html">Liên hệ</a></li>
+              <li><a href="chinh-sach.html">Chính sách mua hàng</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-col-title">Danh mục sản phẩm</h3>
+            <ul class="footer-links" role="list">
+              <li><a href="san-pham.html?category=to-yen-tho">Tổ yến thô</a></li>
+              <li><a href="san-pham.html?category=yen-tinh-che">Yến tinh chế</a></li>
+              <li><a href="san-pham.html?category=yen-chung">Yến chưng sẵn</a></li>
+              <li><a href="combo-qua-tang.html">Set quà biếu</a></li>
+            </ul>
+          </div>
+          <div class="footer-col footer-col--contact">
+            <h3 class="footer-col-title">Liên hệ & Hỗ trợ</h3>
+            <ul class="footer-contact-list" role="list">
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <a href="tel:+840986012754">0986.012.754</a>
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+                <a href="https://zalo.me/0986012754" target="_blank" rel="noopener noreferrer">Zalo: 0986.012.754</a>
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <a href="mailto:lienhe@yensaoyenduyen.vn">lienhe@yensaoyenduyen.vn</a>
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <address style="font-style:normal">503 ĐH507, Phước Thành, Hồ Chí Minh, Vietnam</address>
+              </li>
+            </ul>
+            <div class="footer-hours">
+              <strong>Giờ làm việc:</strong>
+              <span>Thứ 2 – Chủ nhật: 8:00 – 18:00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="footer-bottom-inner">
+          <p class="footer-copy">© 2026 Yến Sào Yến Duyên. Bảo lưu mọi quyền.</p>
+          <div class="footer-legal">
+            <a href="chinh-sach.html">Chính sách bảo mật</a>
+            <span aria-hidden="true">·</span>
+            <a href="chinh-sach.html#doi-tra">Đổi trả</a>
+            <span aria-hidden="true">·</span>
+            <a href="chinh-sach.html#van-chuyen">Vận chuyển</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING CTA -->
+  <div class="float-cta" aria-label="Liên hệ nhanh" role="complementary">
+    <a href="tel:+840986012754" class="float-btn float-btn--call" aria-label="Gọi điện ngay">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Gọi ngay</span>
+    </a>
+    <a href="https://zalo.me/0986012754" class="float-btn float-btn--zalo" aria-label="Nhắn Zalo" target="_blank" rel="noopener noreferrer">
+      <svg width="26" height="26" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+      <span>Zalo</span>
+    </a>
+    <a href="https://m.me/yensaoyenduyen" class="float-btn float-btn--fb" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+      <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path fill="#fff" d="M29.9,19.5h-4v-2.6c0-1,0.7-1.2,1.1-1.2c0.5,0,2.8,0,2.8,0v-4.4l-3.9,0c-4.4,0-5.3,3.3-5.3,5.3v2.9h-2.5V24h2.5c0,5.8,0,12.7,0,12.7h5.3c0,0,0-7,0-12.7h3.6L29.9,19.5z"/></svg>
+      <span>Facebook</span>
+    </a>
+  </div>
+
+  <button class="back-to-top" id="back-to-top" aria-label="Về đầu trang" hidden>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <script>
+  // ---- CART ----
+  // Giỏ hàng đầy đủ (kể cả sản phẩm chưa tick) — dùng để giữ lại phần chưa đặt sau khi đặt hàng xong
+  var fullCart = JSON.parse(localStorage.getItem('yen-duyen-cart') || '[]');
+  // Chỉ những sản phẩm đã tick chọn ở trang giỏ hàng mới được đặt ở đây
+  var cart = fullCart.filter(function(i){ return i.selected !== false; });
+  function saveFullCart(){ localStorage.setItem('yen-duyen-cart', JSON.stringify(fullCart)); }
+  function getCartCount(){ return cart.reduce(function(s,i){return s+i.qty;},0); }
+  function updateCartBadge(){
+    var count = getCartCount();
+    document.querySelectorAll('.cart-badge').forEach(function(b){
+      b.textContent = count; b.hidden = count === 0;
+    });
+  }
+  function fmtPrice(n){ return n.toLocaleString('vi-VN') + 'đ'; }
+
+  // ---- PHÍ VẬN CHUYỂN ----
+  var FREE_SHIP_THRESHOLD = 500000;
+  var FLAT_SHIPPING_FEE = 35000;
+  function computeShippingFee(subtotal){ return subtotal >= FREE_SHIP_THRESHOLD ? 0 : FLAT_SHIPPING_FEE; }
+
+  // ---- VOUCHER (áp dụng từ trang giỏ hàng, kiểm tra lại thật ở đây) ----
+  var VOUCHER_STORAGE_KEY = 'yen-duyen-voucher';
+  var appliedVoucher = null;
+  var discountAmount = 0;
+
+  function recomputeDiscount(){
+    if(!appliedVoucher){ discountAmount = 0; return; }
+    var subtotal = cart.reduce(function(s,i){return s+i.price*i.qty;},0);
+    if(appliedVoucher.min_order && subtotal < appliedVoucher.min_order){
+      discountAmount = 0; appliedVoucher = null; localStorage.removeItem(VOUCHER_STORAGE_KEY); return;
+    }
+    var eligible = subtotal;
+    if(appliedVoucher.apply_scope === 'products'){
+      var ids = appliedVoucher.apply_product_ids || [];
+      eligible = cart.reduce(function(s,i){
+        return ids.indexOf(i.id) !== -1 ? s + i.price*i.qty : s;
+      }, 0);
+    }
+    if(eligible <= 0){
+      discountAmount = 0; appliedVoucher = null; localStorage.removeItem(VOUCHER_STORAGE_KEY); return;
+    }
+    discountAmount = appliedVoucher.discount_type === 'percent'
+      ? Math.round(eligible * appliedVoucher.discount_value / 100)
+      : Math.min(appliedVoucher.discount_value, eligible);
+  }
+
+  // Kiểm tra lại voucher đã áp ở trang giỏ hàng — im lặng, không hiện toast lỗi.
+  // Dùng RPC check_voucher (P1-1): KHÔNG đọc bảng vouchers nữa; RPC tự kiểm hợp lệ
+  // (active/thời hạn/không-vip/khách-mới/giới-hạn-lượt, đếm đúng qua definer) + trả chi tiết.
+  function restoreVoucherSilently(){
+    var saved = null;
+    try{ saved = JSON.parse(localStorage.getItem(VOUCHER_STORAGE_KEY) || 'null'); }catch(e){}
+    if(!saved || !saved.code) return;
+    getSupabase().rpc('check_voucher', { p_code: saved.code }).then(function(res){
+      if(res.error || !res.data || !res.data.ok){ localStorage.removeItem(VOUCHER_STORAGE_KEY); return; }
+      appliedVoucher = res.data; // {code, discount_type, discount_value, min_order, apply_scope, apply_product_ids}
+      renderSidebar();           // recomputeDiscount tự kiểm min_order/eligible theo giỏ
+    });
+  }
+
+  // ---- RENDER SIDEBAR ----
+  function renderSidebar(){
+    var itemsEl = document.getElementById('sidebar-items');
+    var subtotalEl = document.getElementById('sidebar-subtotal');
+    var totalEl = document.getElementById('sidebar-total');
+    var countEl = document.getElementById('sidebar-count');
+    var discRow = document.getElementById('sidebar-discount-row');
+    var discEl = document.getElementById('sidebar-discount');
+    var discLabel = document.getElementById('sidebar-discount-label');
+    var shipEl = document.getElementById('sidebar-shipping');
+    if(!itemsEl) return;
+
+    recomputeDiscount();
+    var subtotal = cart.reduce(function(s,i){return s+i.price*i.qty;},0);
+    var shippingFee = computeShippingFee(subtotal);
+    var total = Math.max(0, subtotal - discountAmount + shippingFee);
+    if(countEl) countEl.textContent = '(' + getCartCount() + ' sản phẩm)';
+    if(subtotalEl) subtotalEl.textContent = fmtPrice(subtotal);
+    if(totalEl) totalEl.textContent = fmtPrice(total);
+    if(discRow) discRow.style.display = discountAmount > 0 ? 'flex' : 'none';
+    if(discEl) discEl.textContent = '−' + fmtPrice(discountAmount);
+    if(discLabel) discLabel.textContent = appliedVoucher ? ('Giảm giá (' + appliedVoucher.code + ')') : 'Giảm giá';
+    if(shipEl){
+      if(shippingFee === 0){ shipEl.textContent = 'Miễn phí'; shipEl.style.color = '#22c55e'; shipEl.style.fontWeight = '600'; }
+      else { shipEl.textContent = fmtPrice(shippingFee); shipEl.style.color = ''; shipEl.style.fontWeight = ''; }
+    }
+
+    if(cart.length === 0){
+      itemsEl.innerHTML = '<div class="order-item__empty">Giỏ hàng đang trống</div>';
+      return;
+    }
+    var html = '';
+    cart.forEach(function(item){
+      html += '<div class="order-item">'
+        + '<img src="'+(item.image||'images/products/yen-keo-soi.jpg')+'" alt="'+item.name+'" class="order-item__img" loading="lazy">'
+        + '<div class="order-item__info">'
+        +   '<div class="order-item__name">'+item.name+'</div>'
+        +   '<div class="order-item__qty">x'+item.qty+'  ·  '+fmtPrice(item.price)+'</div>'
+        + '</div>'
+        + '<div class="order-item__price">'+fmtPrice(item.price*item.qty)+'</div>'
+        + '</div>';
+    });
+    itemsEl.innerHTML = html;
+  }
+
+  // ---- VALIDATION ----
+  function validateField(id, errId, checkFn){
+    var el = document.getElementById(id);
+    var err = document.getElementById(errId);
+    if(!el) return true;
+    var ok = checkFn(el.value.trim());
+    el.classList.toggle('is-error', !ok);
+    if(err) err.classList.toggle('is-visible', !ok);
+    return ok;
+  }
+  function isPhone(v){ return /^[0-9]{9,11}$/.test(v.replace(/[\s.]/g,'')); }
+  function isEmailOrEmpty(v){ return v === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+  // ---- FORM SUBMIT ----
+  var form = document.getElementById('checkout-form');
+  if(form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var ok = true;
+      ok = validateField('fullname','err-fullname', function(v){return v.length>=2;}) && ok;
+      ok = validateField('phone','err-phone', isPhone) && ok;
+      ok = validateField('email','err-email', isEmailOrEmpty) && ok;
+      ok = validateField('province','err-province', function(v){return v!=='';}) && ok;
+      ok = validateField('district','err-district', function(v){return v.length>=2;}) && ok;
+      ok = validateField('address','err-address', function(v){return v.length>=5;}) && ok;
+      if(!ok){
+        var firstErr = form.querySelector('.is-error');
+        if(firstErr) firstErr.focus();
+        return;
+      }
+      if(cart.length === 0){
+        showToast('Giỏ hàng đang trống, vui lòng thêm sản phẩm.', 'error');
+        return;
+      }
+
+      var submitBtn = document.getElementById('submit-btn');
+      if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Đang kiểm tra tồn kho...'; }
+
+      // Kiểm tra lại tồn kho thật trước khi đặt (phòng trường hợp vừa hết hàng
+      // giữa lúc khách ở trang giỏ hàng và lúc bấm xác nhận đặt hàng)
+      var stockCheckIds = [];
+      cart.forEach(function(item){
+        if(stockCheckIds.indexOf(item.id) === -1) stockCheckIds.push(item.id);
+      });
+      getSupabase().from('products').select('id,name,stock').in('id', stockCheckIds).then(function(stockCheckRes){
+        if(stockCheckRes.error){
+          console.warn('Kiểm tra tồn kho lỗi:', stockCheckRes.error.message);
+          placeOrder();
+          return;
+        }
+        var pmap = {};
+        (stockCheckRes.data||[]).forEach(function(p){ pmap[p.id] = p; });
+        var insufficient = [];
+        cart.forEach(function(item){
+          var live = pmap[item.id];
+          if(!live || live.stock < item.qty) insufficient.push(item.name);
+        });
+        if(insufficient.length){
+          if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = 'Xác Nhận Đặt Hàng'; }
+          showToast('Sản phẩm sau đã hết hàng hoặc không đủ số lượng: ' + insufficient.join(', ') + '. Vui lòng quay lại giỏ hàng.', 'error');
+          return;
+        }
+        placeOrder();
+      });
+      return;
+
+      function placeOrder(){
+      if(submitBtn){ submitBtn.textContent = 'Đang xử lý...'; }
+      var fullname = document.getElementById('fullname').value.trim();
+      var phone    = document.getElementById('phone').value.trim();
+      var email    = document.getElementById('email').value.trim();
+      var province = document.getElementById('province').value;
+      var district = document.getElementById('district').value.trim();
+      var address  = document.getElementById('address').value.trim();
+      var note     = document.getElementById('note').value.trim();
+      var payment  = (document.querySelector('input[name="payment"]:checked') || {}).value || 'cod';
+      var fullAddress = address + ', ' + district + ', ' + province;
+      recomputeDiscount();
+      var subtotal = cart.reduce(function(s,i){return s+i.price*i.qty;},0);
+      var shippingFee = computeShippingFee(subtotal);
+      var total = Math.max(0, subtotal - discountAmount + shippingFee);
+      var voucherCode = appliedVoucher ? appliedVoucher.code : null;
+      var code = 'YD' + Date.now().toString().slice(-7);
+
+      // Lưu vào localStorage để trang thank-you đọc được dù Supabase lỗi
+      var orderData = {
+        order_code: code,
+        customer_name: fullname,
+        customer_phone: phone,
+        customer_email: email,
+        customer_address: fullAddress,
+        note: note,
+        payment_method: payment,
+        items: JSON.parse(JSON.stringify(cart)),
+        total_amount: total,
+        voucher_code: voucherCode,
+        discount_amount: discountAmount,
+        shipping_fee: shippingFee,
+        status: 'pending',
+        created_at: new Date().toISOString()
+      };
+      localStorage.setItem('yen-duyen-last-order', JSON.stringify(orderData));
+
+      // Lấy user hiện tại (nếu đã đăng nhập)
+      getSupabase().auth.getSession().then(function(sessionRes){
+        var userId = null;
+        if(sessionRes.data && sessionRes.data.session) {
+          userId = sessionRes.data.session.user.id;
+        }
+
+        var payload = {
+          order_code: orderData.order_code,
+          user_id: userId,
+          customer_name: fullname,
+          customer_phone: phone,
+          customer_email: email,
+          customer_address: fullAddress,
+          note: note,
+          payment_method: payment,
+          items: orderData.items,
+          total_amount: total,
+          voucher_code: voucherCode,
+          discount_amount: discountAmount,
+          shipping_fee: shippingFee,
+          status: 'pending'
+        };
+
+        var rlIdentifier = userId || (typeof SecurityGate !== 'undefined' ? SecurityGate.deviceId() : null);
+        var rlCheck = (typeof SecurityGate !== 'undefined' && rlIdentifier)
+          ? SecurityGate.check('order_place', rlIdentifier)
+          : Promise.resolve(true);
+
+        rlCheck.then(function(rlOk){
+          if(!rlOk){
+            if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = 'Xác Nhận Đặt Hàng'; }
+            showToast('Bạn vừa đặt hàng liên tục, vui lòng thử lại sau ít phút.', 'error');
+            return;
+          }
+          placeOrderInsert(payload);
+        });
+      });
+
+      function placeOrderInsert(payload){
+        // .select() để lấy lại đúng dữ liệu SAU KHI trigger validate_order_price
+        // (sql/add-order-price-validation.sql) đã tính lại giá thật — tránh trang
+        // cảm ơn hiện giá cũ (trước trigger) nếu giá/voucher vừa đổi giữa lúc
+        // khách điền form và lúc bấm đặt hàng.
+        getSupabase().from('orders').insert(payload).select().single().then(function(res){
+          if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = 'Xác Nhận Đặt Hàng'; }
+
+          function finishCheckout(confirmedOrder){
+            // Ghi đè localStorage bằng đơn THẬT đã qua trigger (nếu có) để trang
+            // cảm ơn hiện đúng giá cuối cùng, không phải giá client tự tính trước đó.
+            if(confirmedOrder){
+              localStorage.setItem('yen-duyen-last-order', JSON.stringify(confirmedOrder));
+            }
+            // Chỉ xoá đúng những sản phẩm đã đặt, giữ lại sản phẩm chưa tick chọn
+            var orderedIds = cart.map(function(i){ return i.id; });
+            fullCart = fullCart.filter(function(i){ return orderedIds.indexOf(i.id) === -1; });
+            saveFullCart();
+            cart = fullCart;
+            updateCartBadge();
+            localStorage.removeItem(VOUCHER_STORAGE_KEY);
+            // Redirect sang trang cảm ơn
+            window.location.href = 'dat-hang-thanh-cong.html';
+          }
+
+          if(res.error) {
+            // Phân biệt 2 loại lỗi bằng SQLSTATE code (res.error.code — Postgres
+            // trả nguyên vẹn qua PostgREST), KHÔNG so khớp nội dung message (dễ
+            // vỡ nếu đổi câu chữ thông báo sau này):
+            // - STK01/STK02: trigger validate_order_price CỐ Ý chặn (hết hàng/
+            //   giỏ không còn SP hợp lệ) → đơn KHÔNG được tạo, báo rõ cho khách.
+            //   (tiền tố "STK" = stock, cố tình khác "YD" của order_code để
+            //   không gây nhầm lẫn khi đọc log/debug)
+            // - FS01: trigger CỐ Ý chặn vì suất Flash Sale đã hết/hết giờ/vượt
+            //   giới hạn mua mỗi khách (xem sql/add-flash-sale.sql).
+            // - Mọi mã khác: lỗi hạ tầng/mạng → fail-open, vẫn cho qua để không
+            //   chặn tính năng chính vì lỗi ngoài ý muốn. Xem sql/add-order-price-validation.sql.
+            var TRIGGER_REJECT_CODES = ['STK01', 'STK02', 'FS01'];
+            if(TRIGGER_REJECT_CODES.indexOf(res.error.code) !== -1){
+              if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = 'Xác Nhận Đặt Hàng'; }
+              showToast(res.error.message + '. Vui lòng quay lại giỏ hàng kiểm tra lại.', 'error');
+              return;
+            }
+            console.warn('Supabase insert error:', res.error.message);
+            finishCheckout(null);
+            return;
+          }
+
+          // Trừ tồn kho + cộng lượt bán giờ xử lý TỰ ĐỘNG trong Postgres (trigger
+          // trên bảng orders, xem sql/add-product-popularity.sql) ngay khi đơn hàng
+          // vừa insert xong ở trên — không cần gọi thêm API nào từ đây nữa.
+          finishCheckout(res.data);
+        });
+      }
+      } // end placeOrder
+    });
+
+    // Live validation on blur
+    ['fullname','phone','email','province','district','address'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.addEventListener('blur', function(){
+        el.classList.remove('is-error');
+        var err = document.getElementById('err-'+id);
+        if(err) err.classList.remove('is-visible');
+      });
+    });
+  }
+
+  // ---- TOAST ----
+  function showToast(msg, type){
+    var c = document.getElementById('toast-container');
+    if(!c){ c = document.createElement('div'); c.id='toast-container'; c.className='toast-container'; document.body.appendChild(c); }
+    var t = document.createElement('div'); t.className='toast toast--'+(type||'info');
+    t.innerHTML='<span class="toast__msg">'+msg+'</span><button class="toast__close" onclick="this.parentNode.remove()">✕</button>';
+    c.appendChild(t);
+    setTimeout(function(){t.classList.add('toast--visible');},10);
+    setTimeout(function(){t.classList.remove('toast--visible'); setTimeout(function(){t.remove();},300);},4000);
+  }
+
+  // ---- HEADER SCROLL ----
+  var header = document.getElementById('site-header');
+  window.addEventListener('scroll', function(){
+    if(header) header.classList.toggle('scrolled', window.scrollY > 50);
+  }, {passive:true});
+
+  // ---- MOBILE NAV ----
+  var navToggle = document.getElementById('menu-toggle');
+  var mobileNav = document.getElementById('mobile-nav');
+  if(navToggle && mobileNav){
+    navToggle.addEventListener('click', function(){
+      var open = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-expanded', String(!open));
+      mobileNav.classList.toggle('is-open', !open);
+      document.body.style.overflow = open ? '' : 'hidden';
+    });
+  }
+
+  // ---- BACK TO TOP ----
+  var btt = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){
+    if(btt) btt.classList.toggle('is-visible', window.scrollY > 400);
+  }, {passive:true});
+  if(btt) btt.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+  // ---- SCROLL ANIMATIONS ----
+  var animEls = document.querySelectorAll('.animate-on-scroll');
+  if(animEls.length && 'IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('is-visible'); obs.unobserve(e.target); }
+      });
+    }, {threshold:0.1, rootMargin:'0px 0px -30px 0px'});
+    animEls.forEach(function(el){ obs.observe(el); });
+  }
+
+  // ---- INIT ----
+  updateCartBadge();
+  renderSidebar();
+  restoreVoucherSilently();
+
+  // ---- BẮT BUỘC ĐĂNG NHẬP + TỰ ĐIỀN HỒ SƠ ----
+  // Khách chưa đăng nhập → chuyển sang trang đăng nhập rồi quay lại đây (giỏ hàng vẫn giữ nguyên).
+  requireAuth('dang-nhap.html').then(function(user){
+    if(!user) return;
+    // Lấy hồ sơ + địa chỉ mặc định để gợi ý điền nhanh
+    getSupabase().from('profiles').select('*').eq('id', user.id).single().then(function(res){
+      var p = res.data || {};
+      var name = p.full_name || (user.user_metadata && user.user_metadata.full_name) || '';
+      var phone = p.phone || (isPhoneEmail(user.email) ? normalizePhone(user.email.split('@')[0]) : '');
+      var email = isPhoneEmail(user.email) ? '' : user.email;
+      // chỉ điền vào ô đang trống (không ghi đè nếu khách đã gõ)
+      fillIfEmpty('fullname', name);
+      fillIfEmpty('phone', phone);
+      fillIfEmpty('email', email);
+    });
+    getSupabase().from('addresses').select('*').eq('user_id', user.id).eq('is_default', true).limit(1).then(function(res){
+      if(res.data && res.data.length){ fillIfEmpty('address', res.data[0].full_address); }
+    });
+  });
+  function fillIfEmpty(id, val){
+    var elx = document.getElementById(id);
+    if(elx && !elx.value && val) elx.value = val;
+  }
+  </script>
+  <script src="js/auth-widget.js"></script>
+  <script src="js/ai-chat-widget.js"></script>
+</body>
+</html>

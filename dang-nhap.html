@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập / Đăng ký | Yến Sào Yến Duyên</title>
+  <meta name="description" content="Đăng nhập hoặc tạo tài khoản để theo dõi đơn hàng và nhận ưu đãi từ Yến Sào Yến Duyên.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/site-contact.js"></script>
+  <script src="js/security-gate.js"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    body {
+      background: var(--color-cream);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .auth-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .auth-wrap { width: 100%; max-width: 460px; }
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .auth-logo a {
+      text-decoration: none;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .auth-logo-mark {
+      width: 56px; height: 56px;
+      background: var(--gradient-brand);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-gold);
+      font-family: var(--font-accent);
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: .05em;
+    }
+    .auth-logo-name {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--color-brand);
+    }
+    .auth-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px 36px;
+      box-shadow: 0 8px 40px rgba(62,39,35,.10);
+      border: 1px solid rgba(212,175,55,.15);
+    }
+    /* Tabs */
+    .auth-tabs {
+      display: flex;
+      border-bottom: 2px solid #f0ebe4;
+      margin-bottom: 28px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: .95rem;
+      font-weight: 600;
+      color: #9ca3af;
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all .2s;
+      font-family: var(--font-body);
+    }
+    .auth-tab.is-active {
+      color: var(--color-brand);
+      border-bottom-color: var(--color-brand);
+    }
+    /* Panels */
+    .auth-panel { display: none; }
+    .auth-panel.is-active { display: block; }
+    .panel-title {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      color: var(--color-brand);
+      margin-bottom: 6px;
+    }
+    .panel-sub { font-size: .875rem; color: #888; margin-bottom: 24px; }
+    /* Form */
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-family: var(--font-body);
+      color: #111827;
+      transition: border-color .2s, box-shadow .2s;
+      box-sizing: border-box;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-gold);
+      box-shadow: 0 0 0 3px rgba(212,175,55,.12);
+    }
+    .form-input.is-error { border-color: #ef4444; }
+    .form-error {
+      font-size: .78rem;
+      color: #ef4444;
+      margin-top: 5px;
+      display: none;
+    }
+    .form-error.is-visible { display: block; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .btn-submit {
+      width: 100%;
+      padding: 13px;
+      background: var(--gradient-brand);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-body);
+      letter-spacing: .03em;
+      transition: opacity .2s, transform .2s;
+      margin-top: 4px;
+    }
+    .btn-submit:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+    .alert-box {
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: .85rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      display: none;
+    }
+    .alert-box.is-visible { display: block; }
+    .alert-error { background: #fee2e2; border: 1px solid #fca5a5; color: #dc2626; }
+    .alert-success { background: #dcfce7; border: 1px solid #bbf7d0; color: #166534; }
+    .divider-or {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: #d1d5db;
+      font-size: .8rem;
+    }
+    .divider-or::before, .divider-or::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #f0ebe4;
+    }
+    .btn-google {
+      width: 100%;
+      padding: 11px;
+      background: #fff;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: .875rem;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .btn-google:hover { border-color: #d1d5db; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    .forgot-link {
+      display: block;
+      text-align: right;
+      font-size: .8rem;
+      color: var(--color-brand);
+      text-decoration: none;
+      margin-top: -10px;
+      margin-bottom: 18px;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+    .terms-note {
+      font-size: .78rem;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+    .terms-note a { color: var(--color-brand); text-decoration: underline; }
+    /* Method switch (Email / SĐT) */
+    .method-switch {
+      display: flex;
+      gap: 6px;
+      background: #f5f1ea;
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+    .method-btn {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: none;
+      border-radius: 7px;
+      font-size: .85rem;
+      font-weight: 600;
+      color: #8a7a6a;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all .2s;
+    }
+    .method-btn.is-active {
+      background: #fff;
+      color: var(--color-brand);
+      box-shadow: 0 1px 4px rgba(62,39,35,.12);
+    }
+    /* Simple header */
+    .simple-header {
+      background: var(--color-brand);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .simple-header a { color: rgba(255,255,255,.7); font-size: .85rem; text-decoration: none; }
+    .simple-header a:hover { color: #fff; }
+    @media(max-width: 500px) {
+      .auth-card { padding: 28px 20px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    .captcha-gate {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      font-size: .85rem;
+      color: #92400e;
+      line-height: 1.6;
+    }
+    .captcha-gate .cf-turnstile { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <header class="simple-header">
+    <a href="index.html" style="font-family:var(--font-accent);color:var(--color-gold);font-size:1rem;font-weight:600;">Yến Duyên</a>
+    <a href="index.html">← Về trang chủ</a>
+  </header>
+
+  <div class="auth-page">
+    <div class="auth-wrap">
+      <div class="auth-logo">
+        <a href="index.html">
+          <div class="auth-logo-mark">YD</div>
+          <span class="auth-logo-name">Yến Sào Yến Duyên</span>
+        </a>
+      </div>
+
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab is-active" onclick="switchTab('login')" id="tab-login-btn">Đăng nhập</button>
+          <button class="auth-tab" onclick="switchTab('register')" id="tab-register-btn">Tạo tài khoản</button>
+        </div>
+
+        <!-- ĐĂNG NHẬP -->
+        <div class="auth-panel is-active" id="tab-login">
+          <h1 class="panel-title">Chào mừng trở lại</h1>
+          <p class="panel-sub">Đăng nhập để theo dõi đơn hàng và nhận ưu đãi</p>
+
+          <div class="alert-box alert-error" id="login-error"></div>
+          <div class="alert-box alert-success" id="login-success"></div>
+
+          <form id="form-login" novalidate>
+            <div class="method-switch">
+              <button type="button" class="method-btn is-active" data-m="email" onclick="setLoginMethod('email')">Email</button>
+              <button type="button" class="method-btn" data-m="phone" onclick="setLoginMethod('phone')">Số điện thoại</button>
+            </div>
+            <div class="form-group" id="login-email-group">
+              <label class="form-label" for="login-email">Email</label>
+              <input class="form-input" type="email" id="login-email" placeholder="email@example.com" autocomplete="username">
+              <p class="form-error" id="login-email-err">Vui lòng nhập email hợp lệ.</p>
+            </div>
+            <div class="form-group" id="login-phone-group" style="display:none;">
+              <label class="form-label" for="login-phone">Số điện thoại</label>
+              <input class="form-input" type="tel" id="login-phone" placeholder="0912 345 678" autocomplete="username">
+              <p class="form-error" id="login-phone-err">Số điện thoại không hợp lệ.</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="login-password">Mật khẩu</label>
+              <input class="form-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required>
+              <p class="form-error" id="login-pass-err">Vui lòng nhập mật khẩu.</p>
+            </div>
+            <a href="#" class="forgot-link" id="forgot-link" onclick="showForgot(event)">Quên mật khẩu?</a>
+            <p class="forgot-link" id="forgot-phone-note" style="display:none;cursor:default;color:#9ca3af;">Tài khoản SĐT quên mật khẩu? Vui lòng liên hệ shop 0986.012.754 để được hỗ trợ.</p>
+            <button type="submit" class="btn-submit" id="btn-login">Đăng nhập</button>
+          </form>
+
+          <div class="captcha-gate" id="login-captcha-gate" hidden>
+            <span id="login-captcha-note">Bạn đã nhập sai nhiều lần liên tiếp. Vui lòng xác minh để tiếp tục.</span>
+            <div id="login-turnstile" class="cf-turnstile"></div>
+          </div>
+
+          <div class="divider-or">hoặc</div>
+          <button class="btn-google" onclick="loginGoogle()">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Tiếp tục với Google
+          </button>
+        </div>
+
+        <!-- ĐĂNG KÝ -->
+        <div class="auth-panel" id="tab-register">
+          <h1 class="panel-title">Tạo tài khoản</h1>
+          <p class="panel-sub">Miễn phí — nhận ưu đãi 5% cho đơn đầu tiên</p>
+
+          <div class="alert-box alert-error" id="reg-error"></div>
+          <div class="alert-box alert-success" id="reg-success"></div>
+
+          <form id="form-register" novalidate>
+            <div class="method-switch">
+              <button type="button" class="method-btn is-active" data-m="email" onclick="setRegMethod('email')">Đăng ký bằng Email</button>
+              <button type="button" class="method-btn" data-m="phone" onclick="setRegMethod('phone')">Bằng số điện thoại</button>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-name">Họ và tên *</label>
+              <input class="form-input" type="text" id="reg-name" placeholder="Nguyễn Thị Hoa" required>
+              <p class="form-error" id="reg-name-err">Vui lòng nhập họ tên.</p>
+            </div>
+            <!-- Email mode -->
+            <div class="form-group" id="reg-email-group">
+              <label class="form-label" for="reg-email">Email *</label>
+              <input class="form-input" type="email" id="reg-email" placeholder="email@example.com" autocomplete="username">
+              <p class="form-error" id="reg-email-err">Vui lòng nhập email hợp lệ.</p>
+            </div>
+            <div class="form-group" id="reg-phone-optional-group">
+              <label class="form-label" for="reg-phone">Số điện thoại</label>
+              <input class="form-input" type="tel" id="reg-phone" placeholder="0912 345 678">
+              <p class="form-error" id="reg-phone-err">Số điện thoại không hợp lệ.</p>
+            </div>
+            <!-- Phone mode (login bằng SĐT) -->
+            <div class="form-group" id="reg-phone-required-group" style="display:none;">
+              <label class="form-label" for="reg-phone-main">Số điện thoại *</label>
+              <input class="form-input" type="tel" id="reg-phone-main" placeholder="0912 345 678">
+              <p class="form-error" id="reg-phone-main-err">Số điện thoại không hợp lệ.</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-password">Mật khẩu *</label>
+              <input class="form-input" type="password" id="reg-password" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password" required>
+              <p class="form-error" id="reg-pass-err">Mật khẩu phải có ít nhất 6 ký tự.</p>
+            </div>
+            <button type="submit" class="btn-submit" id="btn-register">Tạo tài khoản</button>
+          </form>
+
+          <div class="divider-or">hoặc</div>
+          <button class="btn-google" onclick="loginGoogle()">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Tiếp tục với Google
+          </button>
+          <p class="terms-note">Bằng cách tạo tài khoản, bạn đồng ý với <a href="chinh-sach.html">Chính sách</a> của chúng tôi.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // Chống open redirect (P2-A): chỉ nhận đường dẫn NỘI BỘ, mọi URL ra ngoài → index.html.
+  // Whitelist (mặc định từ chối) → chuỗi tấn công mới cũng bị loại vì không khớp khuôn.
+  function safeInternalRedirect(raw){
+    var fallback = 'index.html';
+    if(!raw) return fallback;
+    // Chặn tuyệt đối các dạng đưa ra ngoài site:
+    //  //evil.com (protocol-relative) | /path (tuyệt đối) | chứa ":" (https:/javascript:/data:) | "\" (né lọc)
+    if(/^\/\//.test(raw) || /^\//.test(raw) || raw.indexOf(':') !== -1 || raw.indexOf('\\') !== -1){
+      return fallback;
+    }
+    // Chỉ nhận đúng khuôn "trang .html nội bộ" (+ ?query / #hash tuỳ chọn).
+    if(/^[a-zA-Z0-9_\-\/]+\.html([?#].*)?$/.test(raw)) return raw;
+    return fallback;
+  }
+  var _redirectAfterLogin = safeInternalRedirect((new URLSearchParams(location.search)).get('redirect'));
+
+  // Check if already logged in
+  (function(){
+    var db = getSupabase();
+    db.auth.getSession().then(function(res){
+      if(res.data && res.data.session) {
+        window.location.replace(_redirectAfterLogin);
+      }
+    });
+    // Check URL hash for tab
+    if(location.hash === '#register') switchTab('register');
+  })();
+
+  function switchTab(tab) {
+    document.getElementById('tab-login').classList.toggle('is-active', tab === 'login');
+    document.getElementById('tab-register').classList.toggle('is-active', tab === 'register');
+    document.getElementById('tab-login-btn').classList.toggle('is-active', tab === 'login');
+    document.getElementById('tab-register-btn').classList.toggle('is-active', tab === 'register');
+  }
+
+  // ─── CHUYỂN PHƯƠNG THỨC EMAIL / SĐT ──────────────────────
+  var loginMethod = 'email';
+  function setLoginMethod(m) {
+    loginMethod = m;
+    document.querySelectorAll('#form-login .method-btn').forEach(function(b){ b.classList.toggle('is-active', b.dataset.m === m); });
+    document.getElementById('login-email-group').style.display = m === 'email' ? 'block' : 'none';
+    document.getElementById('login-phone-group').style.display = m === 'phone' ? 'block' : 'none';
+    document.getElementById('forgot-link').style.display = m === 'email' ? 'block' : 'none';
+    document.getElementById('forgot-phone-note').style.display = m === 'phone' ? 'block' : 'none';
+  }
+  var regMethod = 'email';
+  function setRegMethod(m) {
+    regMethod = m;
+    document.querySelectorAll('#form-register .method-btn').forEach(function(b){ b.classList.toggle('is-active', b.dataset.m === m); });
+    document.getElementById('reg-email-group').style.display = m === 'email' ? 'block' : 'none';
+    document.getElementById('reg-phone-optional-group').style.display = m === 'email' ? 'block' : 'none';
+    document.getElementById('reg-phone-required-group').style.display = m === 'phone' ? 'block' : 'none';
+  }
+
+  // ─── ĐĂNG NHẬP ───────────────────────────────────────────
+  document.getElementById('form-login').addEventListener('submit', function(e){
+    e.preventDefault();
+    clearErrors('login');
+    var pass = document.getElementById('login-password').value;
+    var loginEmail, ok = true;
+
+    if(loginMethod === 'email') {
+      var email = document.getElementById('login-email').value.trim();
+      if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('login-email-err'); showErr('login-email', true); ok = false; }
+      loginEmail = email;
+    } else {
+      var phone = document.getElementById('login-phone').value.trim();
+      if(!isValidPhone(phone)) { showErr('login-phone-err'); showErr('login-phone', true); ok = false; }
+      loginEmail = phoneToEmail(phone);
+    }
+    if(!pass) { showErr('login-pass-err'); showErr('login-password', true); ok = false; }
+    if(!ok) return;
+
+    setLoading('btn-login', true, 'Đang đăng nhập...');
+    getSupabase().auth.signInWithPassword({ email: loginEmail, password: pass }).then(function(res){
+      setLoading('btn-login', false, 'Đăng nhập');
+      if(res.error) {
+        showAlert('login-error', mapAuthError(res.error.message));
+        if(typeof SecurityGate !== 'undefined'){
+          SecurityGate.check('login_fail', loginEmail.toLowerCase()).then(function(ok){
+            if(!ok) showLoginCaptchaGate();
+          });
+        }
+      } else {
+        showAlert('login-success', 'Đăng nhập thành công! Đang chuyển hướng...', false);
+        setTimeout(function(){ window.location.replace(_redirectAfterLogin); }, 1000);
+      }
+    });
+  });
+
+  // ─── XÁC MINH BỔ SUNG SAU NHIỀU LẦN ĐĂNG NHẬP SAI ────────
+  // Chỉ hiện lên khi Supabase (rate-limit thật, xem sql/security-rate-limit.sql)
+  // báo đã vượt ngưỡng — người dùng nhập đúng ngay từ đầu sẽ không bao giờ thấy khối này.
+  var TURNSTILE_SITE_KEY = ''; // dán Site Key thật (Cloudflare Turnstile) vào đây sau khi tạo
+  var _turnstileRendered = false;
+  function showLoginCaptchaGate(){
+    var gate = document.getElementById('login-captcha-gate');
+    var btnLogin = document.getElementById('btn-login');
+    if(!gate) return;
+    gate.hidden = false;
+    if(TURNSTILE_SITE_KEY && window.turnstile && !_turnstileRendered){
+      _turnstileRendered = true;
+      if(btnLogin) btnLogin.disabled = true;
+      window.turnstile.render('#login-turnstile', {
+        sitekey: TURNSTILE_SITE_KEY,
+        callback: function(){
+          document.getElementById('login-captcha-note').textContent = 'Đã xác minh — mời bạn đăng nhập lại.';
+          if(btnLogin) btnLogin.disabled = false;
+        }
+      });
+    }
+    // Chưa cấu hình Site Key: chỉ hiện thông báo nhắc chờ, không khoá nút đăng nhập
+    // (rate-limit thật vẫn chặn ở phía Supabase dù chưa có CAPTCHA phía giao diện).
+  }
+
+  // ─── ĐĂNG KÝ ─────────────────────────────────────────────
+  document.getElementById('form-register').addEventListener('submit', function(e){
+    e.preventDefault();
+    clearErrors('reg');
+    var name = document.getElementById('reg-name').value.trim();
+    var pass = document.getElementById('reg-password').value;
+    var ok = true;
+    if(!name) { showErr('reg-name-err'); showErr('reg-name', true); ok = false; }
+    if(!pass || pass.length < 6) { showErr('reg-pass-err'); showErr('reg-password', true); ok = false; }
+
+    var signupEmail, phoneVal = '', loginKind;
+    if(regMethod === 'email') {
+      var email = document.getElementById('reg-email').value.trim();
+      if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('reg-email-err'); showErr('reg-email', true); ok = false; }
+      var p = document.getElementById('reg-phone').value.trim();
+      if(p && !isValidPhone(p)) { showErr('reg-phone-err'); showErr('reg-phone', true); ok = false; }
+      signupEmail = email;
+      phoneVal = p ? normalizePhone(p) : '';
+      loginKind = 'email';
+    } else {
+      var phone = document.getElementById('reg-phone-main').value.trim();
+      if(!isValidPhone(phone)) { showErr('reg-phone-main-err'); showErr('reg-phone-main', true); ok = false; }
+      signupEmail = phoneToEmail(phone);
+      phoneVal = normalizePhone(phone);
+      loginKind = 'phone';
+    }
+    if(!ok) return;
+
+    setLoading('btn-register', true, 'Đang tạo tài khoản...');
+    getSupabase().auth.signUp({
+      email: signupEmail,
+      password: pass,
+      options: { data: { full_name: name, phone: phoneVal, login_kind: loginKind } }
+    }).then(function(res){
+      setLoading('btn-register', false, 'Tạo tài khoản');
+      if(res.error) { showAlert('reg-error', mapAuthError(res.error.message)); return; }
+      if(res.data.user && res.data.user.identities && res.data.user.identities.length === 0) {
+        showAlert('reg-error', (loginKind === 'phone' ? 'Số điện thoại' : 'Email') + ' này đã được đăng ký. Vui lòng đăng nhập.');
+        return;
+      }
+      // Hồ sơ (profiles) được trigger DB tự tạo từ metadata. Email confirm đã TẮT → có session ngay.
+      if(res.data.session) {
+        showAlert('reg-success', 'Tạo tài khoản thành công! Đang chuyển hướng...', false);
+        setTimeout(function(){ window.location.replace(_redirectAfterLogin); }, 800);
+      } else {
+        showAlert('reg-success', 'Tạo tài khoản thành công! Bạn có thể đăng nhập ngay.', false);
+        document.getElementById('form-register').reset();
+        setTimeout(function(){ switchTab('login'); }, 1200);
+      }
+    });
+  });
+
+  // ─── GOOGLE LOGIN ─────────────────────────────────────────
+  function loginGoogle() {
+    getSupabase().auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/' + _redirectAfterLogin }
+    });
+  }
+
+  // ─── QUÊN MẬT KHẨU ───────────────────────────────────────
+  function showForgot(e) {
+    e.preventDefault();
+    var email = document.getElementById('login-email').value.trim();
+    if(!email) {
+      showAlert('login-error', 'Vui lòng nhập email của bạn vào ô Email trước.');
+      return;
+    }
+    getSupabase().auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/dang-nhap.html'
+    }).then(function(res){
+      if(res.error) { showAlert('login-error', mapError(res.error.message)); }
+      else { showAlert('login-success', 'Đã gửi link đặt lại mật khẩu vào email của bạn!', false); }
+    });
+  }
+
+  // ─── HELPERS ─────────────────────────────────────────────
+  function showErr(id, isInput) {
+    var el = document.getElementById(id);
+    if(!el) return;
+    if(isInput) el.classList.add('is-error');
+    else el.classList.add('is-visible');
+  }
+  function clearErrors(prefix) {
+    document.querySelectorAll('.form-error').forEach(function(el){ el.classList.remove('is-visible'); });
+    document.querySelectorAll('.form-input').forEach(function(el){ el.classList.remove('is-error'); });
+    document.querySelectorAll('.alert-box').forEach(function(el){ el.classList.remove('is-visible'); });
+  }
+  function showAlert(id, msg, isError) {
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.textContent = msg;
+    el.classList.add('is-visible');
+    if(isError === false) el.classList.remove('alert-error');
+  }
+  function setLoading(btnId, loading, text) {
+    var btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.textContent = text;
+  }
+  function mapError(msg) {
+    if(!msg) return 'Đã có lỗi xảy ra. Vui lòng thử lại.';
+    if(msg.includes('Invalid login')) return 'Email hoặc mật khẩu không đúng.';
+    if(msg.includes('Email not confirmed')) return 'Email chưa được xác nhận. Kiểm tra hộp thư của bạn.';
+    if(msg.includes('User already registered')) return 'Email này đã được đăng ký.';
+    if(msg.includes('Password should be')) return 'Mật khẩu phải có ít nhất 6 ký tự.';
+    if(msg.includes('rate limit')) return 'Quá nhiều yêu cầu. Vui lòng thử lại sau vài phút.';
+    return msg;
+  }
+  </script>
+</body>
+</html>

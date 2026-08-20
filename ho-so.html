@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Hồ sơ của tôi | Yến Sào Yến Duyên</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/header.css">
+  <style>
+    .acct-wrap { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; }
+    .acct-title { font-family: var(--font-heading); font-size: 1.9rem; color: var(--color-brand); margin-bottom: 6px; }
+    .acct-sub { color: #8a7a6a; font-size: .95rem; margin-bottom: 28px; }
+
+    .acct-card { background:#fff; border:1px solid rgba(212,175,55,.35); border-radius:16px; padding:28px; box-shadow:0 3px 16px rgba(62,39,35,.12); margin-bottom:24px; }
+    .acct-card h2 { font-family:var(--font-heading); font-size:1.2rem; color:var(--color-brand); margin:0 0 18px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+
+    /* Avatar block */
+    .avatar-row { display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+    .avatar-big { width:96px; height:96px; border-radius:50%; border:3px solid var(--color-gold); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:2.2rem; overflow:hidden; flex-shrink:0; }
+    .avatar-big img { width:100%; height:100%; object-fit:cover; }
+    .avatar-info-name { font-family:var(--font-heading); font-size:1.4rem; color:var(--color-brand); }
+    .avatar-info-id { color:#9ca3af; font-size:.9rem; margin-top:3px; }
+
+    /* Info rows */
+    .info-list { display:grid; gap:2px; }
+    .info-item { display:flex; justify-content:space-between; gap:16px; padding:13px 0; border-bottom:1px solid #f4efe8; font-size:.95rem; }
+    .info-item:last-child { border-bottom:none; }
+    .info-label { color:#8a7a6a; }
+    .info-value { color:#3E2723; font-weight:600; text-align:right; word-break:break-word; }
+    .info-value .muted { color:#bbb; font-weight:400; }
+
+    /* Buttons */
+    .btn { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:9px; font-weight:700; font-size:.9rem; cursor:pointer; border:none; font-family:var(--font-body); transition:opacity .2s, transform .2s, background .2s; text-decoration:none; }
+    .btn-primary { background:var(--gradient-brand); color:#fff; }
+    .btn-primary:hover { opacity:.92; transform:translateY(-1px); }
+    .btn-gold { background:var(--color-gold); color:#3E2723; }
+    .btn-gold:hover { opacity:.9; }
+    .btn-ghost { background:#f5f1ea; color:#5D4037; }
+    .btn-ghost:hover { background:#ece5da; }
+    .btn-danger { background:#fee2e2; color:#b91c1c; }
+    .btn-danger:hover { background:#fecaca; }
+    .btn-sm { padding:7px 13px; font-size:.82rem; }
+    .btn:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+
+    /* Form */
+    .field { margin-bottom:16px; }
+    .field label { display:block; font-size:.83rem; font-weight:600; color:#5D4037; margin-bottom:6px; }
+    .field input, .field textarea { width:100%; padding:11px 14px; border:1.5px solid #e5e7eb; border-radius:9px; font-size:.92rem; font-family:var(--font-body); box-sizing:border-box; }
+    .field input:focus, .field textarea:focus { outline:none; border-color:var(--color-gold); box-shadow:0 0 0 3px rgba(212,175,55,.12); }
+    .field input:disabled { background:#f8f5f0; color:#9ca3af; }
+    .field .hint { font-size:.78rem; color:#9ca3af; margin-top:5px; }
+    .field .hint.warn { color:#c2410c; }
+    .row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    @media(max-width:560px){ .row2{ grid-template-columns:1fr; } }
+    .hidden { display:none !important; }
+
+    .alert { border-radius:9px; padding:11px 15px; font-size:.86rem; font-weight:600; margin-bottom:16px; display:none; }
+    .alert.show { display:block; }
+    .alert-ok { background:#dcfce7; color:#166534; }
+    .alert-err { background:#fee2e2; color:#b91c1c; }
+
+    /* chips for extra phones/emails */
+    .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .chip { background:var(--color-cream); border:1px solid #ece5da; border-radius:20px; padding:5px 12px; font-size:.84rem; color:#5D4037; display:inline-flex; align-items:center; gap:8px; }
+    .chip button { border:none; background:none; color:#b91c1c; cursor:pointer; font-size:1rem; line-height:1; padding:0; }
+
+    /* address card */
+    .addr { border:1px solid #ece5da; border-radius:11px; padding:14px 16px; margin-bottom:12px; }
+    .addr.is-default { border-color:var(--color-gold); background:#fffdf7; }
+    .addr-top { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px; }
+    .addr-name { font-weight:700; color:#3E2723; }
+    .addr-default-tag { font-size:.72rem; background:var(--color-gold); color:#3E2723; padding:2px 9px; border-radius:20px; font-weight:700; }
+    .addr-text { color:#6b5d50; font-size:.9rem; }
+    .addr-actions { display:flex; gap:8px; margin-top:10px; }
+
+    /* Avatar crop modal */
+    .modal-backdrop { position:fixed; inset:0; background:rgba(40,24,16,.55); display:none; align-items:center; justify-content:center; z-index:2000; padding:20px; }
+    .modal-backdrop.show { display:flex; }
+    .modal { background:#fff; border-radius:16px; padding:24px; max-width:420px; width:100%; }
+    .modal h3 { font-family:var(--font-heading); color:var(--color-brand); margin:0 0 16px; font-size:1.2rem; }
+    .crop-stage { width:280px; height:280px; margin:0 auto 14px; border-radius:50%; overflow:hidden; background:#222; position:relative; touch-action:none; cursor:grab; }
+    .crop-stage canvas { display:block; }
+    .crop-range { width:100%; margin:10px 0 18px; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header" id="site-header" role="banner">
+    <div class="header-inner container">
+      <a href="index.html" class="logo" aria-label="Yến Sào Yến Duyên - Trang chủ">
+        <span class="logo-text" style="font-family:var(--font-accent);color:var(--color-gold);font-size:1.4rem;font-weight:600;">Yến Duyên</span>
+      </a>
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <ul class="nav-list" role="list">
+          <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+          <li><a href="san-pham.html" class="nav-link">Sản phẩm</a></li>
+          <li><a href="combo-qua-tang.html" class="nav-link">Combo quà tặng</a></li>
+          <li><a href="khoi-nghiep.html" class="nav-link">Cẩm nang</a></li>
+          <li><a href="gioi-thieu.html" class="nav-link">Giới thiệu</a></li>
+          <li><a href="lien-he.html" class="nav-link">Liên hệ</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a href="tel:+840986012754" class="header-hotline" aria-label="Gọi hotline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>0986.012.754</span>
+        </a>
+        <a href="gio-hang.html" class="cart-btn" aria-label="Giỏ hàng">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-badge" id="cart-badge" aria-live="polite">0</span>
+        </a>
+        <div id="auth-slot"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="acct-wrap" id="acct-main" style="opacity:0;">
+    <h1 class="acct-title">Hồ sơ của tôi</h1>
+    <p class="acct-sub">Quản lý thông tin tài khoản, địa chỉ giao hàng và bảo mật.</p>
+
+    <div class="alert alert-ok" id="global-ok"></div>
+    <div class="alert alert-err" id="global-err"></div>
+
+    <!-- ===== THÔNG TIN CƠ BẢN ===== -->
+    <section class="acct-card">
+      <h2>Thông tin cá nhân
+        <button class="btn btn-gold btn-sm" id="btn-edit-info" onclick="toggleEdit(true)">Chỉnh sửa</button>
+      </h2>
+
+      <!-- VIEW -->
+      <div id="info-view">
+        <div class="avatar-row" style="margin-bottom:22px;">
+          <div class="avatar-big" id="view-avatar">Y</div>
+          <div>
+            <div class="avatar-info-name" id="view-name">—</div>
+            <div class="avatar-info-id" id="view-id">—</div>
+          </div>
+        </div>
+        <div class="info-list">
+          <div class="info-item"><span class="info-label">Số điện thoại chính</span><span class="info-value" id="view-phone">—</span></div>
+          <div class="info-item"><span class="info-label">SĐT phụ</span><span class="info-value" id="view-extra-phones">—</span></div>
+          <div class="info-item"><span class="info-label">Email phụ</span><span class="info-value" id="view-extra-emails">—</span></div>
+        </div>
+      </div>
+
+      <!-- EDIT -->
+      <div id="info-edit" class="hidden">
+        <div class="avatar-row" style="margin-bottom:22px;">
+          <div class="avatar-big" id="edit-avatar">Y</div>
+          <div>
+            <input type="file" id="avatar-file" accept="image/*" class="hidden">
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('avatar-file').click()">Đổi ảnh đại diện</button>
+            <div class="hint">JPG/PNG, tối đa 2MB. Bạn có thể kéo & phóng to để chỉnh khung tròn.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="edit-name">Họ và tên</label>
+          <input type="text" id="edit-name" maxlength="60">
+          <div class="hint" id="name-limit-hint">Bạn được đổi tên tối đa 3 lần / 30 ngày.</div>
+        </div>
+
+        <div class="field">
+          <label for="edit-phone-main">Số điện thoại chính</label>
+          <input type="tel" id="edit-phone-main" disabled>
+          <div class="hint">SĐT chính không thể đổi. Bạn chỉ có thể thêm SĐT phụ bên dưới.</div>
+        </div>
+
+        <div class="field">
+          <label>Thêm SĐT phụ</label>
+          <div style="display:flex;gap:10px;">
+            <input type="tel" id="add-phone" placeholder="0912 345 678">
+            <button class="btn btn-ghost" type="button" onclick="addExtraPhone()">Thêm</button>
+          </div>
+          <div class="chips" id="chips-phones"></div>
+        </div>
+
+        <div class="field">
+          <label>Thêm Email phụ</label>
+          <div style="display:flex;gap:10px;">
+            <input type="email" id="add-email" placeholder="email@example.com">
+            <button class="btn btn-ghost" type="button" onclick="addExtraEmail()">Thêm</button>
+          </div>
+          <div class="chips" id="chips-emails"></div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn btn-primary" id="btn-save-info" onclick="saveInfo()">Lưu thay đổi</button>
+          <button class="btn btn-ghost" onclick="toggleEdit(false)">Hủy</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ĐỊA CHỈ GIAO HÀNG ===== -->
+    <section class="acct-card">
+      <h2>Địa chỉ giao hàng
+        <button class="btn btn-gold btn-sm" onclick="openAddrForm()">+ Thêm địa chỉ</button>
+      </h2>
+      <div id="addr-list"><p style="color:#9ca3af;font-size:.9rem;">Đang tải...</p></div>
+
+      <div id="addr-form" class="hidden" style="border-top:1px dashed #e5d9c8;padding-top:18px;margin-top:8px;">
+        <div class="row2">
+          <div class="field"><label for="addr-name">Tên người nhận</label><input type="text" id="addr-name"></div>
+          <div class="field"><label for="addr-phone">SĐT người nhận</label><input type="tel" id="addr-phone"></div>
+        </div>
+        <div class="field"><label for="addr-text">Địa chỉ chi tiết</label><textarea id="addr-text" rows="2" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"></textarea></div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:.88rem;color:#5D4037;margin-bottom:14px;cursor:pointer;">
+          <input type="checkbox" id="addr-default" style="width:auto;"> Đặt làm địa chỉ mặc định
+        </label>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-primary" id="btn-save-addr" onclick="saveAddress()">Lưu địa chỉ</button>
+          <button class="btn btn-ghost" onclick="closeAddrForm()">Hủy</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BẢO MẬT ===== -->
+    <section class="acct-card">
+      <h2>Bảo mật</h2>
+      <div class="alert alert-ok" id="pw-ok"></div>
+      <div class="alert alert-err" id="pw-err"></div>
+      <div class="row2">
+        <div class="field"><label for="pw-new">Mật khẩu mới</label><input type="password" id="pw-new" placeholder="Tối thiểu 6 ký tự"></div>
+        <div class="field"><label for="pw-confirm">Nhập lại mật khẩu mới</label><input type="password" id="pw-confirm"></div>
+      </div>
+      <div class="hint" id="pw-hint" style="margin-bottom:14px;color:#9ca3af;font-size:.82rem;"></div>
+      <button class="btn btn-primary" id="btn-change-pw" onclick="changePassword()">Đổi mật khẩu</button>
+    </section>
+  </main>
+
+  <!-- Avatar crop modal -->
+  <div class="modal-backdrop" id="crop-modal">
+    <div class="modal">
+      <h3>Chỉnh ảnh đại diện</h3>
+      <div class="crop-stage" id="crop-stage">
+        <canvas id="crop-canvas" width="280" height="280"></canvas>
+      </div>
+      <input type="range" class="crop-range" id="crop-zoom" min="1" max="3" step="0.01" value="1">
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeCrop()">Hủy</button>
+        <button class="btn btn-primary" id="btn-crop-save" onclick="confirmCrop()">Đăng ảnh</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/site-contact.js"></script>
+  <script src="js/auth-widget.js"></script>
+  <script>
+  var ME = null;        // user
+  var PROFILE = null;   // profiles row
+  var extraPhones = [];
+  var extraEmails = [];
+
+  function fmtPhoneFromEmail(u){ return normalizePhone(u.email.split('@')[0]); }
+  function el(id){ return document.getElementById(id); }
+  function showAlert(id, msg, cls){ var e=el(id); e.textContent=msg; e.className='alert '+cls+' show'; setTimeout(function(){ e.classList.remove('show'); }, 4000); }
+
+  // ─── LOAD ───────────────────────────────────────────────
+  requireAuth('dang-nhap.html').then(function(user){
+    ME = user;
+    return getSupabase().from('profiles').select('*').eq('id', user.id).single();
+  }).then(function(res){
+    PROFILE = res.data || {};
+    extraPhones = (PROFILE.extra_phones || []).slice();
+    extraEmails = (PROFILE.extra_emails || []).slice();
+    renderView();
+    loadAddresses();
+    setupPwHint();
+    el('acct-main').style.opacity = '1';
+  });
+
+  function renderView(){
+    var name = PROFILE.full_name || (ME.user_metadata && ME.user_metadata.full_name) || 'Khách hàng';
+    var isPhone = isPhoneEmail(ME.email);
+    var mainPhone = PROFILE.phone || (isPhone ? fmtPhoneFromEmail(ME) : '');
+    var loginId = isPhone ? ('SĐT: ' + mainPhone) : ('Email: ' + ME.email);
+
+    // avatars
+    var av = el('view-avatar'), ave = el('edit-avatar');
+    if(PROFILE.avatar_url){
+      av.innerHTML = ave.innerHTML = '<img src="'+PROFILE.avatar_url+'" alt="avatar">';
+      av.style.background = ave.style.background = 'none';
+    } else {
+      var g = avatarGradientFor(ME.id);
+      av.textContent = ave.textContent = avatarInitial(name);
+      av.style.background = ave.style.background = g;
+    }
+    el('view-name').textContent = name;
+    el('view-id').textContent = loginId;
+    el('view-phone').textContent = mainPhone || '—';
+    el('view-extra-phones').innerHTML = extraPhones.length ? extraPhones.join('<br>') : '<span class="muted">Chưa có</span>';
+    el('view-extra-emails').innerHTML = extraEmails.length ? extraEmails.join('<br>') : '<span class="muted">Chưa có</span>';
+
+    // edit fields
+    el('edit-name').value = name;
+    el('edit-phone-main').value = mainPhone;
+    renderChips();
+    renderNameLimit();
+  }
+
+  function renderNameLimit(){
+    var log = (PROFILE.name_change_log || []).filter(function(t){
+      return (Date.now() - new Date(t).getTime()) < 30*24*3600*1000;
+    });
+    var left = 3 - log.length;
+    var h = el('name-limit-hint');
+    if(left <= 0){ h.textContent = 'Bạn đã đổi tên 3 lần trong 30 ngày. Tạm thời không thể đổi tên.'; h.className='hint warn'; el('edit-name').disabled = true; }
+    else { h.textContent = 'Bạn còn '+left+' lần đổi tên trong 30 ngày.'; h.className='hint'; el('edit-name').disabled = false; }
+  }
+
+  function renderChips(){
+    el('chips-phones').innerHTML = extraPhones.map(function(p,i){
+      return '<span class="chip">'+p+'<button onclick="removePhone('+i+')" aria-label="Xóa">×</button></span>';
+    }).join('');
+    el('chips-emails').innerHTML = extraEmails.map(function(e,i){
+      return '<span class="chip">'+e+'<button onclick="removeEmail('+i+')" aria-label="Xóa">×</button></span>';
+    }).join('');
+  }
+
+  function toggleEdit(on){
+    el('info-view').classList.toggle('hidden', on);
+    el('info-edit').classList.toggle('hidden', !on);
+    el('btn-edit-info').classList.toggle('hidden', on);
+    if(!on) renderView(); // reset
+  }
+
+  // ─── EXTRA PHONES / EMAILS ──────────────────────────────
+  function addExtraPhone(){
+    var v = el('add-phone').value.trim();
+    if(!isValidPhone(v)){ showAlert('global-err','Số điện thoại không hợp lệ.','alert-err'); return; }
+    var n = normalizePhone(v);
+    if(extraPhones.indexOf(n) === -1) extraPhones.push(n);
+    el('add-phone').value=''; renderChips();
+  }
+  function removePhone(i){ extraPhones.splice(i,1); renderChips(); }
+  function addExtraEmail(){
+    var v = el('add-email').value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){ showAlert('global-err','Email không hợp lệ.','alert-err'); return; }
+    if(extraEmails.indexOf(v) === -1) extraEmails.push(v);
+    el('add-email').value=''; renderChips();
+  }
+  function removeEmail(i){ extraEmails.splice(i,1); renderChips(); }
+
+  // ─── SAVE INFO ──────────────────────────────────────────
+  function saveInfo(){
+    var newName = el('edit-name').value.trim();
+    if(!newName){ showAlert('global-err','Vui lòng nhập họ tên.','alert-err'); return; }
+    var payload = { extra_phones: extraPhones, extra_emails: extraEmails, updated_at: new Date().toISOString() };
+    var oldName = PROFILE.full_name || '';
+    var nameChanged = newName !== oldName;
+
+    if(nameChanged){
+      var log = (PROFILE.name_change_log || []).filter(function(t){ return (Date.now()-new Date(t).getTime()) < 30*24*3600*1000; });
+      if(log.length >= 3){ showAlert('global-err','Bạn đã đổi tên quá 3 lần trong 30 ngày.','alert-err'); return; }
+      payload.full_name = newName;
+      payload.name_change_log = (PROFILE.name_change_log || []).concat([new Date().toISOString()]);
+    }
+
+    el('btn-save-info').disabled = true;
+    getSupabase().from('profiles').update(payload).eq('id', ME.id).then(function(res){
+      el('btn-save-info').disabled = false;
+      if(res.error){ showAlert('global-err','Lỗi lưu: '+res.error.message,'alert-err'); return; }
+      Object.assign(PROFILE, payload);
+      toggleEdit(false);
+      showAlert('global-ok','Đã lưu thông tin thành công!','alert-ok');
+    });
+  }
+
+  // ─── ĐỊA CHỈ ────────────────────────────────────────────
+  var editingAddrId = null;
+  function loadAddresses(){
+    getSupabase().from('addresses').select('*').eq('user_id', ME.id).order('is_default',{ascending:false}).order('created_at',{ascending:false}).then(function(res){
+      var list = res.data || [];
+      var c = el('addr-list');
+      if(!list.length){ c.innerHTML = '<p style="color:#9ca3af;font-size:.9rem;">Chưa có địa chỉ nào. Thêm để đặt hàng nhanh hơn.</p>'; return; }
+      c.innerHTML = list.map(function(a){
+        return '<div class="addr '+(a.is_default?'is-default':'')+'">'+
+          '<div class="addr-top"><span class="addr-name">'+(a.recipient_name||'(Chưa đặt tên)')+ (a.phone?(' · '+a.phone):'') +'</span>'+
+          (a.is_default?'<span class="addr-default-tag">Mặc định</span>':'')+'</div>'+
+          '<div class="addr-text">'+(a.full_address||'')+'</div>'+
+          '<div class="addr-actions">'+
+            (a.is_default?'':'<button class="btn btn-ghost btn-sm" onclick="setDefaultAddr(\''+a.id+'\')">Đặt mặc định</button>')+
+            '<button class="btn btn-ghost btn-sm" onclick="editAddr(\''+a.id+'\')">Sửa</button>'+
+            '<button class="btn btn-danger btn-sm" onclick="deleteAddr(\''+a.id+'\')">Xóa</button>'+
+          '</div></div>';
+      }).join('');
+      window._addrCache = list;
+    });
+  }
+  function openAddrForm(){ editingAddrId=null; el('addr-name').value=''; el('addr-phone').value=''; el('addr-text').value=''; el('addr-default').checked=false; el('addr-form').classList.remove('hidden'); }
+  function closeAddrForm(){ el('addr-form').classList.add('hidden'); }
+  function editAddr(id){
+    var a = (window._addrCache||[]).find(function(x){return x.id===id;});
+    if(!a) return;
+    editingAddrId = id;
+    el('addr-name').value=a.recipient_name||''; el('addr-phone').value=a.phone||''; el('addr-text').value=a.full_address||''; el('addr-default').checked=!!a.is_default;
+    el('addr-form').classList.remove('hidden');
+  }
+  function saveAddress(){
+    var text = el('addr-text').value.trim();
+    if(!text){ showAlert('global-err','Vui lòng nhập địa chỉ chi tiết.','alert-err'); return; }
+    var rec = { user_id: ME.id, recipient_name: el('addr-name').value.trim(), phone: el('addr-phone').value.trim(), full_address: text, is_default: el('addr-default').checked };
+    el('btn-save-addr').disabled = true;
+    var p;
+    if(editingAddrId) p = getSupabase().from('addresses').update(rec).eq('id', editingAddrId);
+    else p = getSupabase().from('addresses').insert(rec);
+    p.then(function(res){
+      el('btn-save-addr').disabled = false;
+      if(res.error){ showAlert('global-err','Lỗi: '+res.error.message,'alert-err'); return; }
+      // nếu đặt mặc định → bỏ mặc định các địa chỉ khác
+      var after = rec.is_default ? unsetOtherDefaults(editingAddrId) : Promise.resolve();
+      after.then(function(){ closeAddrForm(); loadAddresses(); showAlert('global-ok','Đã lưu địa chỉ!','alert-ok'); });
+    });
+  }
+  function unsetOtherDefaults(keepId){
+    var q = getSupabase().from('addresses').update({is_default:false}).eq('user_id', ME.id);
+    if(keepId) q = q.neq('id', keepId);
+    return q;
+  }
+  function setDefaultAddr(id){
+    unsetOtherDefaults(id).then(function(){
+      getSupabase().from('addresses').update({is_default:true}).eq('id', id).then(function(){ loadAddresses(); });
+    });
+  }
+  function deleteAddr(id){
+    if(!confirm('Xóa địa chỉ này?')) return;
+    getSupabase().from('addresses').delete().eq('id', id).then(function(){ loadAddresses(); });
+  }
+
+  // ─── ĐỔI MẬT KHẨU ───────────────────────────────────────
+  function setupPwHint(){
+    if(isPhoneEmail(ME.email)){
+      el('pw-hint').textContent = 'Tài khoản đăng nhập bằng SĐT: mật khẩu đổi trực tiếp tại đây.';
+    } else {
+      el('pw-hint').textContent = 'Sau khi đổi, hệ thống có thể gửi email xác nhận tới ' + ME.email + ' (nếu bật bảo mật nâng cao trong Supabase).';
+    }
+  }
+  function changePassword(){
+    var p1 = el('pw-new').value, p2 = el('pw-confirm').value;
+    if(p1.length < 6){ showAlert('pw-err','Mật khẩu phải có ít nhất 6 ký tự.','alert-err'); return; }
+    if(p1 !== p2){ showAlert('pw-err','Hai mật khẩu không khớp.','alert-err'); return; }
+    el('btn-change-pw').disabled = true;
+    getSupabase().auth.updateUser({ password: p1 }).then(function(res){
+      el('btn-change-pw').disabled = false;
+      if(res.error){ showAlert('pw-err', mapAuthError(res.error.message),'alert-err'); return; }
+      el('pw-new').value=''; el('pw-confirm').value='';
+      showAlert('pw-ok','Đổi mật khẩu thành công!','alert-ok');
+    });
+  }
+
+  // ─── AVATAR CROP ────────────────────────────────────────
+  var cropImg = null, cropScale = 1, cropX = 0, cropY = 0, baseScale = 1;
+  var canvas = el('crop-canvas'), ctx = canvas.getContext('2d');
+  var CANVAS_SIZE = 280;
+
+  el('avatar-file').addEventListener('change', function(e){
+    var f = e.target.files[0];
+    if(!f) return;
+    if(f.size > 2*1024*1024){ showAlert('global-err','Ảnh vượt quá 2MB. Vui lòng chọn ảnh nhỏ hơn.','alert-err'); this.value=''; return; }
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      cropImg = new Image();
+      cropImg.onload = function(){
+        // baseScale: phủ kín khung tròn
+        baseScale = Math.max(CANVAS_SIZE/cropImg.width, CANVAS_SIZE/cropImg.height);
+        cropScale = 1; cropX = 0; cropY = 0;
+        el('crop-zoom').value = 1;
+        drawCrop();
+        el('crop-modal').classList.add('show');
+      };
+      cropImg.src = ev.target.result;
+    };
+    reader.readAsDataURL(f);
+    this.value='';
+  });
+
+  function drawCrop(){
+    if(!cropImg) return;
+    var s = baseScale * cropScale;
+    var w = cropImg.width * s, h = cropImg.height * s;
+    ctx.clearRect(0,0,CANVAS_SIZE,CANVAS_SIZE);
+    ctx.fillStyle='#222'; ctx.fillRect(0,0,CANVAS_SIZE,CANVAS_SIZE);
+    var dx = (CANVAS_SIZE - w)/2 + cropX;
+    var dy = (CANVAS_SIZE - h)/2 + cropY;
+    ctx.drawImage(cropImg, dx, dy, w, h);
+  }
+
+  el('crop-zoom').addEventListener('input', function(){ cropScale = parseFloat(this.value); drawCrop(); });
+
+  // kéo ảnh
+  var dragging=false, lastX=0, lastY=0;
+  var stage = el('crop-stage');
+  function startDrag(x,y){ dragging=true; lastX=x; lastY=y; stage.style.cursor='grabbing'; }
+  function moveDrag(x,y){ if(!dragging) return; cropX += (x-lastX); cropY += (y-lastY); lastX=x; lastY=y; drawCrop(); }
+  function endDrag(){ dragging=false; stage.style.cursor='grab'; }
+  stage.addEventListener('mousedown', function(e){ startDrag(e.clientX,e.clientY); });
+  window.addEventListener('mousemove', function(e){ moveDrag(e.clientX,e.clientY); });
+  window.addEventListener('mouseup', endDrag);
+  stage.addEventListener('touchstart', function(e){ var t=e.touches[0]; startDrag(t.clientX,t.clientY); }, {passive:true});
+  stage.addEventListener('touchmove', function(e){ var t=e.touches[0]; moveDrag(t.clientX,t.clientY); }, {passive:true});
+  stage.addEventListener('touchend', endDrag);
+
+  function closeCrop(){ el('crop-modal').classList.remove('show'); cropImg=null; }
+
+  function confirmCrop(){
+    if(!cropImg) return;
+    // xuất khung 400x400 từ canvas hiện tại (scale lên)
+    var out = document.createElement('canvas'); out.width=400; out.height=400;
+    var octx = out.getContext('2d');
+    var ratio = 400/CANVAS_SIZE;
+    var s = baseScale * cropScale * ratio;
+    var w = cropImg.width*s, h = cropImg.height*s;
+    var dx = (400 - w)/2 + cropX*ratio;
+    var dy = (400 - h)/2 + cropY*ratio;
+    octx.fillStyle='#fff'; octx.fillRect(0,0,400,400);
+    octx.drawImage(cropImg, dx, dy, w, h);
+    out.toBlob(function(blob){
+      uploadAvatar(blob);
+    }, 'image/jpeg', 0.9);
+  }
+
+  function uploadAvatar(blob){
+    el('btn-crop-save').disabled = true;
+    var path = ME.id + '/avatar_' + Date.now() + '.jpg';
+    getSupabase().storage.from('avatars').upload(path, blob, { contentType:'image/jpeg', upsert:true }).then(function(res){
+      if(res.error){ el('btn-crop-save').disabled=false; showAlert('global-err','Tải ảnh thất bại: '+res.error.message+' (Đã tạo bucket "avatars" chưa?)','alert-err'); closeCrop(); return; }
+      var pub = getSupabase().storage.from('avatars').getPublicUrl(path);
+      var url = pub.data.publicUrl;
+      getSupabase().from('profiles').update({ avatar_url: url }).eq('id', ME.id).then(function(r2){
+        el('btn-crop-save').disabled=false;
+        closeCrop();
+        if(r2.error){ showAlert('global-err','Lỗi lưu ảnh: '+r2.error.message,'alert-err'); return; }
+        PROFILE.avatar_url = url;
+        renderView();
+        showAlert('global-ok','Cập nhật ảnh đại diện thành công!','alert-ok');
+      });
+    });
+  }
+  </script>
+</body>
+</html>

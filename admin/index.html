@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Đăng nhập | Admin Yến Duyên</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/security-gate.js"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    body { background: var(--color-cream); display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; }
+    .login-wrap { width:100%; max-width:420px; padding:20px; }
+    .login-logo { text-align:center; margin-bottom:32px; }
+    .login-logo img { height:56px; width:auto; filter:none; }
+    .login-logo-text { font-family:var(--font-heading); font-size:1.1rem; color:var(--color-brand); margin-top:8px; }
+    .login-card {
+      background:#fff;
+      border-radius:12px;
+      padding:40px 36px;
+      box-shadow:0 8px 32px rgba(62,39,35,.12);
+      border:1px solid rgba(212,175,55,.15);
+    }
+    .login-title { font-family:var(--font-heading); font-size:1.5rem; color:var(--color-brand); margin-bottom:6px; }
+    .login-sub { font-size:.875rem; color:#888; margin-bottom:28px; }
+    .form-group { margin-bottom:20px; }
+    .form-label { display:block; font-size:.875rem; font-weight:600; color:#555; margin-bottom:8px; }
+    .form-input {
+      width:100%; padding:12px 14px; border:1.5px solid rgba(0,0,0,.15);
+      border-radius:8px; font-size:.95rem; font-family:var(--font-body);
+      transition:border-color .2s, box-shadow .2s; box-sizing:border-box;
+    }
+    .form-input:focus { outline:none; border-color:var(--color-gold); box-shadow:0 0 0 3px rgba(212,175,55,.12); }
+    .form-input.is-error { border-color:#ef4444; }
+    .form-error { font-size:.8rem; color:#ef4444; margin-top:6px; display:none; }
+    .form-error.is-visible { display:block; }
+    .btn-login {
+      width:100%; padding:14px; background:var(--gradient-brand); color:#fff;
+      border:none; border-radius:8px; font-size:1rem; font-weight:700;
+      cursor:pointer; font-family:var(--font-body); letter-spacing:.03em;
+      transition:opacity .2s, transform .2s; margin-top:4px;
+    }
+    .btn-login:hover { opacity:.9; transform:translateY(-1px); }
+    .btn-login:active { transform:translateY(0); }
+    .btn-login:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+    .alert-error {
+      background:#fee2e2; border:1px solid #fca5a5; border-radius:8px;
+      padding:12px 16px; font-size:.875rem; color:#dc2626; margin-bottom:20px; display:none;
+    }
+    .alert-error.is-visible { display:block; }
+    .captcha-gate {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      font-size: .8rem;
+      color: #92400e;
+      line-height: 1.6;
+    }
+    .captcha-gate .cf-turnstile { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-logo">
+      <img src="../images/logo/logo.png" alt="Yến Sào Yến Duyên">
+      <p class="login-logo-text">Quản Trị Viên</p>
+    </div>
+    <div class="login-card">
+      <h1 class="login-title">Đăng nhập</h1>
+      <p class="login-sub">Trang quản trị nội bộ Yến Sào Yến Duyên</p>
+
+      <div class="alert-error" id="alert-error">Email hoặc mật khẩu không đúng. Vui lòng thử lại.</div>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="admin@yenduyen.vn" autocomplete="username" required>
+          <p class="form-error" id="email-error">Vui lòng nhập email hợp lệ.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Mật khẩu</label>
+          <input class="form-input" type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+          <p class="form-error" id="password-error">Vui lòng nhập mật khẩu.</p>
+        </div>
+        <button type="submit" class="btn-login" id="btn-login">Đăng nhập</button>
+      </form>
+
+      <div class="captcha-gate" id="login-captcha-gate" hidden>
+        <span id="login-captcha-note">Bạn đã nhập sai nhiều lần liên tiếp. Vui lòng xác minh để tiếp tục.</span>
+        <div id="login-turnstile" class="cf-turnstile"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  function setAdminFlag(user){
+    localStorage.setItem('yen-duyen-admin', JSON.stringify({
+      email: user.email, name: 'Admin Yến Duyên',
+      token: 'yd-' + user.id, loginAt: new Date().toISOString()
+    }));
+  }
+  function isAdminRole(userId){
+    return getSupabase().from('profiles').select('role').eq('id', userId).single()
+      .then(function(r){ return !!(r.data && r.data.role === 'admin'); });
+  }
+
+  // ─── XÁC MINH BỔ SUNG SAU NHIỀU LẦN ĐĂNG NHẬP SAI ────────
+  // Chỉ hiện lên khi Supabase (rate-limit thật, xem sql/security-rate-limit.sql)
+  // báo đã vượt ngưỡng — đăng nhập đúng ngay từ đầu sẽ không bao giờ thấy khối này.
+  var TURNSTILE_SITE_KEY = ''; // dán Site Key thật (Cloudflare Turnstile) vào đây sau khi tạo
+  var _turnstileRendered = false;
+  function showLoginCaptchaGate(){
+    var gate = document.getElementById('login-captcha-gate');
+    var btnLogin = document.getElementById('btn-login');
+    if(!gate) return;
+    gate.hidden = false;
+    if(TURNSTILE_SITE_KEY && window.turnstile && !_turnstileRendered){
+      _turnstileRendered = true;
+      if(btnLogin) btnLogin.disabled = true;
+      window.turnstile.render('#login-turnstile', {
+        sitekey: TURNSTILE_SITE_KEY,
+        callback: function(){
+          document.getElementById('login-captcha-note').textContent = 'Đã xác minh — mời bạn đăng nhập lại.';
+          if(btnLogin) btnLogin.disabled = false;
+        }
+      });
+    }
+  }
+
+  // Nếu đã đăng nhập sẵn (và là admin) → vào dashboard
+  getCurrentUser().then(function(u){
+    if(!u) return;
+    isAdminRole(u.id).then(function(ok){ if(ok){ setAdminFlag(u); window.location.replace('dashboard.html'); } });
+  });
+
+  document.getElementById('login-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = document.getElementById('email').value.trim();
+    var password = document.getElementById('password').value;
+    var valid = true;
+
+    document.getElementById('alert-error').classList.remove('is-visible');
+    document.getElementById('email-error').classList.remove('is-visible');
+    document.getElementById('email').classList.remove('is-error');
+    document.getElementById('password-error').classList.remove('is-visible');
+    document.getElementById('password').classList.remove('is-error');
+
+    if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      document.getElementById('email-error').classList.add('is-visible');
+      document.getElementById('email').classList.add('is-error');
+      valid = false;
+    }
+    if(!password){
+      document.getElementById('password-error').classList.add('is-visible');
+      document.getElementById('password').classList.add('is-error');
+      valid = false;
+    }
+    if(!valid) return;
+
+    var btn = document.getElementById('btn-login');
+    btn.disabled = true;
+    btn.textContent = 'Đang đăng nhập...';
+
+    function fail(msg){
+      var a = document.getElementById('alert-error');
+      a.textContent = msg; a.classList.add('is-visible');
+      btn.disabled = false; btn.textContent = 'Đăng nhập';
+      if(typeof SecurityGate !== 'undefined'){
+        SecurityGate.check('login_fail', email.toLowerCase()).then(function(ok){
+          if(!ok) showLoginCaptchaGate();
+        });
+      }
+    }
+
+    getSupabase().auth.signInWithPassword({ email: email, password: password }).then(function(res){
+      if(res.error){ fail('Email hoặc mật khẩu không đúng. Vui lòng thử lại.'); return; }
+      // Kiểm tra quyền admin
+      isAdminRole(res.data.user.id).then(function(ok){
+        if(!ok){
+          getSupabase().auth.signOut();
+          fail('Tài khoản này không có quyền quản trị.');
+          return;
+        }
+        setAdminFlag(res.data.user);
+        window.location.replace('dashboard.html');
+      });
+    });
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,484 @@
+/* ==============================================
+   PRINT.CSS — Print Styles
+   Yến Sào Yến Duyên
+   ============================================== */
+
+@media print {
+
+  /* ==============================================
+     1. PAGE SETUP
+     ============================================== */
+
+  @page {
+    size: A4 portrait;
+    margin: 18mm 15mm 18mm 15mm;
+  }
+
+  @page :first {
+    margin-top: 12mm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: auto;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  /* ==============================================
+     2. HIDE NON-PRINT ELEMENTS
+     ============================================== */
+
+  .site-header,
+  .site-footer,
+  .hero,
+  .trust-badges,
+  .why-us,
+  .testimonials,
+  .newsletter,
+  .floating-cta,
+  .back-to-top,
+  .cart-drawer,
+  .toast-container,
+  nav,
+  .mobile-nav,
+  .menu-toggle,
+  .skip-link,
+  .hero-scroll,
+  .category-tabs,
+  .btn-add-cart,
+  .product-card__overlay,
+  video,
+  iframe:not(.print-include),
+  .admin-sidebar,
+  .admin-topbar,
+  .admin-toolbar,
+  .admin-pagination,
+  .admin-modal-overlay,
+  .no-print {
+    display: none !important;
+  }
+
+  /* ==============================================
+     3. LINKS
+     ============================================== */
+
+  a {
+    color: #000 !important;
+    text-decoration: none !important;
+  }
+
+  /* Show full URL for external links */
+  a[href^="http"]::after,
+  a[href^="https"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    color: #666;
+    font-style: italic;
+  }
+
+  a[href^="tel"]::after,
+  a[href^="mailto"]::after,
+  a[href^="#"]::after,
+  a[href^="/"]::after {
+    content: none;
+  }
+
+  /* ==============================================
+     4. TYPOGRAPHY
+     ============================================== */
+
+  h1 { font-size: 22pt; page-break-after: avoid; }
+  h2 { font-size: 16pt; page-break-after: avoid; }
+  h3 { font-size: 13pt; page-break-after: avoid; }
+  h4 { font-size: 11pt; page-break-after: avoid; }
+
+  p, li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Avoid page breaks inside these elements */
+  blockquote,
+  pre,
+  figure,
+  table,
+  .admin-card,
+  .product-card,
+  .order-item-row {
+    page-break-inside: avoid;
+  }
+
+  /* ==============================================
+     5. IMAGES
+     ============================================== */
+
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid;
+  }
+
+  /* ==============================================
+     6. ORDER INVOICE (dat-hang.html / admin orders)
+     ============================================== */
+
+  .print-invoice {
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .print-invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2pt solid #3E2723;
+    padding-bottom: 8mm;
+    margin-bottom: 8mm;
+  }
+
+  .print-invoice-header__brand {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .print-invoice-header__brand-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 18pt;
+    font-weight: 700;
+    color: #3E2723 !important;
+    letter-spacing: 0.05em;
+  }
+
+  .print-invoice-header__brand-sub {
+    font-size: 9pt;
+    color: #666;
+    margin-top: 2pt;
+  }
+
+  .print-invoice-header__brand-contact {
+    font-size: 9pt;
+    color: #444;
+    margin-top: 4pt;
+    line-height: 1.6;
+  }
+
+  .print-invoice-header__meta {
+    text-align: right;
+  }
+
+  .print-invoice-header__meta h2 {
+    font-size: 20pt;
+    font-weight: 700;
+    color: #8B0000 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4pt;
+  }
+
+  .print-invoice-header__meta p {
+    font-size: 9pt;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  /* Customer & order info grid */
+  .print-invoice-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8mm;
+    margin-bottom: 8mm;
+  }
+
+  .print-invoice-info-box {
+    background: #faf6f1 !important;
+    border: 1pt solid #d4af37;
+    border-radius: 3pt;
+    padding: 4mm 5mm;
+  }
+
+  .print-invoice-info-box__title {
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8B0000 !important;
+    margin-bottom: 3pt;
+    padding-bottom: 3pt;
+    border-bottom: 1pt solid #e5e7eb;
+  }
+
+  .print-invoice-info-box p {
+    font-size: 10pt;
+    margin-bottom: 2pt;
+    color: #222;
+  }
+
+  .print-invoice-info-box strong {
+    color: #000;
+  }
+
+  /* Items table */
+  .print-invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 6mm;
+    font-size: 10pt;
+  }
+
+  .print-invoice-table thead tr {
+    background: #3E2723 !important;
+    color: #fff !important;
+  }
+
+  .print-invoice-table th {
+    padding: 3mm 4mm;
+    text-align: left;
+    font-weight: 700;
+    font-size: 9pt;
+    letter-spacing: 0.05em;
+  }
+
+  .print-invoice-table th:last-child,
+  .print-invoice-table td:last-child {
+    text-align: right;
+  }
+
+  .print-invoice-table th:nth-child(2),
+  .print-invoice-table td:nth-child(2) {
+    text-align: center;
+  }
+
+  .print-invoice-table tbody tr {
+    border-bottom: 0.5pt solid #e5e7eb;
+  }
+
+  .print-invoice-table tbody tr:nth-child(even) {
+    background: #faf6f1 !important;
+  }
+
+  .print-invoice-table td {
+    padding: 3mm 4mm;
+    color: #222;
+  }
+
+  .print-invoice-table td:first-child {
+    font-weight: 600;
+  }
+
+  /* Totals */
+  .print-invoice-totals {
+    width: 55%;
+    margin-left: auto;
+    margin-bottom: 8mm;
+  }
+
+  .print-invoice-totals table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10pt;
+  }
+
+  .print-invoice-totals td {
+    padding: 2mm 3mm;
+    color: #444;
+  }
+
+  .print-invoice-totals td:last-child {
+    text-align: right;
+    font-weight: 600;
+    color: #222;
+  }
+
+  .print-invoice-totals tr.total-row td {
+    border-top: 1.5pt solid #3E2723;
+    font-weight: 700;
+    font-size: 12pt;
+    color: #000 !important;
+    padding-top: 3mm;
+  }
+
+  .print-invoice-totals tr.total-row td:last-child {
+    color: #8B0000 !important;
+  }
+
+  /* Notes & footer */
+  .print-invoice-notes {
+    border-top: 1pt solid #e5e7eb;
+    padding-top: 5mm;
+    margin-bottom: 6mm;
+    font-size: 9pt;
+    color: #666;
+  }
+
+  .print-invoice-notes strong {
+    color: #000;
+  }
+
+  .print-invoice-footer {
+    text-align: center;
+    font-size: 9pt;
+    color: #666;
+    border-top: 0.5pt solid #e5e7eb;
+    padding-top: 4mm;
+  }
+
+  .print-invoice-footer p + p {
+    margin-top: 2pt;
+  }
+
+  .print-invoice-stamp {
+    position: relative;
+    display: inline-block;
+    width: 36mm;
+    height: 36mm;
+    border: 2pt solid #3E2723;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4mm;
+    margin: 4mm auto 0;
+    color: #3E2723 !important;
+  }
+
+  .print-invoice-stamp span {
+    font-size: 7pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #3E2723 !important;
+    line-height: 1.4;
+  }
+
+  /* ==============================================
+     7. PRODUCT PAGE (san-pham.html) PRINT
+     ============================================== */
+
+  .product-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8mm;
+    page-break-inside: avoid;
+  }
+
+  .product-detail__gallery {
+    page-break-inside: avoid;
+  }
+
+  .product-detail__gallery img {
+    width: 100%;
+    border: 1pt solid #e5e7eb;
+  }
+
+  .product-tabs .tab-nav,
+  .product-detail .btn-add-cart,
+  .product-detail .btn-buy-now,
+  .product-detail .product-share {
+    display: none !important;
+  }
+
+  /* ==============================================
+     8. CART / ORDER SUMMARY PRINT
+     ============================================== */
+
+  .cart-layout {
+    display: block !important;
+  }
+
+  .cart-summary {
+    position: static !important;
+    margin-top: 6mm;
+    border: 1pt solid #e5e7eb;
+    padding: 4mm !important;
+  }
+
+  .cart-actions,
+  .voucher-section,
+  .cart-summary__cta {
+    display: none !important;
+  }
+
+  /* ==============================================
+     9. ADMIN PRINT (order details, reports)
+     ============================================== */
+
+  .admin-main {
+    display: block !important;
+    padding: 0 !important;
+    grid-column: 1 / -1 !important;
+  }
+
+  .admin-order-meta {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 4mm !important;
+  }
+
+  .admin-order-meta-item {
+    border: 1pt solid #e5e7eb !important;
+    padding: 3mm !important;
+  }
+
+  .admin-table {
+    font-size: 9pt !important;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 2mm 3mm !important;
+  }
+
+  .status-badge {
+    border: 1pt solid currentColor !important;
+    background: transparent !important;
+  }
+
+  /* ==============================================
+     10. UTILITY CLASSES
+     ============================================== */
+
+  .print-only {
+    display: block !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-break-before {
+    page-break-before: always;
+  }
+
+  .print-break-after {
+    page-break-after: always;
+  }
+
+  .print-no-break {
+    page-break-inside: avoid;
+  }
+
+  .print-center {
+    text-align: center !important;
+  }
+
+  /* Default hide print-only elements on screen */
+}
+
+/* Hide print-only elements on screen */
+.print-only {
+  display: none;
+}

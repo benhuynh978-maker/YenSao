@@ -1,0 +1,27 @@
+# Secrets — KHÔNG BAO GIỜ commit
+testAI/.env
+.env
+.env.local
+*.env
+!*.env.example
+
+# Node
+node_modules/
+
+# Tài liệu/nháp/backup nội bộ — không phục vụ build website, không push công khai
+_backup-mau-cu/
+thiet-ke-moi/
+Mistake/
+SEO/
+khác/
+shoppe/
+task/
+thông báo/
+.claude/
+PLAN.md
+SETUP-DATABASE.sql
+SETUP-HUONG-DAN.md
+
+# OS
+Thumbs.db
+.DS_Store

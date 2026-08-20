@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Quản lý Blog | Admin Yến Duyên</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/admin-notifications.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/security-gate.js"></script>
+  <script src="../js/admin-notifications.js"></script>
+  <style>
+    table { width:100%; border-collapse:collapse; font-size:.875rem; }
+    thead th { padding:10px 14px; background:#f9fafb; font-weight:600; color:#374151; text-align:left; border-bottom:1px solid #e5e7eb; white-space:nowrap; }
+    tbody td { padding:14px; border-bottom:1px solid #f3f4f6; color:#374151; vertical-align:middle; }
+    tbody tr:hover { background:#fafafa; }
+    .blog-thumb { width:72px; height:54px; border-radius:6px; object-fit:cover; background:#f3f4f6; }
+    .blog-title { font-weight:600; color:#111827; }
+    .blog-excerpt { font-size:.8rem; color:#6b7280; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:280px; }
+    .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:700; }
+    .badge--pub { background:#dcfce7; color:#166534; }
+    .badge--draft { background:#f3f4f6; color:#6b7280; }
+    .badge--cat { background:#dbeafe; color:#1d4ed8; }
+    .action-btns { display:flex; gap:6px; }
+    .action-btn { padding:5px 10px; border-radius:6px; font-size:.78rem; font-weight:600; cursor:pointer; border:1px solid; transition:all .2s; }
+    .action-btn--edit { border-color:#e5e7eb; color:#374151; background:#fff; }
+    .action-btn--edit:hover { background:#f3f4f6; }
+    .action-btn--del { border-color:#fee2e2; color:#dc2626; background:#fff; }
+    .action-btn--del:hover { background:#ef4444; color:#fff; border-color:#ef4444; }
+    .filter-bar { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+    .filter-search { position:relative; flex:1; min-width:200px; }
+    .filter-search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#9ca3af; }
+    .filter-search input { width:100%; padding:9px 12px 9px 36px; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; outline:none; box-sizing:border-box; }
+    .filter-select { padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; background:#fff; }
+    .pagination { display:flex; gap:4px; align-items:center; justify-content:center; margin-top:24px; }
+    .pagination a, .pagination span {
+      width:36px; height:36px; border-radius:8px; display:flex; align-items:center;
+      justify-content:center; font-size:.875rem; text-decoration:none; border:1px solid #e5e7eb;
+      color:#374151; transition:all .2s;
+    }
+    .pagination a:hover { border-color:var(--color-brand); color:var(--color-brand); }
+    .pagination span.is-active { background:none; color:#374151; border:none; width:auto; padding:0 8px; font-weight:600; }
+    .pagination a.is-disabled { opacity:.4; pointer-events:none; }
+
+    /* Write modal */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto; }
+    .modal-overlay.is-open { display:flex; }
+    .modal { background:#fff; border-radius:12px; width:100%; max-width:700px; margin:auto; }
+    .modal-header { padding:20px 24px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#fff; z-index:1; border-radius:12px 12px 0 0; }
+    .modal-title { font-weight:700; color:#111827; }
+    .modal-close { width:32px; height:32px; border:none; background:#f3f4f6; border-radius:6px; cursor:pointer; font-size:1.1rem; }
+    .modal-body { padding:24px; }
+    .form-group { margin-bottom:16px; }
+    .form-label { display:block; font-size:.8rem; font-weight:600; color:#555; margin-bottom:6px; }
+    .form-control { width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; outline:none; box-sizing:border-box; transition:border-color .2s; font-family:var(--font-body); }
+    .form-control:focus { border-color:var(--color-brand); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .editor-area { min-height:200px; }
+    .modal-footer { padding:16px 24px; border-top:1px solid #e5e7eb; display:flex; gap:10px; justify-content:flex-end; }
+    .seo-box { background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:16px; margin-top:16px; }
+    .seo-box h4 { font-size:.875rem; font-weight:700; color:#374151; margin-bottom:12px; }
+
+    .img-drop { border:2px dashed #d1d5db; border-radius:10px; padding:18px; text-align:center; cursor:pointer; transition:all .2s; background:#fafafa; }
+    .img-drop:hover, .img-drop.is-dragover { border-color:var(--color-brand); background:#fff7ed; }
+    .img-drop__ph { color:#9ca3af; font-size:.85rem; display:flex; flex-direction:column; align-items:center; gap:6px; }
+    .img-drop__ph strong { color:var(--color-brand); }
+    .img-drop__preview { max-width:100%; max-height:170px; border-radius:8px; object-fit:contain; }
+    .img-drop__clear { margin-top:8px; background:none; border:1px solid #e5e7eb; border-radius:6px; padding:5px 12px; font-size:.78rem; cursor:pointer; color:#6b7280; }
+
+    .editor-toolbar { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+    .tb-btn { padding:6px 12px; border:1px solid #e5e7eb; border-radius:6px; background:#fff; font-size:.78rem; font-weight:600; color:#374151; cursor:pointer; transition:all .15s; }
+    .tb-btn:hover { background:var(--color-brand); color:#fff; border-color:var(--color-brand); }
+  </style>
+</head>
+<body class="admin-body">
+<div class="admin-wrapper" id="admin-wrapper">
+
+  <aside class="admin-sidebar">
+    <a href="dashboard.html" class="admin-sidebar__logo">
+      <div class="admin-sidebar__logo-mark">YD</div>
+      <div class="admin-sidebar__logo-text"><strong>Yến Duyên</strong><span>Admin Panel</span></div>
+    </a>
+    <nav class="admin-sidebar__nav">
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Tổng quan</p>
+        <a href="dashboard.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+        <a href="thong-bao.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span>Thông báo</span></a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Kinh doanh</p>
+        <a href="don-hang.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg><span>Đơn hàng</span></a>
+        <a href="san-pham.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>Sản phẩm</span></a>
+        <a href="voucher.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>Voucher</span></a>
+        <a href="flash-sale.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span>Flash Sale</span></a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Nội dung</p>
+        <a href="blog.html" class="admin-nav-link is-active" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Blog</span></a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Khách hàng</p>
+        <a href="khach-hang.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Khách hàng</span></a>
+        <a href="phan-hoi.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Phản hồi</span></a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Hệ thống</p>
+        <a href="sao-luu.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Sao lưu dữ liệu</span></a><a href="cai-dat.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg><span>Cài đặt</span></a>
+      </div>
+    </nav>
+    <div class="admin-sidebar__footer">
+      <button onclick="logout()" class="admin-nav-link" style="width:100%;background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:.875rem;text-align:left;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Đăng xuất</span></button>
+    </div>
+  </aside>
+
+  <header class="admin-topbar">
+    <div class="admin-topbar__left">
+      <button class="admin-sidebar-toggle" id="sidebar-toggle" aria-label="Thu/mở sidebar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <span class="admin-topbar__title">Quản lý Blog</span>
+    </div>
+    <div class="admin-topbar__right">
+      <button class="admin-btn admin-btn--primary" onclick="openAddModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Viết bài mới
+      </button>
+      <div class="admin-user-menu">
+        <div class="admin-user-avatar" id="user-avatar">A</div>
+        <span class="admin-user-name" id="user-name">Admin</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-page-header">
+      <div>
+        <h1 class="admin-page-title">Blog & Cẩm nang</h1>
+        <p class="admin-page-sub" id="page-sub">Đang tải…</p>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="search-input" placeholder="Tìm bài viết..." aria-label="Tìm bài viết" oninput="applyFilters()">
+      </div>
+      <select class="filter-select" id="filter-topic" onchange="applyFilters()">
+        <option value="">Tất cả chủ đề</option>
+        <option value="Sức khoẻ">Sức khoẻ</option>
+        <option value="Ẩm thực">Ẩm thực</option>
+        <option value="Quà tặng">Quà tặng</option>
+        <option value="Kiến thức">Kiến thức</option>
+      </select>
+      <select class="filter-select" id="filter-status" onchange="applyFilters()">
+        <option value="">Tất cả trạng thái</option>
+        <option value="true">Đã xuất bản</option>
+        <option value="false">Nháp</option>
+      </select>
+    </div>
+
+    <div class="admin-card">
+      <div style="overflow-x:auto;">
+        <table aria-label="Danh sách bài viết">
+          <thead>
+            <tr>
+              <th>Ảnh</th>
+              <th>Tiêu đề</th>
+              <th>Chủ đề</th>
+              <th>Ngày tạo</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="blog-body">
+            <tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Đang tải bài viết…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="blog-pagination" aria-label="Điều hướng trang"></div>
+    </div>
+  </main>
+</div>
+
+<!-- Write/Edit modal -->
+<div class="modal-overlay" id="write-modal" role="dialog" aria-modal="true" aria-label="Viết bài">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title-text">Viết bài mới</span>
+      <button class="modal-close" onclick="closeModal()" aria-label="Đóng">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tiêu đề bài viết *</label>
+        <input class="form-control" type="text" id="f-title" placeholder="Nhập tiêu đề bài viết...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Chủ đề</label>
+          <select class="form-control" id="f-topic">
+            <option value="Sức khoẻ">Sức khoẻ</option>
+            <option value="Ẩm thực">Ẩm thực</option>
+            <option value="Quà tặng">Quà tặng</option>
+            <option value="Kiến thức">Kiến thức</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Trạng thái</label>
+          <select class="form-control" id="f-status">
+            <option value="false">Nháp</option>
+            <option value="true">Xuất bản</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.85rem;font-weight:600;color:#374151;">
+          <input type="checkbox" id="f-featured" style="width:16px;height:16px;cursor:pointer;">
+          Đánh dấu nổi bật (hiện trong carousel đầu trang Cẩm nang)
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Đoạn trích (excerpt)</label>
+        <textarea class="form-control" rows="2" id="f-excerpt" placeholder="Mô tả ngắn xuất hiện trên trang danh sách..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nội dung bài viết</label>
+        <div class="editor-toolbar" id="editor-toolbar">
+          <button type="button" class="tb-btn" data-fmt="h2">Tiêu đề lớn</button>
+          <button type="button" class="tb-btn" data-fmt="h3">Tiêu đề nhỏ</button>
+          <button type="button" class="tb-btn" data-fmt="bold"><strong>In đậm</strong></button>
+          <button type="button" class="tb-btn" data-fmt="quote">Trích dẫn</button>
+          <button type="button" class="tb-btn" data-fmt="highlight">Khung nổi bật</button>
+          <button type="button" class="tb-btn" data-fmt="list">Danh sách</button>
+          <button type="button" class="tb-btn" data-fmt="numbered">Tiêu đề có số</button>
+        </div>
+        <textarea class="form-control editor-area" rows="8" id="f-content" placeholder="Viết nội dung ở đây, hoặc bôi đen 1 đoạn rồi bấm nút định dạng bên trên..."></textarea>
+        <small style="color:#9ca3af;">Mẹo: bôi đen (kéo chọn) đoạn chữ muốn định dạng rồi bấm nút tương ứng ở trên. Không bôi đen gì thì bấm nút sẽ chèn đoạn mẫu trống vào vị trí con trỏ.</small>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ảnh đại diện</label>
+        <input type="file" id="f-cover-file" accept="image/*" hidden>
+        <div id="f-cover-drop" class="img-drop">
+          <img id="f-cover-preview" class="img-drop__preview" alt="Xem trước ảnh" hidden>
+          <div id="f-cover-placeholder" class="img-drop__ph">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <p style="margin:0;">Kéo ảnh vào đây hoặc <strong>bấm để chọn ảnh</strong> từ máy</p>
+            <small>Chỉ nhận file ảnh · tối đa 5MB</small>
+          </div>
+        </div>
+        <button type="button" id="f-cover-clear" class="img-drop__clear" hidden>Bỏ ảnh đã chọn</button>
+      </div>
+      <div class="seo-box">
+        <h4>SEO Meta</h4>
+        <div class="form-group">
+          <label class="form-label">Meta title</label>
+          <input class="form-control" type="text" id="f-meta-title" placeholder="Tiêu đề SEO (50–60 ký tự)">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">Meta description</label>
+          <textarea class="form-control" rows="2" id="f-meta-desc" placeholder="Mô tả SEO (150–160 ký tự)"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="admin-btn admin-btn--outline" onclick="closeModal()">Hủy</button>
+      <button class="admin-btn admin-btn--primary" id="save-btn" onclick="saveBlog()">Lưu bài viết</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('sidebar-toggle').addEventListener('click', function(){ document.getElementById('admin-wrapper').classList.toggle('sidebar-collapsed'); });
+function logout(){ getSupabase().auth.signOut().then(function(){ localStorage.removeItem('yen-duyen-admin'); window.location.replace('index.html'); }); }
+
+// Xác thực admin thật bằng Supabase (chống giả mạo localStorage), rồi tải bài viết
+SecurityGate.requireAdmin().then(function(){
+  var session = JSON.parse(localStorage.getItem('yen-duyen-admin') || 'null');
+  if(session){ document.getElementById('user-name').textContent = session.name||'Admin'; document.getElementById('user-avatar').textContent = (session.name||'A')[0]; }
+  loadPosts(1);
+});
+
+var allPosts = [];
+var editingId = null;
+
+function fmtDate(iso){ if(!iso) return '—'; return new Date(iso).toLocaleDateString('vi-VN'); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ─── TẢI BÀI VIẾT TỪ SUPABASE ──────────────────────────────
+var PAGE_SIZE = 20;
+var currentPage = 1;
+var totalCount = 0;
+var searchDebounceTimer = null;
+
+function buildPostsQuery(){
+  var q = (document.getElementById('search-input').value || '').trim().replace(/[,()%*]/g, '');
+  var topic = document.getElementById('filter-topic').value;
+  var status = document.getElementById('filter-status').value;
+
+  var query = getSupabase().from('blog_posts').select('*', { count: 'exact' });
+  if(q) query = query.ilike('title', '%'+q+'%');
+  if(topic) query = query.eq('topic', topic);
+  if(status !== '') query = query.eq('is_published', status === 'true');
+  return query.order('created_at', { ascending: false });
+}
+
+function loadPosts(page){
+  currentPage = page || 1;
+  var from = (currentPage - 1) * PAGE_SIZE;
+  var to = from + PAGE_SIZE - 1;
+  buildPostsQuery().range(from, to).then(function(res){
+    if(res.error){
+      document.getElementById('blog-body').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#dc2626;">Lỗi tải bài viết: '+res.error.message+'</td></tr>';
+      return;
+    }
+    allPosts = res.data || [];
+    totalCount = res.count || 0;
+    renderPosts(allPosts);
+    renderPagination();
+  });
+}
+
+// Gõ tìm kiếm/đổi bộ lọc → về trang 1, debounce 300ms cho ô tìm kiếm.
+function applyFilters(){
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(function(){ loadPosts(1); }, 300);
+}
+
+function renderPagination(){
+  var wrap = document.getElementById('blog-pagination');
+  if(!wrap) return;
+  var totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  var prevDisabled = currentPage <= 1;
+  var nextDisabled = currentPage >= totalPages;
+  wrap.innerHTML =
+      '<a href="#" id="blog-page-prev" class="'+(prevDisabled?'is-disabled':'')+'" aria-label="Trang trước">‹</a>'
+    + '<span class="is-active">Trang '+currentPage+'/'+totalPages+'</span>'
+    + '<a href="#" id="blog-page-next" class="'+(nextDisabled?'is-disabled':'')+'" aria-label="Trang sau">›</a>';
+  var prevEl = document.getElementById('blog-page-prev');
+  var nextEl = document.getElementById('blog-page-next');
+  if(prevEl) prevEl.addEventListener('click', function(e){ e.preventDefault(); if(!prevDisabled) loadPosts(currentPage - 1); });
+  if(nextEl) nextEl.addEventListener('click', function(e){ e.preventDefault(); if(!nextDisabled) loadPosts(currentPage + 1); });
+}
+
+function renderPosts(list){
+  var tbody = document.getElementById('blog-body');
+  var pubCount = list.filter(function(p){ return p.is_published; }).length;
+  document.getElementById('page-sub').textContent = totalCount + ' bài viết · ' + pubCount + ' đã xuất bản trang này · ' + (list.length - pubCount) + ' nháp trang này';
+  if(!list.length){
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Không có bài viết nào khớp.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(function(p){
+    var statusBadge = p.is_published ? '<span class="badge badge--pub">Xuất bản</span>' : '<span class="badge badge--draft">Nháp</span>';
+    var topicBadge = p.topic ? '<span class="badge badge--cat">'+esc(p.topic)+'</span>' : '—';
+    return '<tr>'
+      + '<td><img src="'+esc(p.cover_image||'')+'" class="blog-thumb" alt=""></td>'
+      + '<td><p class="blog-title">'+esc(p.title)+'</p><p class="blog-excerpt">'+esc(p.excerpt||'')+'</p></td>'
+      + '<td>'+topicBadge+'</td>'
+      + '<td>'+fmtDate(p.created_at)+'</td>'
+      + '<td>'+statusBadge+'</td>'
+      + '<td><div class="action-btns"><button class="action-btn action-btn--edit" onclick="openEditModal(\''+p.id+'\')">Sửa</button><button class="action-btn action-btn--del" onclick="deleteBlog(\''+p.id+'\')">Xóa</button></div></td>'
+      + '</tr>';
+  }).join('');
+}
+
+// ─── MODAL: THÊM / SỬA ───────────────────────────────────────
+function openAddModal(){
+  editingId = null;
+  document.getElementById('modal-title-text').textContent = 'Viết bài mới';
+  document.getElementById('save-btn').textContent = 'Lưu bài viết';
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-topic').selectedIndex = 0;
+  document.getElementById('f-status').value = 'false';
+  document.getElementById('f-featured').checked = false;
+  document.getElementById('f-excerpt').value = '';
+  document.getElementById('f-content').value = '';
+  document.getElementById('f-meta-title').value = '';
+  document.getElementById('f-meta-desc').value = '';
+  resetCoverImage();
+  openModalEl();
+}
+function openEditModal(id){
+  var p = allPosts.find(function(x){ return x.id === id; });
+  if(!p) return;
+  editingId = id;
+  document.getElementById('modal-title-text').textContent = 'Chỉnh sửa bài viết';
+  document.getElementById('save-btn').textContent = 'Lưu thay đổi';
+  document.getElementById('f-title').value = p.title || '';
+  document.getElementById('f-topic').value = p.topic || 'Sức khoẻ';
+  document.getElementById('f-status').value = p.is_published ? 'true' : 'false';
+  document.getElementById('f-featured').checked = !!p.is_featured;
+  document.getElementById('f-excerpt').value = p.excerpt || '';
+  document.getElementById('f-content').value = p.content || '';
+  document.getElementById('f-meta-title').value = p.meta_title || '';
+  document.getElementById('f-meta-desc').value = p.meta_description || '';
+  setCoverPreview(p.cover_image || '');
+  openModalEl();
+}
+function openModalEl(){
+  document.getElementById('write-modal').classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){ document.getElementById('write-modal').classList.remove('is-open'); document.body.style.overflow = ''; }
+
+// ─── ẢNH ĐẠI DIỆN: kéo-thả / chọn từ máy (CHỈ upload khi bấm Lưu) ──
+var pendingCoverFile = null;  // ảnh mới đang chờ (chưa upload)
+var currentCoverUrl  = '';    // ảnh hiện có (khi sửa, nếu không đổi ảnh)
+
+function setCoverPreview(url){
+  currentCoverUrl = url || '';
+  pendingCoverFile = null;
+  var prev = document.getElementById('f-cover-preview');
+  var ph   = document.getElementById('f-cover-placeholder');
+  var clr  = document.getElementById('f-cover-clear');
+  if(url){ prev.src = url; prev.hidden = false; ph.hidden = true; clr.hidden = false; }
+  else { prev.removeAttribute('src'); prev.hidden = true; ph.hidden = false; clr.hidden = true; }
+}
+function resetCoverImage(){ setCoverPreview(''); }
+
+function pickCoverImage(file){
+  if(!file) return;
+  if(!/^image\//.test(file.type)){ alert('Vui lòng chọn đúng file ảnh.'); return; }
+  if(file.size > 5 * 1024 * 1024){ alert('Ảnh quá lớn (tối đa 5MB). Vui lòng chọn ảnh nhỏ hơn.'); return; }
+  pendingCoverFile = file;
+  var prev = document.getElementById('f-cover-preview');
+  var ph   = document.getElementById('f-cover-placeholder');
+  var clr  = document.getElementById('f-cover-clear');
+  prev.src = URL.createObjectURL(file);
+  prev.hidden = false; ph.hidden = true; clr.hidden = false;
+}
+
+(function(){
+  var drop = document.getElementById('f-cover-drop');
+  var fileInput = document.getElementById('f-cover-file');
+  var clr = document.getElementById('f-cover-clear');
+  if(!drop) return;
+  drop.addEventListener('click', function(){ fileInput.click(); });
+  fileInput.addEventListener('change', function(){ if(fileInput.files[0]) pickCoverImage(fileInput.files[0]); });
+  ['dragenter','dragover'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('is-dragover'); }); });
+  ['dragleave','drop'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('is-dragover'); }); });
+  drop.addEventListener('drop', function(e){ var f = e.dataTransfer && e.dataTransfer.files[0]; if(f) pickCoverImage(f); });
+  if(clr) clr.addEventListener('click', function(e){ e.stopPropagation(); fileInput.value = ''; setCoverPreview(''); });
+})();
+
+// ─── THANH ĐỊNH DẠNG: bôi đen 1 đoạn rồi bấm nút để bọc thẻ HTML quanh đoạn đó ──
+// Không bôi đen gì thì chèn đoạn mẫu trống vào vị trí con trỏ.
+function wrapSelection(before, after, placeholder){
+  var ta = document.getElementById('f-content');
+  var start = ta.selectionStart, end = ta.selectionEnd;
+  var selected = ta.value.slice(start, end) || placeholder;
+  ta.value = ta.value.slice(0, start) + before + selected + after + ta.value.slice(end);
+  var newStart = start + before.length;
+  ta.focus();
+  ta.setSelectionRange(newStart, newStart + selected.length);
+}
+function wrapAsList(){
+  var ta = document.getElementById('f-content');
+  var start = ta.selectionStart, end = ta.selectionEnd;
+  var selected = ta.value.slice(start, end) || 'Mục 1\nMục 2\nMục 3';
+  var items = selected.split('\n').filter(function(l){ return l.trim(); })
+    .map(function(l){ return '  <li>' + l.trim() + '</li>'; }).join('\n');
+  var wrapped = '<ul>\n' + items + '\n</ul>';
+  ta.value = ta.value.slice(0, start) + wrapped + ta.value.slice(end);
+  var pos = start + wrapped.length;
+  ta.focus();
+  ta.setSelectionRange(pos, pos);
+}
+function wrapNumberedHeading(){
+  var ta = document.getElementById('f-content');
+  var count = (ta.value.match(/class="benefit-num"/g) || []).length + 1;
+  wrapSelection('<h2><span class="benefit-num">' + count + '</span> ', '</h2>', 'Tiêu đề mục ' + count);
+}
+document.querySelectorAll('.tb-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var fmt = btn.dataset.fmt;
+    if(fmt === 'h2') wrapSelection('<h2>', '</h2>', 'Tiêu đề lớn');
+    else if(fmt === 'h3') wrapSelection('<h3>', '</h3>', 'Tiêu đề nhỏ');
+    else if(fmt === 'bold') wrapSelection('<strong>', '</strong>', 'chữ in đậm');
+    else if(fmt === 'quote') wrapSelection('<blockquote>\n  ', '\n</blockquote>', 'Nội dung trích dẫn');
+    else if(fmt === 'highlight') wrapSelection('<div class="highlight-box">\n  <h4>Tiêu đề khung</h4>\n  <p>', '</p>\n</div>', 'Nội dung khung nổi bật');
+    else if(fmt === 'list') wrapAsList();
+    else if(fmt === 'numbered') wrapNumberedHeading();
+  });
+});
+
+// ─── LƯU (TẠO MỚI / CẬP NHẬT) ─────────────────────────────────
+function saveBlog(){
+  var title = document.getElementById('f-title').value.trim();
+  if(!title){ alert('Vui lòng nhập tiêu đề bài viết.'); return; }
+
+  var payload = {
+    title: title,
+    topic: document.getElementById('f-topic').value,
+    is_published: document.getElementById('f-status').value === 'true',
+    is_featured: document.getElementById('f-featured').checked,
+    excerpt: document.getElementById('f-excerpt').value.trim() || null,
+    content: document.getElementById('f-content').value.trim() || null,
+    meta_title: document.getElementById('f-meta-title').value.trim() || null,
+    meta_description: document.getElementById('f-meta-desc').value.trim() || null
+  };
+
+  var btn = document.getElementById('save-btn');
+  btn.disabled = true;
+
+  // Bước 1: nếu có ảnh mới → tải ảnh lên Supabase (đúng lúc bấm Lưu, đi cùng bài viết).
+  // Dùng chung kho 'product-images' đã có sẵn (đã cấp quyền admin upload).
+  var step = Promise.resolve(currentCoverUrl);
+  if(pendingCoverFile){
+    btn.textContent = 'Đang tải ảnh...';
+    var ext = (pendingCoverFile.name.split('.').pop() || 'jpg').toLowerCase();
+    var path = 'blog-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+    step = getSupabase().storage.from('product-images')
+      .upload(path, pendingCoverFile, { contentType: pendingCoverFile.type, upsert: false })
+      .then(function(up){
+        if(up.error) throw up.error;
+        return getSupabase().storage.from('product-images').getPublicUrl(path).data.publicUrl;
+      });
+  }
+
+  // Bước 2: gán cover_image rồi lưu bài viết vào DB
+  step.then(function(coverUrl){
+    payload.cover_image = coverUrl || null;
+    btn.textContent = editingId ? 'Lưu thay đổi' : 'Lưu bài viết';
+    return editingId
+      ? getSupabase().from('blog_posts').update(payload).eq('id', editingId)
+      : getSupabase().from('blog_posts').insert(payload);
+  }).then(function(res){
+    if(res && res.error) throw res.error;
+    closeModal();
+    loadPosts(currentPage);
+  }).catch(function(err){
+    alert('Lỗi lưu bài viết: ' + (err.message || err));
+  }).then(function(){
+    btn.disabled = false;
+  });
+}
+
+// ─── XÓA ───────────────────────────────────────────────────────
+function deleteBlog(id){
+  var p = allPosts.find(function(x){ return x.id === id; });
+  if(!confirm('Xóa bài viết "' + (p ? p.title : '') + '"? Hành động này không thể hoàn tác.')) return;
+  getSupabase().from('blog_posts').delete().eq('id', id).then(function(res){
+    if(res.error){ alert('Lỗi xóa: ' + res.error.message); return; }
+    loadPosts(currentPage);
+  });
+}
+
+document.getElementById('write-modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+</script>
+<script src="../js/admin-status.js"></script>
+</body>
+</html>

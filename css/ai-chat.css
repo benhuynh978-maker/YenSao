@@ -1,0 +1,285 @@
+/* ==============================================
+   AI CHAT WIDGET — bong bóng chat nổi + khung chat.
+   BẢN MẪU GIAO DIỆN: chưa nối logic gửi/nhận thật, chỉ demo hiệu ứng
+   mở/đóng + hiệu ứng "đang gõ". Nội dung tin nhắn trong index.html là
+   mẫu tạm, sẽ thay bằng nội dung thật sau khi duyệt giao diện.
+   ============================================== */
+
+/* ── Nút bong bóng nổi ──
+   Nằm NGAY TRONG .float-cta (cụm Gọi/Zalo/FB), là item cuối cùng — chiếm
+   đúng vị trí gần đáy màn hình mà nút Facebook có (dễ bấm nhất), không tự
+   định vị fixed riêng nữa, ăn theo layout flex column/row có sẵn của
+   .float-cta (xem base.css mục 18). */
+.ai-chat-toggle {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, var(--color-gold), var(--color-primary));
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+.ai-chat-toggle:hover { transform: translateY(-3px) scale(1.04); box-shadow: var(--shadow-xl); }
+.ai-chat-toggle:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+.ai-chat-toggle > span:last-child { display: none; } /* nhãn "Chat AI" — chỉ hiện ở thanh ngang trên di động */
+
+/* Ẩn Gọi/Zalo/FB khi khung chat đang mở, tránh chồng lấp + đỡ rối mắt.
+   Nút chat vẫn ở nguyên vị trí (item cuối) vì nó không bị ẩn. */
+.float-cta.is-chat-open .float-btn { display: none; }
+
+.ai-chat-toggle__icon,
+.ai-chat-toggle__close {
+  position: absolute;
+  color: var(--color-white);
+  transition: opacity .2s, transform .2s;
+}
+.ai-chat-toggle__close { opacity: 0; transform: scale(.6) rotate(-45deg); }
+.ai-chat-toggle.is-open .ai-chat-toggle__icon { opacity: 0; transform: scale(.6) rotate(45deg); }
+.ai-chat-toggle.is-open .ai-chat-toggle__close { opacity: 1; transform: scale(1) rotate(0); }
+
+/* Chấm "đang hoạt động" nhấp nháy nhẹ trên nút, để thu hút chú ý khi đóng */
+.ai-chat-toggle__dot {
+  position: absolute;
+  top: 2px; right: 2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--color-selected);
+  border: 2px solid var(--color-white);
+  animation: aiChatPulse 2s ease-in-out infinite;
+}
+.ai-chat-toggle.is-open .ai-chat-toggle__dot { display: none; }
+@keyframes aiChatPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.25); opacity: .7; }
+}
+
+/* ── Khung chat ──
+   Neo ngay trên nút chat (giờ ở item cuối .float-cta: bottom 24-76px) —
+   88px = 24 (đáy cụm nút) + 52 (cao nút) + 12 (khoảng cách). Chiều cao dùng
+   calc(100vh - 110px) làm trần để LUÔN chừa ít nhất ~22px phía trên màn
+   hình dù cửa sổ trình duyệt thấp đến đâu — tránh lặp lại bug tràn lên che
+   thanh header đã gặp khi neo ở bottom:288px cũ. */
+.ai-chat-panel {
+  position: fixed;
+  bottom: 88px;
+  right: var(--space-24);
+  z-index: var(--z-float);
+  width: 360px;
+  height: min(520px, calc(100vh - 110px));
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform-origin: bottom right;
+  transform: translateY(16px) scale(.96);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.ai-chat-panel.is-open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Header */
+.ai-chat-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--color-brand);
+  flex-shrink: 0;
+}
+.ai-chat-panel__avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--color-gold), var(--color-primary));
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-white);
+  flex-shrink: 0;
+}
+.ai-chat-panel__title { flex: 1; min-width: 0; }
+.ai-chat-panel__name {
+  font-family: var(--font-heading);
+  font-size: .98rem;
+  font-weight: 600;
+  color: var(--color-white);
+  line-height: 1.3;
+}
+.ai-chat-panel__status {
+  display: flex; align-items: center; gap: 5px;
+  font-size: .74rem;
+  color: rgba(255,255,255,.7);
+}
+.ai-chat-panel__status::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--color-selected);
+  flex-shrink: 0;
+}
+.ai-chat-panel__close {
+  background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,.7);
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  transition: background .2s, color .2s;
+  flex-shrink: 0;
+}
+.ai-chat-panel__close:hover { background: rgba(255,255,255,.12); color: var(--color-white); }
+
+/* Khung tin nhắn */
+.ai-chat-panel__messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--color-cream);
+}
+.ai-chat-msg { display: flex; gap: 8px; max-width: 86%; }
+.ai-chat-msg--bot { align-self: flex-start; }
+.ai-chat-msg--user { align-self: flex-end; flex-direction: row-reverse; }
+.ai-chat-msg__avatar {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, var(--color-gold), var(--color-primary));
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-white);
+}
+.ai-chat-msg__bubble {
+  padding: 10px 13px;
+  border-radius: var(--radius-lg);
+  font-size: .86rem;
+  line-height: 1.5;
+}
+.ai-chat-msg--bot .ai-chat-msg__bubble {
+  background: var(--color-white);
+  color: var(--color-brand);
+  border-bottom-left-radius: 4px;
+  box-shadow: var(--shadow-sm);
+}
+.ai-chat-msg--user .ai-chat-msg__bubble {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-bottom-right-radius: 4px;
+}
+
+/* Hiệu ứng đang gõ — 3 chấm nhảy so le, kiểu ChatGPT/Gemini */
+.ai-chat-typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 2px;
+}
+.ai-chat-typing span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-brand-light);
+  animation: aiChatTyping 1.2s ease-in-out infinite;
+}
+.ai-chat-typing span:nth-child(2) { animation-delay: .15s; }
+.ai-chat-typing span:nth-child(3) { animation-delay: .3s; }
+@keyframes aiChatTyping {
+  0%, 60%, 100% { transform: translateY(0); opacity: .5; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* Gợi ý nhanh */
+.ai-chat-panel__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 16px 12px;
+  flex-shrink: 0;
+  background: var(--color-cream);
+}
+.ai-chat-chip {
+  border: 1px solid var(--color-gold);
+  background: var(--color-gold-pale);
+  color: var(--color-brand);
+  font-size: .78rem;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+  white-space: nowrap;
+}
+.ai-chat-chip:hover { background: var(--color-gold); color: var(--color-white); transform: translateY(-1px); }
+
+/* Ô nhập */
+.ai-chat-panel__input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--color-white);
+  border-top: var(--border-subtle);
+  flex-shrink: 0;
+}
+.ai-chat-panel__input {
+  flex: 1;
+  border: 1px solid var(--border-subtle, #e5e0d8);
+  border-radius: var(--radius-full);
+  padding: 9px 15px;
+  font-size: .86rem;
+  font-family: var(--font-body);
+  outline: none;
+  background: var(--color-cream);
+  color: var(--color-brand);
+}
+.ai-chat-panel__input:focus { border-color: var(--color-gold); }
+.ai-chat-panel__send {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-white);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.ai-chat-panel__send:hover { background: var(--color-primary-hover); }
+
+@media (max-width: 767px) {
+  /* .float-cta chuyển thành thanh ngang full-width (xem base.css) — nút chat
+     hoà vào làm tab thứ 4, cùng kiểu với Gọi/Zalo/FB thay vì nổi riêng. */
+  .ai-chat-toggle {
+    flex: 1;
+    width: auto;
+    height: auto;
+    gap: var(--space-8);
+    border-radius: 0;
+    padding: 14px 12px;
+    box-shadow: none;
+  }
+  .ai-chat-toggle__icon, .ai-chat-toggle__close { position: static; }
+  .ai-chat-toggle.is-open .ai-chat-toggle__icon,
+  .ai-chat-toggle .ai-chat-toggle__close { display: none; }
+  .ai-chat-toggle.is-open .ai-chat-toggle__close { display: inline-flex; }
+  .ai-chat-toggle__dot { top: 6px; right: 18px; }
+  .ai-chat-toggle > span:last-child { display: inline; font-size: var(--text-sm); font-weight: 600; color: var(--color-white); }
+
+  /* Khung chat gần full màn hình, neo trên thanh ngang (60px) */
+  .ai-chat-panel {
+    bottom: 60px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    height: calc(100vh - 132px);
+  }
+}

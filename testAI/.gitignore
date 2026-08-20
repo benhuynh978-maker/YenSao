@@ -1,0 +1,5 @@
+.env
+node_modules/
+server.log
+prompt-eval/run.log
+prompt-eval/run2.log

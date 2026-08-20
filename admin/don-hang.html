@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Quản lý Đơn hàng | Admin Yến Duyên</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/admin-notifications.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/security-gate.js"></script>
+  <script src="../js/admin-notifications.js"></script>
+  <style>
+    .filter-bar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:20px; }
+    .filter-search { position:relative; flex:1; min-width:220px; }
+    .filter-search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#9ca3af; pointer-events:none; }
+    .filter-search input { width:100%; padding:9px 12px 9px 36px; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; outline:none; box-sizing:border-box; }
+    .filter-search input:focus { border-color:var(--color-brand); }
+    .filter-select { padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; background:#fff; }
+    .tab-filter { display:flex; gap:4px; background:#f3f4f6; border-radius:8px; padding:4px; margin-bottom:20px; flex-wrap:wrap; }
+    .tab-filter-btn {
+      padding:7px 16px; border:none; background:none; border-radius:6px; font-size:.875rem;
+      font-weight:500; color:#6b7280; cursor:pointer; transition:all .2s; white-space:nowrap;
+    }
+    .tab-filter-btn.is-active { background:#fff; color:var(--color-brand); box-shadow:0 1px 4px rgba(0,0,0,.08); }
+    table { width:100%; border-collapse:collapse; font-size:.875rem; }
+    thead th { padding:10px 14px; background:#f9fafb; font-weight:600; color:#374151; text-align:left; border-bottom:1px solid #e5e7eb; white-space:nowrap; }
+    tbody td { padding:12px 14px; border-bottom:1px solid #f3f4f6; color:#374151; vertical-align:top; }
+    tbody tr:hover { background:#fafafa; }
+    .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:700; white-space:nowrap; }
+    .badge--new { background:#dbeafe; color:#1d4ed8; }
+    .badge--confirmed { background:#d1fae5; color:#065f46; }
+    .badge--waiting { background:#f3e8ff; color:#7c3aed; }
+    .badge--shipping { background:#e0e7ff; color:#4338ca; }
+    .badge--done { background:#dcfce7; color:#166534; }
+    .badge--cancelled { background:#fee2e2; color:#991b1b; }
+    .action-btns { display:flex; gap:6px; flex-wrap:wrap; }
+    .action-btn { padding:5px 10px; border-radius:6px; font-size:.78rem; font-weight:600; cursor:pointer; border:1px solid; transition:all .2s; text-decoration:none; display:inline-block; }
+    .action-btn--view { border-color:#e5e7eb; color:#374151; background:#fff; }
+    .action-btn--view:hover { background:#f3f4f6; }
+    .action-btn--confirm { border-color:#22c55e; color:#16a34a; background:#f0fdf4; }
+    .action-btn--confirm:hover { background:#22c55e; color:#fff; }
+    .action-btn--cancel { border-color:#ef4444; color:#dc2626; background:#fef2f2; }
+    .action-btn--cancel:hover { background:#ef4444; color:#fff; }
+    .order-products { font-size:.8rem; color:#6b7280; margin-top:3px; }
+    .pagination { display:flex; gap:4px; align-items:center; justify-content:center; margin-top:24px; }
+    .pagination a, .pagination span {
+      width:36px; height:36px; border-radius:8px; display:flex; align-items:center;
+      justify-content:center; font-size:.875rem; text-decoration:none; border:1px solid #e5e7eb;
+      color:#374151; transition:all .2s;
+    }
+    .pagination a:hover { border-color:var(--color-brand); color:var(--color-brand); }
+    .pagination span.is-active { background:none; color:#374151; border:none; width:auto; padding:0 8px; font-weight:600; }
+    .pagination a.is-disabled { opacity:.4; pointer-events:none; }
+
+    /* Order detail modal */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.is-open { display:flex; }
+    .modal { background:#fff; border-radius:12px; width:100%; max-width:600px; max-height:85vh; overflow-y:auto; }
+    .modal-header { padding:20px 24px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#fff; z-index:1; }
+    .modal-title { font-weight:700; color:#111827; font-size:1rem; }
+    .modal-close { width:32px; height:32px; border:none; background:#f3f4f6; border-radius:6px; cursor:pointer; font-size:1.1rem; }
+    .modal-body { padding:24px; }
+    .modal-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f3f4f6; font-size:.875rem; }
+    .modal-row:last-child { border-bottom:none; }
+    .modal-row dt { color:#6b7280; }
+    .modal-row dd { font-weight:600; color:#111827; }
+    .modal-section-title { font-weight:700; color:#111827; margin:16px 0 10px; font-size:.9rem; }
+    .status-select { padding:8px 12px; border:1px solid #e5e7eb; border-radius:6px; font-size:.875rem; width:100%; margin-top:4px; }
+    .modal-footer { padding:16px 24px; border-top:1px solid #e5e7eb; display:flex; gap:10px; justify-content:flex-end; }
+  </style>
+</head>
+<body class="admin-body">
+<div class="admin-wrapper" id="admin-wrapper">
+
+  <!-- SIDEBAR (same as dashboard) -->
+  <aside class="admin-sidebar">
+    <a href="dashboard.html" class="admin-sidebar__logo">
+      <div class="admin-sidebar__logo-mark">YD</div>
+      <div class="admin-sidebar__logo-text"><strong>Yến Duyên</strong><span>Admin Panel</span></div>
+    </a>
+    <nav class="admin-sidebar__nav">
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Tổng quan</p>
+        <a href="dashboard.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="thong-bao.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span>Thông báo</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Kinh doanh</p>
+        <a href="don-hang.html" class="admin-nav-link is-active" aria-current="page">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span>Đơn hàng</span>
+        </a>
+        <a href="san-pham.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          <span>Sản phẩm</span>
+        </a>
+        <a href="voucher.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          <span>Voucher</span>
+        </a>
+        <a href="flash-sale.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <span>Flash Sale</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Nội dung</p>
+        <a href="blog.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>Blog</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Khách hàng</p>
+        <a href="khach-hang.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <span>Khách hàng</span>
+        </a>
+        <a href="phan-hoi.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Phản hồi</span>
+        </a>
+      </div>
+      <div class="admin-nav-section">
+        <p class="admin-nav-section-label">Hệ thống</p>
+        <a href="sao-luu.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Sao lưu dữ liệu</span>
+        </a>
+        <a href="cai-dat.html" class="admin-nav-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+          <span>Cài đặt</span>
+        </a>
+      </div>
+    </nav>
+    <div class="admin-sidebar__footer">
+      <button onclick="logout()" class="admin-nav-link" style="width:100%;background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:.875rem;text-align:left;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Đăng xuất</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="admin-topbar">
+    <div class="admin-topbar__left">
+      <button class="admin-sidebar-toggle" id="sidebar-toggle" aria-label="Thu/mở sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="admin-topbar__title">Quản lý Đơn hàng</span>
+    </div>
+    <div class="admin-topbar__right">
+      <button class="admin-btn admin-btn--outline" id="btn-export-csv" onclick="exportCSV()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Xuất Excel (.xlsx)
+      </button>
+      <div class="admin-user-menu">
+        <div class="admin-user-avatar" id="user-avatar">A</div>
+        <span class="admin-user-name" id="user-name">Admin</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <!-- Realtime new order notice -->
+    <div id="new-order-notice" style="display:none;align-items:center;gap:12px;background:#dcfce7;border:1px solid #86efac;border-radius:10px;padding:14px 20px;margin-bottom:16px;font-weight:600;color:#166534;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      <span id="new-order-notice-text"></span>
+    </div>
+    <div id="order-total-count" style="font-size:.82rem;color:#9ca3af;margin-bottom:8px;"></div>
+
+    <div class="admin-page-header">
+      <div>
+        <h1 class="admin-page-title">Đơn hàng</h1>
+        <p class="admin-page-sub">Quản lý và xử lý đơn hàng của khách</p>
+      </div>
+    </div>
+
+    <!-- Status tabs -->
+    <div class="tab-filter" role="tablist">
+      <button class="tab-filter-btn is-active" role="tab" onclick="filterTab(this,'all')">Tất cả</button>
+      <button class="tab-filter-btn" role="tab" onclick="filterTab(this,'pending')">Đợi xác nhận</button>
+      <button class="tab-filter-btn" role="tab" onclick="filterTab(this,'preparing')">Chuẩn bị hàng</button>
+      <button class="tab-filter-btn" role="tab" onclick="filterTab(this,'waiting_shipper')">Đợi shipper</button>
+      <button class="tab-filter-btn" role="tab" onclick="filterTab(this,'shipping')">Đang giao</button>
+      <button class="tab-filter-btn" role="tab" onclick="filterTab(this,'delivered')">Giao thành công</button>
+      <button class="tab-filter-btn" role="tab" onclick="filterTab(this,'cancelled')">Đã hủy</button>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="filter-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="search-order" placeholder="Tìm mã đơn, tên, SĐT..." aria-label="Tìm kiếm đơn hàng" oninput="filterOrders()">
+      </div>
+      <select class="filter-select" onchange="onDateFilterChange()" id="filter-date">
+        <option value="">Tất cả thời gian</option>
+        <option value="today">Hôm nay</option>
+        <option value="week">7 ngày qua</option>
+        <option value="month">Tháng này</option>
+      </select>
+      <select class="filter-select" onchange="onSortChange()" id="filter-sort">
+        <option value="newest">Mới nhất trước</option>
+        <option value="oldest">Cũ nhất trước</option>
+        <option value="highest">Giá trị cao nhất</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="admin-card">
+      <div style="overflow-x:auto;">
+        <table aria-label="Danh sách đơn hàng" id="orders-table">
+          <thead>
+            <tr>
+              <th>Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>Sản phẩm</th>
+              <th>Tổng tiền</th>
+              <th>Thời gian</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body">
+            <tr id="orders-loading">
+              <td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Đang tải đơn hàng…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Pagination thật — JS tự dựng lại theo tổng số đơn khớp bộ lọc hiện tại -->
+      <div class="pagination" id="orders-pagination" aria-label="Điều hướng trang"></div>
+    </div>
+  </main>
+</div>
+
+<!-- Order detail modal -->
+<div class="modal-overlay" id="order-modal" role="dialog" aria-modal="true" aria-label="Chi tiết đơn hàng">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-order-id">Chi tiết đơn #YD-XXXXXX</span>
+      <button class="modal-close" onclick="closeModal()" aria-label="Đóng">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-section-title">Thông tin khách hàng</p>
+      <dl>
+        <div class="modal-row"><dt>Họ tên</dt><dd id="m-name">—</dd></div>
+        <div class="modal-row"><dt>SĐT</dt><dd id="m-phone">—</dd></div>
+        <div class="modal-row"><dt>Email</dt><dd id="m-email">—</dd></div>
+        <div class="modal-row"><dt>Địa chỉ</dt><dd id="m-addr">—</dd></div>
+        <div class="modal-row"><dt>Ghi chú</dt><dd id="m-note">—</dd></div>
+      </dl>
+      <p class="modal-section-title">Sản phẩm đặt</p>
+      <dl>
+        <div class="modal-row"><dt>Sản phẩm</dt><dd id="m-products">—</dd></div>
+        <div class="modal-row"><dt>Phí ship</dt><dd id="m-shipping">—</dd></div>
+        <div class="modal-row"><dt>Tổng cộng</dt><dd id="m-total" style="color:var(--color-primary);font-size:1.1rem;">—</dd></div>
+      </dl>
+      <p class="modal-section-title">Cập nhật trạng thái</p>
+      <select class="status-select" id="m-status">
+        <option value="pending">Đợi xác nhận</option>
+        <option value="preparing">Đang chuẩn bị hàng</option>
+        <option value="waiting_shipper">Đợi shipper lấy hàng</option>
+        <option value="shipping">Đang giao hàng</option>
+        <option value="delivered">Giao hàng thành công</option>
+        <option value="cancelled">Đã hủy</option>
+      </select>
+      <p class="modal-section-title">Thông tin vận chuyển (tuỳ chọn)</p>
+      <input type="text" class="status-select" id="m-shipping-provider" placeholder="Đơn vị vận chuyển (VD: Giao Hàng Nhanh)">
+      <input type="text" class="status-select" id="m-shipping-code" placeholder="Mã vận đơn" style="margin-top:8px;">
+    </div>
+    <div class="modal-footer">
+      <button class="admin-btn admin-btn--outline" onclick="closeModal()">Đóng</button>
+      <button class="admin-btn admin-btn--primary" onclick="saveStatus()">Lưu trạng thái</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Xác thực admin thật bằng Supabase (chống giả mạo localStorage)
+SecurityGate.requireAdmin().then(function(){
+  var session = JSON.parse(localStorage.getItem('yen-duyen-admin') || 'null');
+  if(session){ document.getElementById('user-name').textContent = session.name||'Admin'; document.getElementById('user-avatar').textContent = (session.name||'A')[0]; }
+});
+document.getElementById('sidebar-toggle').addEventListener('click', function(){ document.getElementById('admin-wrapper').classList.toggle('sidebar-collapsed'); });
+// Mở modal chi tiết đơn qua event delegation (thay onclick inline) — an toàn cả với
+// order_code do client gửi lên: giá trị nằm trong data-code đã esc, đọc bằng getAttribute
+// rồi tra khớp chính xác trong allOrders, không nhét thẳng vào chuỗi JS nữa.
+document.addEventListener('click', function(e){
+  var t = e.target.closest('.js-open-modal');
+  if(t){ e.preventDefault(); openModal(t.getAttribute('data-code')); }
+});
+function logout(){ getSupabase().auth.signOut().then(function(){ localStorage.removeItem('yen-duyen-admin'); window.location.replace('index.html'); }); }
+
+var currentOrder = {};
+var allOrders = [];
+
+// ─── TRẠNG THÁI PHÂN TRANG + LỌC (đều xử lý thật trên Supabase) ────
+var PAGE_SIZE = 20;
+var currentPage = 1;
+var totalCount = 0;
+var currentStatus = 'all';
+var currentSearch = '';
+var currentDateFilter = '';
+var currentSort = 'newest';
+var searchDebounceTimer = null;
+
+// Loại ký tự có ý nghĩa đặc biệt trong cú pháp filter PostgREST (.or()) khỏi
+// từ khoá tìm kiếm — tránh người dùng gõ dấu phẩy/ngoặc làm lệch điều kiện lọc.
+function sanitizeSearchTerm(s){ return (s || '').replace(/[,()."\\]/g, '').trim(); }
+
+function dateThresholdFor(key){
+  var now = new Date();
+  if(key === 'today') return new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+  if(key === 'week') return new Date(Date.now() - 7*86400000).toISOString();
+  if(key === 'month') return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  return null;
+}
+
+function buildOrdersQuery(){
+  var q = getSupabase().from('orders').select('*', {count:'exact'});
+  if(currentStatus !== 'all') q = q.eq('status', currentStatus);
+  var term = sanitizeSearchTerm(currentSearch);
+  if(term) q = q.or('order_code.ilike.%'+term+'%,customer_name.ilike.%'+term+'%,customer_phone.ilike.%'+term+'%');
+  var since = dateThresholdFor(currentDateFilter);
+  if(since) q = q.gte('created_at', since);
+  if(currentSort === 'oldest') q = q.order('created_at', {ascending:true});
+  else if(currentSort === 'highest') q = q.order('total_amount', {ascending:false});
+  else q = q.order('created_at', {ascending:false});
+  return q;
+}
+
+// ─── STATUS BADGE ─────────────────────────────────────────
+var statusMap = {
+  pending:         { label:'Đợi xác nhận',        cls:'badge--new' },
+  preparing:       { label:'Đang chuẩn bị hàng',   cls:'badge--confirmed' },
+  waiting_shipper: { label:'Đợi shipper lấy hàng', cls:'badge--waiting' },
+  shipping:        { label:'Đang giao hàng',       cls:'badge--shipping' },
+  delivered:       { label:'Giao thành công',      cls:'badge--done' },
+  cancelled:       { label:'Đã hủy',               cls:'badge--cancelled' }
+};
+
+function fmtPrice(n){ return Number(n).toLocaleString('vi-VN') + 'đ'; }
+function fmtDate(iso){
+  if(!iso) return '—';
+  var d = new Date(iso);
+  return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+}
+// Escape nội dung do KHÁCH nhập trước khi render qua innerHTML (chống XSS).
+// Dùng ở renderOrders (bảng, innerHTML). openModal dùng textContent nên KHÔNG cần esc.
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function itemsSummary(items){
+  if(!Array.isArray(items) || !items.length) return '—';
+  return items.map(function(i){ return (i.name||'SP') + ' x' + (i.qty||1); }).join(', ');
+}
+
+// ─── RENDER TABLE ─────────────────────────────────────────
+function renderOrders(list){
+  var tbody = document.getElementById('orders-body');
+  if(!tbody) return;
+  if(!list || !list.length){
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Chưa có đơn hàng nào</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(function(o){
+    var st = statusMap[o.status] || statusMap.pending;
+    return '<tr>'
+      + '<td><a href="#" class="js-open-modal" data-code="'+esc(o.order_code)+'" style="color:var(--color-brand);font-weight:700;">#'+esc(o.order_code)+'</a><div style="font-size:.75rem;color:#9ca3af;">'+fmtDate(o.created_at)+'</div></td>'
+      + '<td><strong>'+esc(o.customer_name)+'</strong><div style="font-size:.8rem;color:#9ca3af;">'+esc(o.customer_phone)+'</div></td>'
+      + '<td><div class="order-products">'+esc(itemsSummary(o.items))+'</div></td>'
+      + '<td style="font-weight:700;color:var(--color-primary);">'+fmtPrice(o.total_amount)+'</td>'
+      + '<td><span class="badge '+st.cls+'">'+st.label+'</span></td>'
+      + '<td><div class="action-btns">'
+      +   '<button class="action-btn action-btn--view js-open-modal" data-code="'+esc(o.order_code)+'">Chi tiết</button>'
+      + '</div></td>'
+      + '</tr>';
+  }).join('');
+}
+
+// ─── LOAD ORDERS FROM SUPABASE — theo trang thật, không tải hết 1 lần ──
+function loadOrders(page){
+  currentPage = page || 1;
+  var from = (currentPage - 1) * PAGE_SIZE;
+  var to = from + PAGE_SIZE - 1;
+  var tbody = document.getElementById('orders-body');
+  if(tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Đang tải đơn hàng…</td></tr>';
+  buildOrdersQuery().range(from, to).then(function(res){
+    if(res.error){
+      console.warn('Supabase:', res.error.message);
+      if(tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Không tải được dữ liệu</td></tr>';
+      return;
+    }
+    allOrders = res.data || [];
+    totalCount = (res.count == null) ? allOrders.length : res.count;
+    renderOrders(allOrders);
+    updateOrderCount();
+    renderPagination();
+  });
+}
+
+function renderPagination(){
+  var wrap = document.getElementById('orders-pagination');
+  if(!wrap) return;
+  var totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  var prevDisabled = currentPage <= 1;
+  var nextDisabled = currentPage >= totalPages;
+  wrap.innerHTML =
+      '<a href="#" id="page-prev" class="'+(prevDisabled?'is-disabled':'')+'" aria-label="Trang trước">‹</a>'
+    + '<span class="is-active">Trang '+currentPage+'/'+totalPages+'</span>'
+    + '<a href="#" id="page-next" class="'+(nextDisabled?'is-disabled':'')+'" aria-label="Trang sau">›</a>';
+  var prevEl = document.getElementById('page-prev');
+  var nextEl = document.getElementById('page-next');
+  if(prevEl) prevEl.addEventListener('click', function(e){ e.preventDefault(); if(!prevDisabled) loadOrders(currentPage - 1); });
+  if(nextEl) nextEl.addEventListener('click', function(e){ e.preventDefault(); if(!nextDisabled) loadOrders(currentPage + 1); });
+}
+
+// ─── REALTIME SUBSCRIPTION ────────────────────────────────
+function subscribeRealtime(){
+  getSupabase()
+    .channel('orders-changes')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, function(payload){
+      showNewOrderNotice(payload.new);
+      // Chỉ tự tải lại khi đang xem đúng trang 1 + không lọc gì (view mặc định) —
+      // tránh đơn mới về làm nhảy trang/mất vị trí đang xem của admin.
+      var isDefaultView = currentPage === 1 && currentStatus === 'all' && !currentSearch && !currentDateFilter && currentSort === 'newest';
+      if(isDefaultView) loadOrders(1);
+    })
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, function(payload){
+      var idx = allOrders.findIndex(function(o){ return o.id === payload.new.id; });
+      if(idx === -1) return;
+      allOrders[idx] = payload.new;
+      renderOrders(allOrders);
+    })
+    .subscribe();
+}
+
+function showNewOrderNotice(order){
+  var notice = document.getElementById('new-order-notice');
+  if(!notice) return;
+  document.getElementById('new-order-notice-text').textContent = 'Đơn hàng mới: #' + order.order_code + ' — ' + order.customer_name + ' · ' + fmtPrice(order.total_amount);
+  notice.style.display = 'flex';
+  setTimeout(function(){ notice.style.display = 'none'; }, 8000);
+}
+
+function updateOrderCount(){
+  var el = document.getElementById('order-total-count');
+  if(el) el.textContent = 'Tổng: ' + totalCount + ' đơn';
+}
+
+// ─── MODAL ────────────────────────────────────────────────
+function openModal(orderCode){
+  var o = allOrders.find(function(x){ return x.order_code === orderCode; });
+  if(!o) return;
+  currentOrder = o;
+  document.getElementById('modal-order-id').textContent = 'Chi tiết đơn #' + o.order_code;
+  document.getElementById('m-name').textContent = o.customer_name || '—';
+  document.getElementById('m-phone').textContent = o.customer_phone || '—';
+  document.getElementById('m-email').textContent = o.customer_email || '—';
+  document.getElementById('m-addr').textContent = o.customer_address || '—';
+  document.getElementById('m-note').textContent = o.note || 'Không có';
+  document.getElementById('m-products').textContent = itemsSummary(o.items);
+  document.getElementById('m-shipping').textContent = o.shipping_fee ? fmtPrice(o.shipping_fee) : 'Miễn phí';
+  document.getElementById('m-total').textContent = fmtPrice(o.total_amount);
+  document.getElementById('m-status').value = o.status || 'pending';
+  document.getElementById('m-shipping-provider').value = o.shipping_provider || '';
+  document.getElementById('m-shipping-code').value = o.shipping_code || '';
+  document.getElementById('order-modal').classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){ document.getElementById('order-modal').classList.remove('is-open'); document.body.style.overflow = ''; }
+
+function saveStatus(){
+  var newStatus = document.getElementById('m-status').value;
+  if(!currentOrder || !currentOrder.id){ closeModal(); return; }
+  var patch = {
+    status: newStatus,
+    shipping_provider: document.getElementById('m-shipping-provider').value.trim() || null,
+    shipping_code: document.getElementById('m-shipping-code').value.trim() || null,
+    updated_at: new Date().toISOString()
+  };
+  if(newStatus === 'cancelled') patch.cancelled_by = 'admin';
+  getSupabase().from('orders').update(patch).eq('id', currentOrder.id).then(function(res){
+    if(res.error){ alert('Lỗi cập nhật: ' + res.error.message); return; }
+    currentOrder.status = newStatus;
+    allOrders = allOrders.map(function(o){ return o.id === currentOrder.id ? Object.assign({},o,patch) : o; });
+    renderOrders(allOrders);
+    closeModal();
+  });
+}
+
+function confirmOrder(id, btn){ btn.textContent = '✓ Đã xác nhận'; btn.disabled = true; }
+
+// Xuất CSV toàn bộ đơn KHỚP BỘ LỌC ĐANG CHỌN (không chỉ riêng trang đang xem) —
+// dùng .range() lặp giống admin/sao-luu.html để vượt giới hạn 1000 dòng/lần của Supabase.
+function exportCSV(){
+  var btn = document.getElementById('btn-export-csv');
+  if(btn) btn.disabled = true;
+  var size = 1000, all = [];
+  function page(from){
+    buildOrdersQuery().range(from, from + size - 1).then(function(res){
+      if(res.error){
+        alert('Lỗi xuất dữ liệu: ' + res.error.message);
+        if(btn) btn.disabled = false;
+        return;
+      }
+      var rows = res.data || [];
+      all = all.concat(rows);
+      if(rows.length < size){ finishExportCSV(all); if(btn) btn.disabled = false; }
+      else { page(from + size); }
+    });
+  }
+  page(0);
+}
+function finishExportCSV(list){
+  if(!list.length){ alert('Không có đơn hàng nào khớp bộ lọc hiện tại để xuất.'); return; }
+  // Xuất .xlsx bằng SheetJS: ô ghi dạng text nên dữ liệu như "=..." KHÔNG chạy thành công
+  // thức khi mở bằng Excel (chống CSV injection), và Unicode chuẩn nên Excel/WPS/Google
+  // Sheets đều đọc đúng tiếng Việt (không còn vỡ chữ như CSV UTF-8 cũ).
+  var aoa = [['Mã đơn','Khách hàng','SĐT','Địa chỉ','Tổng tiền','Trạng thái','Ngày đặt']];
+  list.forEach(function(o){
+    aoa.push([o.order_code, o.customer_name, o.customer_phone, o.customer_address, o.total_amount, o.status, o.created_at]);
+  });
+  var ws = XLSX.utils.aoa_to_sheet(aoa);
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Đơn hàng');
+  XLSX.writeFile(wb, 'don-hang.xlsx');
+}
+
+function filterTab(btn, status){
+  document.querySelectorAll('.tab-filter-btn').forEach(function(b){ b.classList.remove('is-active'); });
+  btn.classList.add('is-active');
+  currentStatus = status;
+  loadOrders(1);
+}
+function filterOrders(){
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(function(){
+    currentSearch = document.getElementById('search-order').value;
+    loadOrders(1);
+  }, 300);
+}
+function onDateFilterChange(){
+  currentDateFilter = document.getElementById('filter-date').value;
+  loadOrders(1);
+}
+function onSortChange(){
+  currentSort = document.getElementById('filter-sort').value;
+  loadOrders(1);
+}
+document.getElementById('order-modal').addEventListener('click', function(e){ if(e.target === this) closeModal(); });
+
+// Tìm kiếm tổng hợp từ dashboard đưa qua (?search=...)
+(function(){
+  var q = new URLSearchParams(window.location.search).get('search');
+  if(q){ document.getElementById('search-order').value = q; currentSearch = q; }
+})();
+
+// Load đơn hàng thật từ Supabase (trang 1) + lắng nghe realtime
+loadOrders(1);
+subscribeRealtime();
+</script>
+<script src="../js/vendor/xlsx.full.min.js"></script>
+<script src="../js/admin-status.js"></script>
+</body>
+</html>

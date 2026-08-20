@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Chi tiết đơn hàng | Yến Sào Yến Duyên</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/ai-chat.css">
+  <style>
+    .cd-wrap { max-width: 980px; margin: 0 auto; padding: 40px 20px 80px; }
+    .cd-back { display:inline-flex; align-items:center; gap:6px; color:#8a7a6a; font-size:.85rem; text-decoration:none; margin-bottom:18px; }
+    .cd-back:hover { color:var(--color-brand); }
+    .cd-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:26px; }
+    .cd-title { font-family: var(--font-heading); font-size: 1.7rem; color: var(--color-brand); margin-bottom:6px; }
+    .cd-date { color:#9ca3af; font-size:.85rem; }
+    .badge { display:inline-block; padding:6px 14px; border-radius:20px; font-size:.8rem; font-weight:700; white-space:nowrap; }
+    .badge--pending { background:#dbeafe; color:#1d4ed8; }
+    .badge--preparing { background:#fef3c7; color:#92400e; }
+    .badge--waiting_shipper { background:#f3e8ff; color:#7c3aed; }
+    .badge--shipping { background:#e0e7ff; color:#4338ca; }
+    .badge--delivered { background:#dcfce7; color:#166534; }
+    .badge--cancelled { background:#fee2e2; color:#991b1b; }
+
+    .cd-card { background:#fff; border:1px solid rgba(212,175,55,.35); border-radius:14px; padding:22px 24px; margin-bottom:20px; box-shadow:0 3px 16px rgba(62,39,35,.12); }
+    .cd-card h2 { font-family: var(--font-heading); font-size:1.1rem; color:var(--color-brand); margin:0 0 16px; }
+
+    .cd-shipping-row { display:flex; justify-content:space-between; padding:7px 0; font-size:.9rem; }
+    .cd-shipping-row dt { color:#8a7a6a; } .cd-shipping-row dd { font-weight:600; color:#3E2723; }
+
+    .cd-item { display:flex; gap:14px; align-items:center; padding:14px 0; border-bottom:1px solid #f3f4f6; text-decoration:none; color:inherit; }
+    .cd-item:last-child { border-bottom:none; }
+    .cd-item:hover .cd-item-name { color:var(--color-brand); }
+    .cd-item img { width:64px; height:64px; border-radius:10px; object-fit:cover; flex-shrink:0; background:#f3f4f6; }
+    .cd-item-name { font-weight:600; color:#3E2723; font-size:.94rem; margin-bottom:3px; }
+    .cd-item-qty { font-size:.8rem; color:#9ca3af; }
+    .cd-item-price { text-align:right; flex-shrink:0; }
+    .cd-item-old { display:block; font-size:.78rem; color:#b0a294; text-decoration:line-through; }
+    .cd-item-now { display:block; font-weight:600; color:var(--color-primary); font-size:.92rem; }
+
+    .cd-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px 24px; }
+    @media (max-width:640px){ .cd-info-grid{ grid-template-columns:1fr; } }
+
+    .cd-summary-row { display:flex; justify-content:space-between; padding:6px 0; font-size:.9rem; color:#5D4037; }
+    .cd-summary-row.total { border-top:1px dashed #efe7da; margin-top:8px; padding-top:12px; font-weight:700; font-size:1.05rem; color:var(--color-primary); }
+    .cd-summary-row .discount { color:#16a34a; }
+
+    .cd-support { display:flex; gap:14px; flex-wrap:wrap; }
+    .cd-support a { display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:10px; background:#fff7e6; color:#92400e; border:1px solid #fde68a; text-decoration:none; font-weight:600; font-size:.86rem; }
+    .cd-support a:hover { background:#fef3c7; }
+
+    .cd-related { margin-top:40px; }
+    .cd-related h2 { font-family:var(--font-heading); color:var(--color-brand); font-size:1.2rem; margin-bottom:16px; }
+    .cd-rel-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+    @media (max-width:900px){ .cd-rel-grid{ grid-template-columns:repeat(2,1fr); } }
+    .cd-rel-card { border:1px solid rgba(212,175,55,.35); border-radius:12px; overflow:hidden; background:#fff; box-shadow:0 3px 16px rgba(62,39,35,.12); text-decoration:none; display:block; transition:box-shadow .15s,transform .15s; }
+    .cd-rel-card:hover { box-shadow:0 6px 20px rgba(62,39,35,.1); transform:translateY(-2px); }
+    .cd-rel-card img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
+    .cd-rel-body { padding:12px 14px; }
+    .cd-rel-name { font-size:.86rem; font-weight:600; color:#3E2723; margin-bottom:4px; }
+    .cd-rel-price { font-size:.9rem; font-weight:700; color:var(--color-primary); }
+
+    .cd-notfound { text-align:center; padding:60px 20px; color:#9ca3af; }
+    .cd-notfound h2 { font-family:var(--font-heading); color:var(--color-brand); margin-bottom:8px; }
+
+    .cd-faq { margin-top:18px; }
+    .cd-acc { border:1px solid #efe7da; border-radius:10px; overflow:hidden; margin-bottom:10px; background:#fff; }
+    .cd-acc__q { width:100%; text-align:left; background:none; border:none; cursor:pointer; padding:13px 16px; font-family:var(--font-body); font-size:.9rem; font-weight:600; color:var(--color-brand); display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .cd-acc__q .ic { transition:transform .2s; flex-shrink:0; color:var(--color-gold); }
+    .cd-acc.is-open .cd-acc__q .ic { transform:rotate(45deg); }
+    .cd-acc__a { display:none; padding:0 16px 15px; font-size:.86rem; line-height:1.65; color:#5D4037; }
+    .cd-acc.is-open .cd-acc__a { display:block; }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="site-header" role="banner">
+    <div class="header-inner container">
+      <a href="index.html" class="logo" aria-label="Yến Sào Yến Duyên - Trang chủ">
+        <span class="logo-text" style="font-family:var(--font-accent);color:var(--color-gold);font-size:1.4rem;font-weight:600;">Yến Duyên</span>
+      </a>
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <ul class="nav-list" role="list">
+          <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+          <li><a href="san-pham.html" class="nav-link">Sản phẩm</a></li>
+          <li><a href="combo-qua-tang.html" class="nav-link">Combo quà tặng</a></li>
+          <li><a href="khoi-nghiep.html" class="nav-link">Cẩm nang</a></li>
+          <li><a href="gioi-thieu.html" class="nav-link">Giới thiệu</a></li>
+          <li><a href="lien-he.html" class="nav-link">Liên hệ</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a href="tel:+840986012754" class="header-hotline" aria-label="Gọi hotline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>0986.012.754</span>
+        </a>
+        <a href="gio-hang.html" class="cart-btn" aria-label="Giỏ hàng">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-badge" id="cart-badge" aria-live="polite">0</span>
+        </a>
+        <div id="auth-slot"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="cd-wrap" id="cd-wrap">
+    <a href="don-hang-cua-toi.html" class="cd-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Đơn hàng của tôi
+    </a>
+
+    <div id="cd-content" hidden>
+      <div class="cd-head">
+        <div>
+          <div class="cd-title" id="cd-code">—</div>
+          <div class="cd-date" id="cd-date">—</div>
+        </div>
+        <span class="badge" id="cd-badge">—</span>
+      </div>
+
+      <!-- Vận chuyển -->
+      <div class="cd-card" id="cd-shipping-card" hidden>
+        <h2>Thông tin vận chuyển</h2>
+        <dl>
+          <div class="cd-shipping-row"><dt>Đơn vị vận chuyển</dt><dd id="cd-ship-provider">—</dd></div>
+          <div class="cd-shipping-row"><dt>Mã vận đơn</dt><dd id="cd-ship-code">—</dd></div>
+        </dl>
+      </div>
+
+      <!-- Sản phẩm -->
+      <div class="cd-card">
+        <h2>Sản phẩm đặt</h2>
+        <div id="cd-items"></div>
+      </div>
+
+      <!-- Thông tin khách hàng -->
+      <div class="cd-card">
+        <h2>Thông tin giao hàng</h2>
+        <div class="cd-info-grid">
+          <div class="cd-shipping-row"><dt>Người nhận</dt><dd id="cd-name">—</dd></div>
+          <div class="cd-shipping-row"><dt>Điện thoại</dt><dd id="cd-phone">—</dd></div>
+          <div class="cd-shipping-row"><dt>Email</dt><dd id="cd-email">—</dd></div>
+          <div class="cd-shipping-row"><dt>Phương thức thanh toán</dt><dd id="cd-payment">—</dd></div>
+        </div>
+        <div class="cd-shipping-row" style="margin-top:6px;"><dt>Địa chỉ</dt><dd id="cd-address">—</dd></div>
+        <div class="cd-shipping-row"><dt>Ghi chú</dt><dd id="cd-note">—</dd></div>
+      </div>
+
+      <!-- Tổng tiền -->
+      <div class="cd-card">
+        <h2>Tổng thanh toán</h2>
+        <div class="cd-summary-row"><span>Tạm tính</span><span id="cd-subtotal">—</span></div>
+        <div class="cd-summary-row" id="cd-discount-row" hidden><span>Giảm giá<span id="cd-voucher-code"></span></span><span class="discount" id="cd-discount">—</span></div>
+        <div class="cd-summary-row"><span>Phí vận chuyển</span><span id="cd-shipfee">—</span></div>
+        <div class="cd-summary-row total"><span>Thành tiền</span><span id="cd-total">—</span></div>
+      </div>
+
+      <!-- Hỗ trợ -->
+      <div class="cd-card">
+        <h2>Bạn cần hỗ trợ?</h2>
+        <div class="cd-support">
+          <a href="tel:+840986012754" id="cd-support-call">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Gọi hotline
+          </a>
+          <a href="https://zalo.me/0986012754" target="_blank" rel="noopener noreferrer" id="cd-support-zalo">
+            <svg width="16" height="16" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+            Nhắn Zalo
+          </a>
+          <a href="https://facebook.com/yensaoyenduyen" target="_blank" rel="noopener noreferrer" id="cd-support-fb">
+            <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path fill="#fff" d="M29.9,19.5h-4v-2.6c0-1,0.7-1.2,1.1-1.2c0.5,0,2.8,0,2.8,0v-4.4l-3.9,0c-4.4,0-5.3,3.3-5.3,5.3v2.9h-2.5V24h2.5c0,5.8,0,12.7,0,12.7h5.3c0,0,0-7,0-12.7h3.6L29.9,19.5z"/></svg>
+            Facebook
+          </a>
+        </div>
+
+        <div class="cd-faq">
+          <div class="cd-acc"><button class="cd-acc__q" type="button">Khi nào đơn hàng được giao?<svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="cd-acc__a">Đơn nội thành giao trong 24h, các tỉnh thành khác 2–4 ngày làm việc. Bạn có thể theo dõi trạng thái ngay tại trang này.</div></div>
+          <div class="cd-acc"><button class="cd-acc__q" type="button">Tôi muốn đổi địa chỉ nhận hàng / thông tin người nhận thì làm sao?<svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="cd-acc__a">Nếu đơn chưa chuyển sang "Đang giao hàng", vui lòng nhắn Zalo hoặc gọi hotline kèm mã đơn để được hỗ trợ cập nhật nhanh nhất.</div></div>
+          <div class="cd-acc"><button class="cd-acc__q" type="button">Tôi muốn hủy đơn có được không?<svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="cd-acc__a">Bạn có thể tự hủy khi đơn đang ở trạng thái "Đợi xác nhận" tại trang Đơn hàng của tôi. Nếu đơn đã chuyển bước tiếp theo, vui lòng liên hệ shop để được hỗ trợ.</div></div>
+          <div class="cd-acc"><button class="cd-acc__q" type="button">Nhận hàng rồi phát hiện thiếu/sai sản phẩm thì sao?<svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="cd-acc__a">Vui lòng giữ nguyên bao bì và chụp ảnh sản phẩm, liên hệ shop trong vòng 24h để được đổi/bù hàng miễn phí.</div></div>
+          <div class="cd-acc"><button class="cd-acc__q" type="button">Sản phẩm có đúng là yến thật không, lỡ không ưng thì đổi trả thế nào?<svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="cd-acc__a">Yến Duyên cam kết hoàn tiền nếu phát hiện yến giả/độn. Hỗ trợ đổi trả trong 7 ngày nếu sản phẩm còn nguyên bao bì, chưa sử dụng.</div></div>
+          <div class="cd-acc"><button class="cd-acc__q" type="button">Tôi đã chuyển khoản nhưng chưa thấy shop xác nhận?<svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="cd-acc__a">Vui lòng gửi ảnh chụp biên lai chuyển khoản kèm mã đơn qua Zalo — shop xác nhận trong giờ hành chính (8h–18h).</div></div>
+          <div class="cd-acc"><button class="cd-acc__q" type="button">Mã vận đơn tra trên app hãng vận chuyển không thấy?<svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="cd-acc__a">Mã vận đơn thường lên hệ thống sau 1–2 giờ kể từ khi bàn giao cho đơn vị vận chuyển. Nếu quá 12h vẫn không thấy, hãy liên hệ shop để kiểm tra giúp bạn.</div></div>
+        </div>
+      </div>
+
+      <!-- Sản phẩm gợi ý -->
+      <div class="cd-related">
+        <h2>Có thể bạn cũng thích</h2>
+        <div class="cd-rel-grid" id="cd-rel-grid"></div>
+      </div>
+    </div>
+
+    <div class="cd-notfound" id="cd-notfound" hidden>
+      <h2>Không tìm thấy đơn hàng</h2>
+      <p>Đơn hàng này không tồn tại hoặc không thuộc về tài khoản của bạn.</p>
+      <p><a href="don-hang-cua-toi.html">← Quay lại danh sách đơn hàng</a></p>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-divider" aria-hidden="true"></div>
+    <div class="footer-main">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col footer-col--brand">
+            <a href="index.html" class="footer-logo">
+              <img src="images/logo/logo.png" alt="Yến Sào Yến Duyên" class="logo-img logo-img--footer" width="140" height="70">
+            </a>
+            <p class="footer-brand-desc">Tinh hoa yến sào thiên nhiên. Sản phẩm 100% thiên nhiên, chứng nhận an toàn thực phẩm.</p>
+            <div class="footer-social">
+              <a href="https://facebook.com/yensaoyenduyen" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              </a>
+              <a href="https://zalo.me/0986012754" class="social-link" aria-label="Zalo" target="_blank" rel="noopener noreferrer">
+                <svg width="20" height="20" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+              </a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-col-title">Liên kết nhanh</h3>
+            <ul class="footer-links" role="list">
+              <li><a href="index.html">Trang chủ</a></li>
+              <li><a href="san-pham.html">Sản phẩm</a></li>
+              <li><a href="combo-qua-tang.html">Combo quà tặng</a></li>
+              <li><a href="gioi-thieu.html">Về Yến Duyên</a></li>
+              <li><a href="lien-he.html">Liên hệ</a></li>
+            </ul>
+          </div>
+          <div class="footer-col footer-col--contact">
+            <h3 class="footer-col-title">Liên hệ</h3>
+            <ul class="footer-contact-list" role="list">
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <a href="tel:+840986012754">0986.012.754</a>
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <address style="font-style:normal">503 ĐH507, Phước Thành, Hồ Chí Minh, Vietnam</address>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="footer-bottom-inner">
+          <p class="footer-copy">© 2026 Yến Sào Yến Duyên. Bảo lưu mọi quyền.</p>
+          <div class="footer-legal">
+            <a href="chinh-sach.html">Chính sách bảo mật</a>
+            <span aria-hidden="true">·</span>
+            <a href="chinh-sach.html#doi-tra">Đổi trả</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating CTA -->
+  <div class="float-cta" aria-label="Liên hệ nhanh" role="complementary">
+    <a href="tel:+840986012754" class="float-btn float-btn--call" aria-label="Gọi điện ngay">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Gọi ngay</span>
+    </a>
+    <a href="https://zalo.me/0986012754" class="float-btn float-btn--zalo" aria-label="Nhắn Zalo" target="_blank" rel="noopener noreferrer">
+      <svg width="26" height="26" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+      <span>Zalo</span>
+    </a>
+    <a href="https://facebook.com/yensaoyenduyen" class="float-btn float-btn--fb" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+      <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path fill="#fff" d="M29.9,19.5h-4v-2.6c0-1,0.7-1.2,1.1-1.2c0.5,0,2.8,0,2.8,0v-4.4l-3.9,0c-4.4,0-5.3,3.3-5.3,5.3v2.9h-2.5V24h2.5c0,5.8,0,12.7,0,12.7h5.3c0,0,0-7,0-12.7h3.6L29.9,19.5z"/></svg>
+      <span>Facebook</span>
+    </a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/site-contact.js"></script>
+  <script src="js/auth-widget.js"></script>
+  <script>
+  var ME = null, ORDER = null;
+
+  var STATUS = {
+    pending:         'Đợi xác nhận',
+    preparing:       'Đang chuẩn bị hàng',
+    waiting_shipper: 'Đợi shipper lấy hàng',
+    shipping:        'Đang giao hàng',
+    delivered:       'Giao hàng thành công',
+    cancelled:       'Đã hủy'
+  };
+  var PAYMENT_LABEL = { cod:'Thanh toán khi nhận hàng (COD)', transfer:'Chuyển khoản ngân hàng' };
+
+  function el(id){ return document.getElementById(id); }
+  function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function fmtPrice(n){ return new Intl.NumberFormat('vi-VN').format(n||0) + 'đ'; }
+  function fmtDate(iso){ var d=new Date(iso); return d.toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+
+  var orderCode = new URLSearchParams(window.location.search).get('ma');
+
+  requireAuth('dang-nhap.html').then(function(user){
+    ME = user;
+    if(!orderCode){ showNotFound(); return; }
+    return getSupabase().from('orders').select('*').eq('order_code', orderCode).eq('user_id', user.id).maybeSingle()
+      .then(function(res){
+        if(res.error || !res.data){ showNotFound(); return; }
+        ORDER = res.data;
+        render();
+        loadRelated();
+      });
+  });
+
+  function showNotFound(){
+    el('cd-notfound').hidden = false;
+  }
+
+  function render(){
+    var o = ORDER;
+    el('cd-content').hidden = false;
+    el('cd-code').textContent = 'Đơn ' + (o.order_code || '');
+    el('cd-date').textContent = 'Đặt lúc ' + fmtDate(o.created_at);
+    var badge = el('cd-badge');
+    badge.textContent = STATUS[o.status] || o.status;
+    badge.className = 'badge badge--' + o.status;
+
+    if(o.shipping_provider || o.shipping_code){
+      el('cd-shipping-card').hidden = false;
+      el('cd-ship-provider').textContent = o.shipping_provider || '—';
+      el('cd-ship-code').textContent = o.shipping_code || '—';
+    }
+
+    var items = Array.isArray(o.items) ? o.items : [];
+    el('cd-items').innerHTML = items.map(function(it){
+      var pid = it.productId || it.id;
+      var link = pid ? 'chi-tiet-san-pham.html?id=' + encodeURIComponent(pid) : '#';
+      var oldPriceHtml = it.oldPrice ? '<span class="cd-item-old">' + fmtPrice(it.oldPrice) + '</span>' : '';
+      return '<a class="cd-item" href="' + esc(link) + '">'
+        + '<img src="' + esc(it.image||'') + '" alt="' + esc(it.name||'') + '">'
+        + '<div style="flex:1"><div class="cd-item-name">' + esc(it.name||'Sản phẩm') + '</div><div class="cd-item-qty">Số lượng: ' + (it.qty||1) + '</div></div>'
+        + '<div class="cd-item-price">' + oldPriceHtml + '<span class="cd-item-now">' + fmtPrice(it.price) + '</span></div>'
+        + '</a>';
+    }).join('') || '<p style="color:#9ca3af;">(Không có chi tiết sản phẩm)</p>';
+
+    el('cd-name').textContent = o.customer_name || '—';
+    el('cd-phone').textContent = o.customer_phone || '—';
+    el('cd-email').textContent = o.customer_email || '—';
+    el('cd-payment').textContent = PAYMENT_LABEL[o.payment_method] || o.payment_method || '—';
+    el('cd-address').textContent = o.customer_address || '—';
+    el('cd-note').textContent = o.note || 'Không có';
+
+    var subtotal = items.reduce(function(s,it){ return s + (it.price||0)*(it.qty||1); }, 0);
+    el('cd-subtotal').textContent = fmtPrice(subtotal);
+    if(o.discount_amount > 0){
+      el('cd-discount-row').hidden = false;
+      el('cd-discount').textContent = '−' + fmtPrice(o.discount_amount);
+      el('cd-voucher-code').textContent = o.voucher_code ? ' (' + o.voucher_code + ')' : '';
+    }
+    el('cd-shipfee').textContent = o.shipping_fee ? fmtPrice(o.shipping_fee) : 'Miễn phí';
+    el('cd-total').textContent = fmtPrice(o.total_amount);
+
+    var cats = items.map(function(it){ return it.productId || it.id; }).filter(Boolean);
+    window._cdExcludeIds = cats;
+  }
+
+  document.querySelectorAll('.cd-acc__q').forEach(function(q){
+    q.addEventListener('click', function(){ q.parentNode.classList.toggle('is-open'); });
+  });
+
+  function loadRelated(){
+    getSupabase().from('products').select('id, name, price, old_price, image_url')
+      .eq('is_active', true).order('created_at', { ascending:false }).limit(8)
+      .then(function(res){
+        var grid = el('cd-rel-grid'); if(!grid) return;
+        var exclude = window._cdExcludeIds || [];
+        var items = (res.data || []).filter(function(p){ return exclude.indexOf(p.id) === -1; }).slice(0, 4);
+        if(!items.length){ grid.parentElement.hidden = true; return; }
+        grid.innerHTML = items.map(function(p){
+          return '<a href="chi-tiet-san-pham.html?id=' + esc(p.id) + '" class="cd-rel-card">'
+            + '<img src="' + esc(p.image_url||'') + '" alt="' + esc(p.name) + ' — Yến Duyên" loading="lazy">'
+            + '<div class="cd-rel-body"><div class="cd-rel-name">' + esc(p.name) + '</div>'
+            + '<div class="cd-rel-price">' + fmtPrice(p.price) + '</div></div></a>';
+        }).join('');
+      });
+  }
+  </script>
+  <script src="js/ai-chat-widget.js"></script>
+</body>
+</html>

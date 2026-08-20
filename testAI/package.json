@@ -1,0 +1,10 @@
+{
+  "name": "test-ai-chat-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo AI chat function-calling + relay server (dựng theo AI-Chat-Nhung-Co-Tool.md) — độc lập với website chính, chỉ để test kiến trúc.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

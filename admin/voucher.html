@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Quản lý Voucher | Admin Yến Duyên</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/admin-notifications.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/security-gate.js"></script>
+  <script src="../js/admin-notifications.js"></script>
+  <style>
+    .voucher-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px; margin-bottom:24px; }
+    .voucher-card {
+      background:#fff; border:1.5px dashed #e5e7eb; border-radius:12px; overflow:hidden;
+      transition:all .2s; position:relative;
+    }
+    .voucher-card:hover { border-color:var(--color-gold); box-shadow:0 4px 16px rgba(0,0,0,.07); }
+    .voucher-card.is-expired { opacity:.55; }
+    .voucher-stripe { height:6px; background:var(--gradient-brand); }
+    .voucher-stripe--gold { background:linear-gradient(90deg, var(--color-gold), #f5c842); }
+    .voucher-stripe--green { background:linear-gradient(90deg, #22c55e, #16a34a); }
+    .voucher-body { padding:20px; }
+    .voucher-code {
+      font-family:'Courier New',monospace; font-size:1.3rem; font-weight:900;
+      color:var(--color-brand); letter-spacing:.1em; background:var(--color-cream);
+      padding:8px 14px; border-radius:6px; display:inline-block; margin-bottom:12px;
+      border:1px dashed rgba(62,39,35,.2);
+    }
+    .voucher-value { font-size:1.6rem; font-weight:800; color:var(--color-primary); margin-bottom:6px; }
+    .voucher-cond { font-size:.8rem; color:#6b7280; margin-bottom:12px; line-height:1.5; }
+    .voucher-meta { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    .voucher-tag { background:#f3f4f6; color:#374151; font-size:.72rem; font-weight:600; padding:3px 8px; border-radius:4px; }
+    .voucher-tag--demo { background:#fef3c7; color:#92400e; }
+    .voucher-actions { display:flex; gap:8px; }
+    .badge { display:inline-block; padding:2px 8px; border-radius:20px; font-size:.72rem; font-weight:700; }
+    .badge--active { background:#dcfce7; color:#166534; }
+    .badge--expired { background:#fee2e2; color:#991b1b; }
+    .badge--paused { background:#f3f4f6; color:#6b7280; }
+    .badge--upcoming { background:#dbeafe; color:#1d4ed8; }
+    .action-btn { flex:1; padding:7px; border-radius:6px; font-size:.8rem; font-weight:600; cursor:pointer; border:1px solid; transition:all .2s; text-align:center; }
+    .action-btn--edit { border-color:#e5e7eb; color:#374151; background:#fff; }
+    .action-btn--edit:hover { background:#f3f4f6; }
+    .action-btn--del { border-color:#fee2e2; color:#dc2626; background:#fff; }
+    .action-btn--del:hover { background:#ef4444; color:#fff; border-color:#ef4444; }
+    /* Modal */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.is-open { display:flex; }
+    .modal { background:#fff; border-radius:12px; width:100%; max-width:480px; max-height:88vh; overflow-y:auto; }
+    .modal-header { padding:20px 24px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; }
+    .modal-title { font-weight:700; color:#111827; }
+    .modal-close { width:32px; height:32px; border:none; background:#f3f4f6; border-radius:6px; cursor:pointer; font-size:1.1rem; }
+    .modal-body { padding:24px; }
+    .form-group { margin-bottom:16px; }
+    .form-label { display:block; font-size:.8rem; font-weight:600; color:#555; margin-bottom:6px; }
+    .form-control { width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; outline:none; box-sizing:border-box; }
+    .form-control:focus { border-color:var(--color-brand); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .modal-footer { padding:16px 24px; border-top:1px solid #e5e7eb; display:flex; gap:10px; justify-content:flex-end; }
+    /* Filter bar */
+    .filter-bar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:20px; }
+    .filter-search { position:relative; flex:1; min-width:220px; }
+    .filter-search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#9ca3af; pointer-events:none; }
+    .filter-search input { width:100%; padding:9px 12px 9px 36px; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; outline:none; box-sizing:border-box; }
+    .filter-search input:focus { border-color:var(--color-brand); }
+    .filter-select { padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; background:#fff; }
+    .pagination { display:flex; gap:4px; align-items:center; justify-content:center; margin-top:24px; }
+    .pagination a, .pagination span {
+      width:36px; height:36px; border-radius:8px; display:flex; align-items:center;
+      justify-content:center; font-size:.875rem; text-decoration:none; border:1px solid #e5e7eb;
+      color:#374151; transition:all .2s;
+    }
+    .pagination a:hover { border-color:var(--color-brand); color:var(--color-brand); }
+    .pagination span.is-active { background:none; color:#374151; border:none; width:auto; padding:0 8px; font-weight:600; }
+    .pagination a.is-disabled { opacity:.4; pointer-events:none; }
+  </style>
+</head>
+<body class="admin-body">
+<div class="admin-wrapper" id="admin-wrapper">
+  <aside class="admin-sidebar">
+    <a href="dashboard.html" class="admin-sidebar__logo"><div class="admin-sidebar__logo-mark">YD</div><div class="admin-sidebar__logo-text"><strong>Yến Duyên</strong><span>Admin Panel</span></div></a>
+    <nav class="admin-sidebar__nav">
+      <div class="admin-nav-section"><p class="admin-nav-section-label">Tổng quan</p><a href="dashboard.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a><a href="thong-bao.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span>Thông báo</span></a></div>
+      <div class="admin-nav-section"><p class="admin-nav-section-label">Kinh doanh</p>
+        <a href="don-hang.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg><span>Đơn hàng</span></a>
+        <a href="san-pham.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>Sản phẩm</span></a>
+        <a href="voucher.html" class="admin-nav-link is-active" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span>Voucher</span></a>
+        <a href="flash-sale.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span>Flash Sale</span></a>
+      </div>
+      <div class="admin-nav-section"><p class="admin-nav-section-label">Nội dung</p><a href="blog.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Blog</span></a></div>
+      <div class="admin-nav-section"><p class="admin-nav-section-label">Khách hàng</p><a href="khach-hang.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Khách hàng</span></a><a href="phan-hoi.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Phản hồi</span></a></div>
+      <div class="admin-nav-section"><p class="admin-nav-section-label">Hệ thống</p><a href="sao-luu.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Sao lưu dữ liệu</span></a><a href="cai-dat.html" class="admin-nav-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg><span>Cài đặt</span></a></div>
+    </nav>
+    <div class="admin-sidebar__footer"><button onclick="logout()" class="admin-nav-link" style="width:100%;background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:.875rem;text-align:left;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Đăng xuất</span></button></div>
+  </aside>
+
+  <header class="admin-topbar">
+    <div class="admin-topbar__left">
+      <button class="admin-sidebar-toggle" id="sidebar-toggle" aria-label="Thu/mở sidebar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <span class="admin-topbar__title">Quản lý Voucher</span>
+    </div>
+    <div class="admin-topbar__right">
+      <button class="admin-btn admin-btn--primary" onclick="openCreateModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tạo voucher
+      </button>
+      <div class="admin-user-menu"><div class="admin-user-avatar" id="user-avatar">A</div><span class="admin-user-name" id="user-name">Admin</span></div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-page-header">
+      <div><h1 class="admin-page-title">Voucher & Mã giảm giá</h1><p class="admin-page-sub" id="page-sub">Đang tải…</p></div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="voucher-search" placeholder="Tìm theo mã voucher..." aria-label="Tìm voucher" oninput="applyVoucherFilters()">
+      </div>
+      <select class="filter-select" id="filter-discount-type" onchange="applyVoucherFilters()">
+        <option value="">Tất cả loại giảm giá</option>
+        <option value="percent">Giảm theo %</option>
+        <option value="amount">Giảm theo số tiền</option>
+      </select>
+      <select class="filter-select" id="filter-active" onchange="applyVoucherFilters()">
+        <option value="">Tất cả trạng thái</option>
+        <option value="true">Đang hoạt động</option>
+        <option value="false">Tạm dừng</option>
+      </select>
+      <select class="filter-select" id="filter-scope" onchange="applyVoucherFilters()">
+        <option value="">Tất cả áp dụng cho</option>
+        <option value="all">Tất cả khách hàng</option>
+        <option value="new_customer">Khách hàng mới</option>
+        <option value="vip">Khách VIP</option>
+        <option value="products">Sản phẩm cụ thể</option>
+      </select>
+      <select class="filter-select" id="voucher-sort" onchange="applyVoucherFilters()">
+        <option value="newest">Sắp xếp: Mới nhất</option>
+        <option value="oldest">Cũ nhất</option>
+        <option value="value-desc">Giá trị giảm cao → thấp</option>
+        <option value="value-asc">Giá trị giảm thấp → cao</option>
+        <option value="expiring">Sắp hết hạn trước</option>
+        <option value="min-order-desc">Đơn tối thiểu cao → thấp</option>
+        <option value="code-asc">Mã A → Z</option>
+      </select>
+    </div>
+
+    <div class="voucher-grid" id="voucher-grid">
+      <p style="color:#9ca3af;padding:32px;text-align:center;grid-column:1/-1;">Đang tải voucher…</p>
+    </div>
+    <div class="pagination" id="voucher-pagination" aria-label="Điều hướng trang"></div>
+  </main>
+</div>
+
+<!-- Create/Edit Voucher Modal -->
+<div class="modal-overlay" id="voucher-modal" role="dialog" aria-modal="true" aria-label="Tạo/chỉnh sửa voucher">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title-text">Tạo voucher mới</span>
+      <button class="modal-close" onclick="closeModal()" aria-label="Đóng">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Mã voucher *</label>
+        <input class="form-control" id="f-code" type="text" placeholder="VD: SUMMER2026" style="font-family:'Courier New',monospace;text-transform:uppercase;">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Loại giảm giá</label>
+          <select class="form-control" id="f-discount-type" onchange="onDiscountTypeChange()">
+            <option value="percent">Giảm theo phần trăm (%)</option>
+            <option value="amount">Giảm theo số tiền cố định (đ)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="f-value-label">Phần trăm giảm (%) *</label>
+          <input class="form-control" id="f-discount-value" type="number" placeholder="10">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Đơn tối thiểu (đ)</label>
+          <input class="form-control" id="f-min-order" type="number" placeholder="1000000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Trạng thái</label>
+          <select class="form-control" id="f-active">
+            <option value="true">Đang bật</option>
+            <option value="false">Tạm dừng</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Số lượng voucher (tổng lượt tối đa) *</label>
+          <input class="form-control" id="f-total-quantity" type="number" min="1" placeholder="VD: 100">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Giới hạn mỗi khách hàng *</label>
+          <input class="form-control" id="f-max-per-customer" type="number" min="1" value="1">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ngày bắt đầu</label>
+          <input class="form-control" id="f-start-date" type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ngày hết hạn</label>
+          <input class="form-control" id="f-end-date" type="text" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Áp dụng cho</label>
+        <select class="form-control" id="f-scope" onchange="onScopeChange()">
+          <option value="all">Tất cả khách hàng</option>
+          <option value="new_customer">Khách hàng mới (đơn đầu tiên) — Demo, chưa áp dụng thật</option>
+          <option value="vip">Khách VIP — Demo, chưa áp dụng thật</option>
+          <option value="products">Sản phẩm cụ thể</option>
+        </select>
+      </div>
+      <div class="form-group" id="f-products-wrap" style="display:none;">
+        <label class="form-label">Chọn sản phẩm áp dụng</label>
+        <div id="f-products-list" style="max-height:180px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="admin-btn admin-btn--outline" onclick="closeModal()">Hủy</button>
+      <button class="admin-btn admin-btn--primary" id="save-btn" onclick="saveVoucher()">Tạo voucher</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Xác thực admin thật bằng Supabase (chống giả mạo localStorage)
+SecurityGate.requireAdmin().then(function(){
+  var session = JSON.parse(localStorage.getItem('yen-duyen-admin') || 'null');
+  if(session){ document.getElementById('user-name').textContent = session.name||'Admin'; document.getElementById('user-avatar').textContent = (session.name||'A')[0]; }
+});
+document.getElementById('sidebar-toggle').addEventListener('click', function(){ document.getElementById('admin-wrapper').classList.toggle('sidebar-collapsed'); });
+function logout(){ getSupabase().auth.signOut().then(function(){ localStorage.removeItem('yen-duyen-admin'); window.location.replace('index.html'); }); }
+
+var allVouchers = [];
+var allProducts = [];
+var editingId = null;
+
+var SCOPE_LABELS = { all:'Tất cả khách hàng', new_customer:'Khách hàng mới', vip:'Khách VIP', products:'Sản phẩm cụ thể' };
+
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function fmt(n){ return Number(n||0).toLocaleString('vi-VN') + 'đ'; }
+function fmtDateShort(iso){ if(!iso) return '—'; return new Date(iso).toLocaleDateString('vi-VN'); }
+// Đọc ngược ISO (UTC) về đúng ngày dương lịch giờ VN (+7), hiển thị dd/mm/yyyy —
+// input[type=date] hiện định dạng theo locale trình duyệt (có máy ra mm/dd/yyyy,
+// không phải lỗi nhưng gây nhầm) nên đổi hẳn sang ô nhập chữ dd/mm/yyyy cố định.
+function toVNDateInput(iso){
+  if(!iso) return '';
+  var vn = new Date(new Date(iso).getTime() + 7*3600000);
+  var s = vn.toISOString().slice(0,10); // yyyy-mm-dd
+  var p = s.split('-');
+  return p[2] + '/' + p[1] + '/' + p[0];
+}
+// dd/mm/yyyy (khách gõ) → yyyy-mm-dd — null nếu sai định dạng hoặc ngày không có thật (vd 31/02)
+function parseDDMMYYYY(s){
+  var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec((s||'').trim());
+  if(!m) return null;
+  var d = parseInt(m[1],10), mo = parseInt(m[2],10), y = parseInt(m[3],10);
+  var date = new Date(y, mo-1, d);
+  if(date.getFullYear() !== y || date.getMonth() !== mo-1 || date.getDate() !== d) return null;
+  var pad = function(n){ return (n<10?'0':'')+n; };
+  return y + '-' + pad(mo) + '-' + pad(d);
+}
+// Tự chèn dấu "/" khi gõ số vào ô ngày (dd/mm/yyyy)
+function autoFormatDateInput(el){
+  if(!el) return;
+  el.addEventListener('input', function(){
+    var digits = el.value.replace(/[^0-9]/g, '').slice(0, 8);
+    var out = digits;
+    if(digits.length > 4) out = digits.slice(0,2) + '/' + digits.slice(2,4) + '/' + digits.slice(4);
+    else if(digits.length > 2) out = digits.slice(0,2) + '/' + digits.slice(2);
+    el.value = out;
+  });
+}
+autoFormatDateInput(document.getElementById('f-start-date'));
+autoFormatDateInput(document.getElementById('f-end-date'));
+
+function computeStatus(v){
+  var now = new Date();
+  if(!v.is_active) return {key:'paused', label:'Tạm dừng', cls:'badge--paused'};
+  if(v.end_date && new Date(v.end_date) < now) return {key:'expired', label:'Hết hạn', cls:'badge--expired'};
+  if(v.start_date && new Date(v.start_date) > now) return {key:'upcoming', label:'Sắp diễn ra', cls:'badge--upcoming'};
+  if((usageMap[v.code]||0) >= (v.total_quantity||1)) return {key:'sold_out', label:'Hết lượt', cls:'badge--expired'};
+  return {key:'active', label:'Đang hoạt động', cls:'badge--active'};
+}
+function valueLabel(v){
+  return v.discount_type === 'percent' ? ('Giảm ' + (v.discount_value||0) + '%') : ('Giảm ' + fmt(v.discount_value));
+}
+
+// ─── LOAD DỮ LIỆU THẬT TỪ SUPABASE (phân trang thật — gọi lại Supabase mỗi trang, giống admin/don-hang.html) ──
+var usageMap = {};
+var PAGE_SIZE = 12;
+var currentPage = 1;
+var totalCount = 0;
+var searchDebounceTimer = null;
+
+function loadProductsOnce(){
+  return getSupabase().from('products').select('id,name').eq('is_active', true).order('name').then(function(pRes){
+    if(pRes.error) console.warn('Supabase products:', pRes.error.message);
+    allProducts = pRes.data || [];
+  });
+}
+
+function buildVouchersQuery(){
+  var term = (document.getElementById('voucher-search') || {}).value || '';
+  term = term.trim().replace(/[,()%*]/g, '');
+  var typeSel = document.getElementById('filter-discount-type');
+  var type = typeSel ? typeSel.value : '';
+  var activeSel = document.getElementById('filter-active');
+  var activeVal = activeSel ? activeSel.value : '';
+  var scopeSel = document.getElementById('filter-scope');
+  var scopeVal = scopeSel ? scopeSel.value : '';
+  var sortSel = document.getElementById('voucher-sort');
+  var sortVal = sortSel ? sortSel.value : 'newest';
+
+  var q = getSupabase().from('vouchers').select('*', { count: 'exact' });
+  if(type) q = q.eq('discount_type', type);
+  if(activeVal) q = q.eq('is_active', activeVal === 'true');
+  if(scopeVal) q = q.eq('apply_scope', scopeVal);
+  if(term) q = q.ilike('code', '%'+term+'%');
+
+  if(sortVal === 'oldest') q = q.order('created_at', { ascending: true });
+  else if(sortVal === 'value-desc') q = q.order('discount_value', { ascending: false });
+  else if(sortVal === 'value-asc') q = q.order('discount_value', { ascending: true });
+  else if(sortVal === 'min-order-desc') q = q.order('min_order', { ascending: false });
+  else if(sortVal === 'code-asc') q = q.order('code', { ascending: true });
+  else if(sortVal === 'expiring') q = q.order('end_date', { ascending: true, nullsFirst: false });
+  else q = q.order('created_at', { ascending: false }); // 'newest' mặc định
+
+  return q;
+}
+
+function loadData(page){
+  currentPage = page || 1;
+  var from = (currentPage - 1) * PAGE_SIZE;
+  var to = from + PAGE_SIZE - 1;
+  buildVouchersQuery().range(from, to).then(function(vRes){
+    if(vRes.error){
+      document.getElementById('voucher-grid').innerHTML = '<p style="color:#dc2626;padding:24px;">Lỗi tải voucher: '+vRes.error.message+'</p>';
+      return;
+    }
+    allVouchers = vRes.data || [];
+    totalCount = vRes.count || 0;
+    var codes = allVouchers.map(function(v){ return v.code; });
+    usageMap = {};
+    if(!codes.length){ renderVouchers(allVouchers); renderPagination(); return; }
+    getSupabase().from('orders').select('voucher_code').in('voucher_code', codes).neq('status', 'cancelled')
+      .then(function(oRes){
+        (oRes.data || []).forEach(function(o){ if(o.voucher_code) usageMap[o.voucher_code] = (usageMap[o.voucher_code]||0) + 1; });
+        renderVouchers(allVouchers);
+        renderPagination();
+      });
+  });
+}
+
+// Gõ tìm kiếm/đổi bộ lọc → về trang 1, debounce 300ms cho ô tìm kiếm.
+function applyVoucherFilters(){
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(function(){ loadData(1); }, 300);
+}
+
+function renderPagination(){
+  var wrap = document.getElementById('voucher-pagination');
+  if(!wrap) return;
+  var totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  var prevDisabled = currentPage <= 1;
+  var nextDisabled = currentPage >= totalPages;
+  wrap.innerHTML =
+      '<a href="#" id="voucher-page-prev" class="'+(prevDisabled?'is-disabled':'')+'" aria-label="Trang trước">‹</a>'
+    + '<span class="is-active">Trang '+currentPage+'/'+totalPages+'</span>'
+    + '<a href="#" id="voucher-page-next" class="'+(nextDisabled?'is-disabled':'')+'" aria-label="Trang sau">›</a>';
+  var prevEl = document.getElementById('voucher-page-prev');
+  var nextEl = document.getElementById('voucher-page-next');
+  if(prevEl) prevEl.addEventListener('click', function(e){ e.preventDefault(); if(!prevDisabled) loadData(currentPage - 1); });
+  if(nextEl) nextEl.addEventListener('click', function(e){ e.preventDefault(); if(!nextDisabled) loadData(currentPage + 1); });
+}
+
+// ─── RENDER DANH SÁCH ───────────────────────────────────────
+function renderVouchers(list){
+  var grid = document.getElementById('voucher-grid');
+  var activeCount = list.filter(function(v){ return computeStatus(v).key === 'active'; }).length;
+  document.getElementById('page-sub').textContent = totalCount + ' voucher · ' + activeCount + ' đang hoạt động';
+
+  if(!list.length){
+    grid.innerHTML = '<div class="admin-empty-state" style="grid-column:1/-1;"><h3>Chưa có voucher nào</h3><p>Bấm "Tạo voucher" để thêm mã giảm giá đầu tiên.</p></div>';
+    return;
+  }
+
+  var pmap = {};
+  allProducts.forEach(function(p){ pmap[p.id] = p.name; });
+
+  grid.innerHTML = list.map(function(v){
+    var st = computeStatus(v);
+    var isExpired = st.key === 'expired';
+    var isDone = isExpired || st.key === 'sold_out';
+    var stripeClass = st.key === 'upcoming' ? 'voucher-stripe--gold' : (st.key === 'paused' || isDone ? '' : '');
+    var demoTag = (v.apply_scope === 'new_customer' || v.apply_scope === 'vip') ? '<span class="voucher-tag voucher-tag--demo">⚠️ Demo</span>' : '';
+    var scopeTag;
+    if(v.apply_scope === 'products'){
+      var names = (v.apply_product_ids||[]).map(function(id){ return pmap[id] || id; }).join(', ');
+      scopeTag = '<span class="voucher-tag" title="'+esc(names)+'">'+(v.apply_product_ids||[]).length+' sản phẩm</span>';
+    } else {
+      scopeTag = '<span class="voucher-tag">'+esc(SCOPE_LABELS[v.apply_scope] || 'Tất cả khách hàng')+'</span>';
+    }
+    var condParts = [];
+    condParts.push('Đơn tối thiểu ' + fmt(v.min_order));
+    if(v.start_date) condParts.push('Từ ' + fmtDateShort(v.start_date));
+    condParts.push((isExpired ? 'Đã hết hạn ' : 'Hết hạn: ') + (v.end_date ? fmtDateShort(v.end_date) : 'Không giới hạn'));
+    var usageCount = usageMap[v.code] || 0;
+    condParts.push('Đã dùng: ' + usageCount + '/' + (v.total_quantity||1));
+    condParts.push('Tối đa ' + (v.max_uses_per_customer||1) + ' lần/khách');
+
+    return '<div class="voucher-card '+(isDone?'is-expired':'')+'">'
+      + '<div class="voucher-stripe '+stripeClass+'"></div>'
+      + '<div class="voucher-body">'
+      +   '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">'
+      +     '<span class="voucher-code">'+esc(v.code)+'</span>'
+      +     '<span class="badge '+st.cls+'">'+st.label+'</span>'
+      +   '</div>'
+      +   '<p class="voucher-value">'+valueLabel(v)+'</p>'
+      +   '<p class="voucher-cond">'+esc(condParts.join(' · '))+'</p>'
+      +   '<div class="voucher-meta">'+scopeTag+demoTag+'</div>'
+      +   '<div class="voucher-actions">'
+      +     '<button class="action-btn action-btn--edit" onclick="openEditModal(\''+v.id+'\')">Chỉnh sửa</button>'
+      +     '<button class="action-btn action-btn--del" onclick="deleteVoucher(\''+v.id+'\')">Xóa</button>'
+      +   '</div>'
+      + '</div></div>';
+  }).join('');
+}
+
+// ─── MODAL: MỞ / ĐÓNG ───────────────────────────────────────
+function openCreateModal(){
+  editingId = null;
+  document.getElementById('modal-title-text').textContent = 'Tạo voucher mới';
+  document.getElementById('save-btn').textContent = 'Tạo voucher';
+  document.getElementById('f-code').value = '';
+  document.getElementById('f-discount-type').value = 'percent';
+  document.getElementById('f-discount-value').value = '';
+  document.getElementById('f-min-order').value = '';
+  document.getElementById('f-active').value = 'true';
+  document.getElementById('f-total-quantity').value = '';
+  document.getElementById('f-max-per-customer').value = '1';
+  document.getElementById('f-start-date').value = '';
+  document.getElementById('f-end-date').value = '';
+  document.getElementById('f-scope').value = 'all';
+  onDiscountTypeChange();
+  onScopeChange();
+  renderProductChecklist([]);
+  openModalEl();
+}
+function openEditModal(id){
+  var v = allVouchers.find(function(x){ return x.id === id; });
+  if(!v) return;
+  editingId = id;
+  document.getElementById('modal-title-text').textContent = 'Chỉnh sửa voucher';
+  document.getElementById('save-btn').textContent = 'Lưu thay đổi';
+  document.getElementById('f-code').value = v.code || '';
+  document.getElementById('f-discount-type').value = v.discount_type || 'percent';
+  document.getElementById('f-discount-value').value = v.discount_value || '';
+  document.getElementById('f-min-order').value = v.min_order || '';
+  document.getElementById('f-active').value = v.is_active ? 'true' : 'false';
+  document.getElementById('f-total-quantity').value = v.total_quantity || '';
+  document.getElementById('f-max-per-customer').value = v.max_uses_per_customer || 1;
+  document.getElementById('f-start-date').value = toVNDateInput(v.start_date);
+  document.getElementById('f-end-date').value = toVNDateInput(v.end_date);
+  document.getElementById('f-scope').value = v.apply_scope || 'all';
+  onDiscountTypeChange();
+  onScopeChange();
+  renderProductChecklist(v.apply_product_ids || []);
+  openModalEl();
+}
+function openModalEl(){
+  document.getElementById('voucher-modal').classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){ document.getElementById('voucher-modal').classList.remove('is-open'); document.body.style.overflow=''; }
+
+// ─── FORM: LOẠI GIẢM GIÁ + XEM TRƯỚC VÍ DỤ ──────────────────
+function onDiscountTypeChange(){
+  var type = document.getElementById('f-discount-type').value;
+  var label = document.getElementById('f-value-label');
+  var input = document.getElementById('f-discount-value');
+  if(type === 'percent'){
+    label.textContent = 'Phần trăm giảm (%) *';
+    input.placeholder = '10';
+    input.setAttribute('max', '100');
+  } else {
+    label.textContent = 'Số tiền giảm (đ) *';
+    input.placeholder = '500000';
+    input.removeAttribute('max');
+  }
+}
+
+// ─── FORM: ÁP DỤNG CHO / CHỌN SẢN PHẨM ──────────────────────
+function onScopeChange(){
+  var scope = document.getElementById('f-scope').value;
+  document.getElementById('f-products-wrap').style.display = scope === 'products' ? 'block' : 'none';
+}
+function renderProductChecklist(checkedIds){
+  checkedIds = checkedIds || [];
+  var wrap = document.getElementById('f-products-list');
+  if(!allProducts.length){ wrap.innerHTML = '<p style="color:#9ca3af;font-size:.82rem;margin:0;">Không có sản phẩm đang active.</p>'; return; }
+  wrap.innerHTML = allProducts.map(function(p){
+    var checked = checkedIds.indexOf(p.id) !== -1 ? 'checked' : '';
+    return '<label style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:.85rem;">'
+      + '<input type="checkbox" class="f-product-cb" value="'+p.id+'" '+checked+'> '+esc(p.name)+'</label>';
+  }).join('');
+}
+
+// ─── LƯU (TẠO MỚI / CẬP NHẬT) ───────────────────────────────
+function saveVoucher(){
+  var code = (document.getElementById('f-code').value || '').trim().toUpperCase();
+  var discountType = document.getElementById('f-discount-type').value;
+  var discountValue = Number(document.getElementById('f-discount-value').value) || 0;
+  var minOrder = Number(document.getElementById('f-min-order').value) || 0;
+  var isActive = document.getElementById('f-active').value === 'true';
+  var totalQuantity = Number(document.getElementById('f-total-quantity').value) || 0;
+  var maxPerCustomer = Number(document.getElementById('f-max-per-customer').value) || 0;
+  var startDateVal = document.getElementById('f-start-date').value;
+  var endDateVal = document.getElementById('f-end-date').value;
+  var scope = document.getElementById('f-scope').value;
+
+  if(!code){ alert('Vui lòng nhập mã voucher.'); return; }
+  if(!discountValue || discountValue <= 0){ alert('Vui lòng nhập giá trị giảm hợp lệ.'); return; }
+  if(discountType === 'percent' && discountValue > 100){ alert('Phần trăm giảm không được vượt quá 100%.'); return; }
+  if(!totalQuantity || totalQuantity <= 0){ alert('Vui lòng nhập số lượng voucher hợp lệ (số nguyên dương).'); return; }
+  if(!maxPerCustomer || maxPerCustomer <= 0){ alert('Vui lòng nhập giới hạn mỗi khách hàng hợp lệ (số nguyên dương).'); return; }
+
+  var startDateISO = startDateVal ? parseDDMMYYYY(startDateVal) : null;
+  var endDateISO = endDateVal ? parseDDMMYYYY(endDateVal) : null;
+  if(startDateVal && !startDateISO){ alert('Ngày bắt đầu không hợp lệ. Định dạng đúng: dd/mm/yyyy'); return; }
+  if(endDateVal && !endDateISO){ alert('Ngày hết hạn không hợp lệ. Định dạng đúng: dd/mm/yyyy'); return; }
+
+  var productIds = [];
+  if(scope === 'products'){
+    productIds = Array.prototype.slice.call(document.querySelectorAll('.f-product-cb:checked')).map(function(cb){ return cb.value; });
+    if(!productIds.length){ alert('Vui lòng chọn ít nhất 1 sản phẩm áp dụng.'); return; }
+  }
+
+  var payload = {
+    code: code,
+    discount_type: discountType,
+    discount_value: discountValue,
+    min_order: minOrder,
+    is_active: isActive,
+    total_quantity: totalQuantity,
+    max_uses_per_customer: maxPerCustomer,
+    // Giờ VN (+07:00): bắt đầu từ 00:00, kết thúc tới hết 23:59:59 ngày đã chọn —
+    // nếu không ghi rõ giờ, JS hiểu ngày dạng "YYYY-MM-DD" là UTC, làm voucher tự
+    // đóng sớm ~17 tiếng (hết hạn từ 7h sáng thay vì cuối ngày) so với ý admin chọn.
+    start_date: startDateISO ? new Date(startDateISO + 'T00:00:00+07:00').toISOString() : null,
+    end_date: endDateISO ? new Date(endDateISO + 'T23:59:59+07:00').toISOString() : null,
+    apply_scope: scope,
+    apply_product_ids: productIds
+  };
+
+  var btn = document.getElementById('save-btn');
+  btn.disabled = true;
+
+  var query = editingId
+    ? getSupabase().from('vouchers').update(payload).eq('id', editingId)
+    : getSupabase().from('vouchers').insert(payload);
+
+  query.then(function(res){
+    btn.disabled = false;
+    if(res.error){
+      if(res.error.code === '23505') alert('Mã voucher "' + code + '" đã tồn tại. Vui lòng chọn mã khác.');
+      else alert('Lỗi lưu voucher: ' + res.error.message);
+      return;
+    }
+    closeModal();
+    loadData(currentPage);
+  });
+}
+
+// ─── XÓA ─────────────────────────────────────────────────────
+function deleteVoucher(id){
+  var v = allVouchers.find(function(x){ return x.id === id; });
+  if(!confirm('Xóa voucher "' + (v ? v.code : '') + '"?')) return;
+  getSupabase().from('vouchers').delete().eq('id', id).then(function(res){
+    if(res.error){ alert('Lỗi xóa: ' + res.error.message); return; }
+    loadData(currentPage);
+  });
+}
+
+document.getElementById('voucher-modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+// Tìm kiếm tổng hợp từ dashboard đưa qua (?search=...)
+(function(){
+  var q = new URLSearchParams(window.location.search).get('search');
+  if(q) document.getElementById('voucher-search').value = q;
+})();
+
+loadProductsOnce();
+loadData(1);
+</script>
+<script src="../js/admin-status.js"></script>
+</body>
+</html>

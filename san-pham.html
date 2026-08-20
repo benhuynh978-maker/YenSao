@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tất cả sản phẩm yến sào cao cấp của Yến Duyên — Tổ yến thô, yến tinh chế, yến chưng sẵn, set quà biếu. Chính hãng, an toàn, giao toàn quốc.">
+  <title>Sản Phẩm — Yến Sào Yến Duyên</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/sections.css">
+  <link rel="stylesheet" href="css/ai-chat.css">
+
+  <style>
+    /* ── Riêng trang này: quay lại bảng màu gốc (đỏ/nâu/vàng/trắng),
+       không đụng các trang khác đang dùng bảng màu mới (kem/gold/xanh ngọc).
+       Chỉ cần đè lại các CSS custom property — toàn bộ site vốn tham chiếu
+       qua var(--...) nên không cần sửa từng rule. ── */
+    :root {
+      --color-brand:           #3E2723;
+      --color-brand-medium:    #5D4037;
+      --color-brand-light:     #8D6E63;
+      --color-primary:         #8B0000;
+      --color-primary-hover:   #A52A2A;
+      --color-gold:            #D4AF37;
+      --color-gold-pale:       #F5E6D3;
+      --color-cream:           #FAF6F1;
+      --color-text:            #2C1810;
+      --color-text-medium:     #5D4037;
+      --color-text-light:      #8D6E63;
+      --color-text-on-dark:    #FAF6F1;
+      --color-success:         #2E7D32;
+      --color-bg:              #FAF6F1;
+      --color-surface:         #FFFFFF;
+      --color-selected:        #8B0000;
+      --color-selected-hover:  #A52A2A;
+      --gradient-brand:        linear-gradient(135deg, #3E2723 0%, #5D4037 50%, #8B0000 100%);
+      --gradient-hero:         linear-gradient(135deg, #3E2723 0%, #5D4037 50%, #8B0000 100%);
+      --gradient-card:         linear-gradient(180deg, #FAF6F1 0%, #F5E6D3 100%);
+      --gradient-button:       linear-gradient(135deg, #8B0000 0%, #A52A2A 100%);
+      --gradient-gold:         linear-gradient(135deg, #D4AF37 0%, #F0D060 50%, #D4AF37 100%);
+      --shadow-sm:             0 2px 6px rgba(62, 39, 35, 0.06);
+      --shadow-md:             0 4px 12px rgba(62, 39, 35, 0.08);
+      --shadow-lg:             0 12px 24px rgba(62, 39, 35, 0.15);
+      --shadow-xl:             0 20px 40px rgba(62, 39, 35, 0.2);
+      --shadow-brand:          0 4px 16px rgba(139, 0, 0, 0.2);
+      --shadow-gold:           0 4px 16px rgba(212, 175, 55, 0.3);
+      --border-subtle:         1px solid rgba(139, 0, 0, 0.1);
+      --border-light:          1px solid rgba(141, 110, 99, 0.2);
+      --border-gold:           1px solid rgba(212, 175, 55, 0.4);
+    }
+
+    /* ── Page-level styles for san-pham.html ── */
+
+    .page-hero {
+      background: var(--gradient-brand);
+      padding: 100px 0 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1920&h=400&fit=crop&q=60') center/cover no-repeat;
+      opacity: 0.08;
+    }
+    .page-hero__label {
+      font-family: var(--font-accent);
+      font-size: var(--text-sm);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-gold);
+      margin-bottom: var(--space-12);
+      position: relative;
+    }
+    .page-hero__title {
+      font-family: var(--font-heading);
+      font-size: var(--text-4xl);
+      font-weight: 700;
+      color: var(--color-white);
+      position: relative;
+      margin-bottom: var(--space-16);
+    }
+    .page-hero__breadcrumb {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-8);
+      font-size: var(--text-sm);
+      color: rgba(255,255,255,0.65);
+      position: relative;
+    }
+    .page-hero__breadcrumb a { color: rgba(255,255,255,0.75); text-decoration: none; }
+    .page-hero__breadcrumb a:hover { color: var(--color-gold); }
+    .page-hero__breadcrumb span { color: var(--color-gold); }
+
+    /* ── Shop Layout ── */
+    .shop-layout {
+      display: flex;
+      flex-direction: row;
+      gap: var(--space-32);
+      align-items: flex-start;
+      padding: var(--space-64) 0;
+    }
+
+    /* ── Filter Sidebar ── */
+    .filter-sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      /* scroll tự nhiên theo trang, không sticky */
+    }
+    .filter-panel {
+      background: var(--color-white);
+      border: var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: var(--space-20);
+    }
+    .filter-panel__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-16) var(--space-20);
+      background: var(--color-cream);
+      border-bottom: var(--border-subtle);
+      cursor: pointer;
+      user-select: none;
+    }
+    .filter-panel__head h3 {
+      font-family: var(--font-heading);
+      font-size: var(--text-base);
+      font-weight: 600;
+      color: var(--color-brand);
+      margin: 0;
+    }
+    .filter-panel__arrow {
+      width: 18px;
+      height: 18px;
+      color: var(--color-text-muted);
+      transition: transform var(--transition-fast);
+    }
+    .filter-panel.is-collapsed .filter-panel__arrow { transform: rotate(-90deg); }
+    .filter-panel.is-collapsed .filter-panel__body { display: none; }
+    .filter-panel__body { padding: var(--space-16) var(--space-20); }
+
+    .filter-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-12); }
+    .filter-list label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-10);
+      font-size: var(--text-sm);
+      color: var(--color-text-medium);
+      cursor: pointer;
+      transition: color var(--transition-fast);
+    }
+    .filter-list label:hover { color: var(--color-primary); }
+    .filter-list input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .filter-list .count {
+      margin-left: auto;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      background: var(--color-cream);
+      border-radius: var(--radius-full);
+      padding: 1px 8px;
+    }
+
+    .filter-price-range {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-12);
+    }
+    .price-range-row {
+      display: flex;
+      gap: var(--space-8);
+    }
+    .price-range-row input {
+      flex: 1;
+      padding: var(--space-8) var(--space-12);
+      border: var(--border-light);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      outline: none;
+    }
+    .price-range-row input:focus { border-color: var(--color-primary); }
+    .btn-apply-filter {
+      width: 100%;
+      padding: var(--space-10) 0;
+      background: var(--gradient-button);
+      color: var(--color-white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity var(--transition-fast);
+    }
+    .btn-apply-filter:hover { opacity: 0.88; }
+
+    .btn-clear-filter {
+      width: 100%;
+      padding: var(--space-10) 0;
+      background: transparent;
+      color: var(--color-text-muted);
+      border: var(--border-light);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      margin-top: var(--space-8);
+    }
+    .btn-clear-filter:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+    /* ── Product Main Area ── */
+    .shop-main {
+      flex: 1;
+      min-width: 0; /* ngăn flex child tràn */
+    }
+
+    .shop-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-16);
+      margin-bottom: var(--space-32);
+      padding-bottom: var(--space-20);
+      border-bottom: var(--border-subtle);
+      flex-wrap: wrap;
+    }
+    .shop-count {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+    .shop-count strong { color: var(--color-text); }
+
+    .shop-search { position: relative; min-width: 220px; }
+    .shop-search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted); pointer-events: none; }
+    .shop-search input {
+      width: 100%; padding: 9px 12px 9px 36px; border: var(--border-light);
+      border-radius: var(--radius-sm); font-size: var(--text-sm); font-family: inherit;
+      outline: none; box-sizing: border-box;
+    }
+    .shop-search input:focus { border-color: var(--color-brand); }
+
+    .shop-toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    }
+    .sort-select {
+      padding: var(--space-8) var(--space-16);
+      border: var(--border-light);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      color: var(--color-text);
+      background: var(--color-white);
+      cursor: pointer;
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+    .sort-select:focus { border-color: var(--color-primary); }
+
+    .view-btns { display: flex; gap: var(--space-4); }
+    .view-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: var(--border-light);
+      border-radius: var(--radius-sm);
+      background: var(--color-white);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .view-btn.is-active, .view-btn:hover {
+      background: var(--color-brand);
+      border-color: var(--color-brand);
+      color: var(--color-white);
+    }
+
+    /* Active filters chips */
+    .active-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-8);
+      margin-bottom: var(--space-24);
+    }
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-6);
+      padding: 4px 12px;
+      background: var(--color-cream);
+      border: var(--border-light);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--color-text-medium);
+    }
+    .filter-chip button {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      line-height: 1;
+      font-size: 14px;
+    }
+    .filter-chip button:hover { color: var(--color-primary); }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-8);
+      margin-top: var(--space-64);
+    }
+    .page-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: var(--border-light);
+      border-radius: var(--radius-sm);
+      background: var(--color-white);
+      color: var(--color-text-medium);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+    .page-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .page-btn.is-active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-white);
+    }
+    .page-btn--icon { color: var(--color-text-muted); }
+
+    /* ── Mobile filter toggle ── */
+    .btn-filter-toggle {
+      display: none;
+      align-items: center;
+      gap: var(--space-8);
+      padding: var(--space-10) var(--space-20);
+      background: var(--color-white);
+      border: var(--border-light);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-text);
+      cursor: pointer;
+    }
+
+    /* ── Product detail modal / quick view ── */
+    .qv-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 1200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-20);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .qv-overlay.is-open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .qv-panel {
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      max-width: 860px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.25s;
+    }
+    .qv-overlay.is-open .qv-panel { transform: translateY(0); }
+    .qv-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--color-cream);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text);
+      font-size: 20px;
+      z-index: 1;
+      transition: background var(--transition-fast);
+    }
+    .qv-close:hover { background: var(--color-gold-pale); }
+    .qv-img {
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    }
+    .qv-body {
+      padding: var(--space-32);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-16);
+    }
+    .qv-body .product-card__name { font-size: var(--text-xl); }
+    .qv-body .price-current { font-size: var(--text-2xl); }
+    .qv-desc { font-size: var(--text-sm); color: var(--color-text-light); line-height: var(--leading-relaxed); }
+    .qv-qty-row { display: flex; align-items: center; gap: var(--space-12); }
+    .qty-ctrl {
+      display: flex;
+      align-items: center;
+      border: var(--border-light);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .qty-ctrl button {
+      width: 36px;
+      height: 36px;
+      background: var(--color-cream);
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--color-text);
+      transition: background var(--transition-fast);
+    }
+    .qty-ctrl button:hover { background: var(--color-gold-pale); }
+    .qty-ctrl input {
+      width: 48px;
+      height: 36px;
+      text-align: center;
+      border: none;
+      border-left: var(--border-light);
+      border-right: var(--border-light);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--color-text);
+      outline: none;
+    }
+    .qv-actions { display: flex; gap: var(--space-12); }
+    .qv-actions .btn { flex: 1; justify-content: center; }
+    #qv-add-cart:disabled, .qty-ctrl button:disabled, .qty-ctrl input:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .qty-ctrl button:disabled:hover { background: var(--color-cream); }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .filter-sidebar { width: 220px; }
+      .shop-layout { gap: var(--space-24); }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .page-hero__title { font-size: var(--text-3xl); }
+      /* Đổi layout thành 1 cột, sidebar thành drawer */
+      .shop-layout { flex-direction: column; }
+      .filter-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: 100vh;
+        overflow-y: auto;
+        background: var(--color-white);
+        z-index: 1100;
+        padding: var(--space-24) var(--space-20);
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+        box-shadow: var(--shadow-xl);
+      }
+      .filter-sidebar.is-open { transform: translateX(0); }
+      .filter-sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 1099;
+      }
+      .filter-sidebar-backdrop.is-open { display: block; }
+      .btn-filter-toggle { display: flex; }
+      .shop-main { width: 100%; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-16); }
+    }
+    @media (max-width: 480px) {
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-12); }
+      .qv-panel { grid-template-columns: 1fr; }
+      .qv-img { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header" id="site-header" role="banner">
+    <div class="header-inner container">
+      <a href="index.html" class="logo" aria-label="Yến Duyên - Trang chủ">
+        <img src="images/logo/logo.png" alt="Yến Sào Yến Duyên" class="logo-img" width="120" height="60">
+      </a>
+
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <ul class="nav-list" role="list">
+          <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+          <li><a href="san-pham.html" class="nav-link active" aria-current="page">Sản phẩm</a></li>
+          <li><a href="combo-qua-tang.html" class="nav-link">Combo quà tặng</a></li>
+          <li><a href="khoi-nghiep.html" class="nav-link">Cẩm nang</a></li>
+          <li><a href="gioi-thieu.html" class="nav-link">Giới thiệu</a></li>
+          <li><a href="lien-he.html" class="nav-link">Liên hệ</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a href="tel:+840986012754" class="header-hotline" aria-label="Gọi hotline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>0986.012.754</span>
+        </a>
+        <a href="gio-hang.html" class="cart-btn" aria-label="Giỏ hàng">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span class="cart-badge" id="cart-badge" aria-live="polite">0</span>
+        </a>
+        <div id="auth-slot"></div>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-nav">
+          <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Menu di động" aria-hidden="true">
+      <ul class="mobile-nav-list" role="list">
+        <li><a href="index.html" class="mobile-nav-link">Trang chủ</a></li>
+        <li><a href="san-pham.html" class="mobile-nav-link">Sản phẩm</a></li>
+        <li><a href="combo-qua-tang.html" class="mobile-nav-link">Combo quà tặng</a></li>
+        <li><a href="khoi-nghiep.html" class="mobile-nav-link">Cẩm nang</a></li>
+        <li><a href="gioi-thieu.html" class="mobile-nav-link">Giới thiệu</a></li>
+        <li><a href="lien-he.html" class="mobile-nav-link">Liên hệ</a></li>
+        <li class="mobile-nav-cta">
+          <a href="tel:+840986012754" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Gọi ngay
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero" aria-label="Trang sản phẩm">
+    <div class="container">
+      <p class="page-hero__label">Tinh hoa yến sào thiên nhiên</p>
+      <h1 class="page-hero__title">Tất Cả Sản Phẩm</h1>
+      <nav class="page-hero__breadcrumb" aria-label="Đường dẫn">
+        <a href="index.html">Trang chủ</a>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>Sản phẩm</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content">
+    <div class="container">
+      <div class="shop-layout">
+
+        <!-- FILTER SIDEBAR -->
+        <aside class="filter-sidebar" id="filter-sidebar" aria-label="Bộ lọc sản phẩm">
+          <!-- Category -->
+          <div class="filter-panel" id="panel-category">
+            <div class="filter-panel__head" id="head-category" role="button" aria-expanded="true" aria-controls="body-category">
+              <h3>Danh mục</h3>
+              <svg class="filter-panel__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="filter-panel__body" id="body-category">
+              <ul class="filter-list">
+                <li>
+                  <label>
+                    <input type="checkbox" name="category" value="to-yen-tho" id="f-to-yen">
+                    Tổ Yến Thô
+                    <span class="count" id="cnt-to-yen-tho">0</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" name="category" value="yen-tinh-che" id="f-tinh-che">
+                    Yến Tinh Chế
+                    <span class="count" id="cnt-yen-tinh-che">0</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" name="category" value="yen-chung" id="f-yen-chung">
+                    Yến Chưng Sẵn
+                    <span class="count" id="cnt-yen-chung">0</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" name="category" value="qua-bieu" id="f-qua-bieu">
+                    Set Quà Biếu
+                    <span class="count" id="cnt-qua-bieu">0</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" name="category" value="combo-tet" id="f-combo-tet">
+                    Combo - Dịp Tết
+                    <span class="count" id="cnt-combo-tet">0</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" name="category" value="combo-suc-khoe" id="f-combo-suc-khoe">
+                    Combo - Sức khoẻ
+                    <span class="count" id="cnt-combo-suc-khoe">0</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" name="category" value="combo-sinh-nhat" id="f-combo-sinh-nhat">
+                    Combo - Sinh nhật
+                    <span class="count" id="cnt-combo-sinh-nhat">0</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" name="category" value="combo-tham-benh" id="f-combo-tham-benh">
+                    Combo - Thăm bệnh
+                    <span class="count" id="cnt-combo-tham-benh">0</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" name="category" value="combo-vip" id="f-combo-vip">
+                    Combo - VIP
+                    <span class="count" id="cnt-combo-vip">0</span>
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Price Range -->
+          <div class="filter-panel" id="panel-price">
+            <div class="filter-panel__head" id="head-price" role="button" aria-expanded="true" aria-controls="body-price">
+              <h3>Giá</h3>
+              <svg class="filter-panel__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="filter-panel__body" id="body-price">
+              <div class="filter-price-range">
+                <div class="price-range-row">
+                  <input type="number" id="price-from" placeholder="Từ (đ)" min="0" step="100000" aria-label="Giá từ">
+                  <input type="number" id="price-to" placeholder="Đến (đ)" min="0" step="100000" aria-label="Giá đến">
+                </div>
+                <button class="btn-apply-filter" id="btn-apply-price">Áp dụng</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weight -->
+          <div class="filter-panel" id="panel-weight">
+            <div class="filter-panel__head" id="head-weight" role="button" aria-expanded="true" aria-controls="body-weight">
+              <h3>Khối lượng</h3>
+              <svg class="filter-panel__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="filter-panel__body" id="body-weight">
+              <ul class="filter-list">
+                <li><label><input type="checkbox" name="weight" value="10g"> 10g <span class="count" id="cnt-w-10g">0</span></label></li>
+                <li><label><input type="checkbox" name="weight" value="25g"> 25g <span class="count" id="cnt-w-25g">0</span></label></li>
+                <li><label><input type="checkbox" name="weight" value="50g"> 50g <span class="count" id="cnt-w-50g">0</span></label></li>
+                <li><label><input type="checkbox" name="weight" value="100g"> 100g <span class="count" id="cnt-w-100g">0</span></label></li>
+              </ul>
+              <div class="filter-price-range" style="margin-top:12px;">
+                <div class="price-range-row">
+                  <input type="number" id="weight-from" placeholder="Từ (g)" min="0" step="1" aria-label="Khối lượng từ">
+                  <input type="number" id="weight-to" placeholder="Đến (g)" min="0" step="1" aria-label="Khối lượng đến">
+                </div>
+                <button class="btn-apply-filter" id="btn-apply-weight">Áp dụng</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rating -->
+          <div class="filter-panel" id="panel-rating">
+            <div class="filter-panel__head" id="head-rating" role="button" aria-expanded="true" aria-controls="body-rating">
+              <h3>Đánh giá</h3>
+              <svg class="filter-panel__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="filter-panel__body" id="body-rating">
+              <ul class="filter-list">
+                <li>
+                  <label>
+                    <input type="radio" name="rating" value="5">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    &amp; trên
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="radio" name="rating" value="4">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#e5e7eb"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    &amp; trên
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <button class="btn-clear-filter" id="btn-clear-filter">Xóa tất cả bộ lọc</button>
+        </aside>
+
+        <!-- FILTER SIDEBAR BACKDROP (mobile) -->
+        <div class="filter-sidebar-backdrop" id="filter-backdrop"></div>
+
+        <!-- PRODUCT MAIN -->
+        <section class="shop-main" aria-label="Danh sách sản phẩm">
+
+          <!-- Toolbar -->
+          <div class="shop-toolbar">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <button class="btn-filter-toggle" id="btn-filter-toggle" aria-label="Mở bộ lọc" aria-expanded="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="4" y1="6" x2="11" y2="6"/><line x1="13" y1="6" x2="20" y2="6"/><circle cx="12" cy="6" r="1.5" fill="currentColor"/><line x1="4" y1="12" x2="7" y2="12"/><line x1="9" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/><line x1="4" y1="18" x2="15" y2="18"/><line x1="17" y1="18" x2="20" y2="18"/><circle cx="16" cy="18" r="1.5" fill="currentColor"/></svg>
+                Bộ lọc
+              </button>
+              <p class="shop-count">Hiển thị <strong id="product-count">8</strong> sản phẩm</p>
+              <div class="shop-search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="search" id="product-search" placeholder="Tìm sản phẩm..." aria-label="Tìm sản phẩm">
+              </div>
+            </div>
+            <div class="shop-toolbar-right">
+              <select class="sort-select" id="sort-select" aria-label="Sắp xếp theo">
+                <option value="popular">Phổ biến nhất</option>
+                <option value="price-asc">Giá: Thấp → Cao</option>
+                <option value="price-desc">Giá: Cao → Thấp</option>
+                <option value="newest">Mới nhất</option>
+                <option value="rating">Đánh giá cao nhất</option>
+              </select>
+              <div class="view-btns" role="group" aria-label="Chế độ xem">
+                <button class="view-btn is-active" id="view-grid" aria-label="Xem dạng lưới" aria-pressed="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="0" y="0" width="6" height="6" rx="1"/><rect x="10" y="0" width="6" height="6" rx="1"/><rect x="0" y="10" width="6" height="6" rx="1"/><rect x="10" y="10" width="6" height="6" rx="1"/></svg>
+                </button>
+                <button class="view-btn" id="view-list" aria-label="Xem dạng danh sách" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="0" y="1" width="16" height="2" rx="1"/><rect x="0" y="7" width="16" height="2" rx="1"/><rect x="0" y="13" width="16" height="2" rx="1"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active filters — JS tự dựng theo danh mục/tìm kiếm thật đang chọn -->
+          <div class="active-filters" id="active-filters" aria-label="Bộ lọc đang áp dụng"></div>
+
+          <!-- Products Grid -->
+          <div class="products-grid products-grid--3col" id="products-grid">
+
+            <!-- Product 1 -->
+            <article class="product-card">
+              <a href="#" class="product-card__img-wrap" data-qv="1" aria-label="Xem nhanh Yến Tinh Chế Kéo Sợi">
+                <img src="images/products/yen-keo-soi.jpg" alt="Yến Tinh Chế Kéo Sợi" loading="lazy" width="400" height="400" class="product-card__img">
+                <span class="product-badge product-badge--hot">Bán chạy</span>
+                <div class="product-card__overlay" aria-hidden="true">
+                  <span class="product-card__qv-label">Xem nhanh</span>
+                </div>
+              </a>
+              <div class="product-card__body">
+                <h2 class="product-card__name"><a href="#">Yến Tinh Chế Kéo Sợi</a></h2>
+                <p class="product-card__subtitle">Hộp tròn 100g — MUA 1 TẶNG 3</p>
+                <div class="product-card__price">
+                  <span class="price-current">2.999.000đ</span>
+                  <span class="price-old">3.500.000đ</span>
+                </div>
+                <button class="btn btn-add-cart" data-product-id="1" data-product-name="Yến Tinh Chế Kéo Sợi" data-product-price="2999000" data-product-image="images/products/yen-keo-soi.jpg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                  Thêm vào giỏ
+                </button>
+              </div>
+            </article>
+
+            <!-- Product 2 -->
+            <article class="product-card">
+              <a href="#" class="product-card__img-wrap" data-qv="2" aria-label="Xem nhanh Yến Tinh Chế Hoa Hồng">
+                <img src="images/products/yen-hoa-hong.jpg" alt="Yến Tinh Chế Hoa Hồng" loading="lazy" width="400" height="400" class="product-card__img">
+                <span class="product-badge product-badge--new">Mới</span>
+                <div class="product-card__overlay" aria-hidden="true">
+                  <span class="product-card__qv-label">Xem nhanh</span>
+                </div>
+              </a>
+              <div class="product-card__body">
+                <h2 class="product-card__name"><a href="#">Yến Tinh Chế Hoa Hồng</a></h2>
+                <p class="product-card__subtitle">Hộp tròn 100g — MUA 1 TẶNG 3</p>
+                <div class="product-card__price">
+                  <span class="price-current">2.749.000đ</span>
+                  <span class="price-old">3.231.000đ</span>
+                </div>
+                <button class="btn btn-add-cart" data-product-id="2" data-product-name="Yến Tinh Chế Hoa Hồng" data-product-price="2749000" data-product-image="images/products/yen-hoa-hong.jpg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                  Thêm vào giỏ
+                </button>
+              </div>
+            </article>
+
+            <!-- Product 3 -->
+            <article class="product-card">
+              <a href="#" class="product-card__img-wrap" data-qv="3" aria-label="Xem nhanh Yến Tinh Chế Viên Bi">
+                <img src="images/products/yen-vien-bi.jpg" alt="Yến Tinh Chế Viên Bi" loading="lazy" width="400" height="400" class="product-card__img">
+                <span class="product-badge product-badge--gift">Quà tặng</span>
+                <div class="product-card__overlay" aria-hidden="true">
+                  <span class="product-card__qv-label">Xem nhanh</span>
+                </div>
+              </a>
+              <div class="product-card__body">
+                <h2 class="product-card__name"><a href="#">Yến Tinh Chế Viên Bi</a></h2>
+                <p class="product-card__subtitle">Hộp tròn 100g — MUA 1 TẶNG 3</p>
+                <div class="product-card__price">
+                  <span class="price-current">2.599.000đ</span>
+                  <span class="price-old">3.077.000đ</span>
+                </div>
+                <button class="btn btn-add-cart" data-product-id="3" data-product-name="Yến Tinh Chế Viên Bi" data-product-price="2599000" data-product-image="images/products/yen-vien-bi.jpg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                  Thêm vào giỏ
+                </button>
+              </div>
+            </article>
+
+            <!-- Product 4 -->
+            <article class="product-card">
+              <a href="#" class="product-card__img-wrap" data-qv="4" aria-label="Xem nhanh Yến Tinh Chế Sợi Rối">
+                <img src="images/products/yen-soi-roi.jpg" alt="Yến Tinh Chế Sợi Rối" loading="lazy" width="400" height="400" class="product-card__img">
+                <span class="product-badge product-badge--sale">-15%</span>
+                <div class="product-card__overlay" aria-hidden="true">
+                  <span class="product-card__qv-label">Xem nhanh</span>
+                </div>
+              </a>
+              <div class="product-card__body">
+                <h2 class="product-card__name"><a href="#">Yến Tinh Chế Sợi Rối</a></h2>
+                <p class="product-card__subtitle">Hộp tròn 100g — MUA 1 TẶNG 3</p>
+                <div class="product-card__price">
+                  <span class="price-current">2.599.000đ</span>
+                  <span class="price-old">3.077.000đ</span>
+                </div>
+                <button class="btn btn-add-cart" data-product-id="4" data-product-name="Yến Tinh Chế Sợi Rối" data-product-price="2599000" data-product-image="images/products/yen-soi-roi.jpg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                  Thêm vào giỏ
+                </button>
+              </div>
+            </article>
+
+            <!-- Product 5 -->
+            <article class="product-card">
+              <a href="#" class="product-card__img-wrap" data-qv="5" aria-label="Xem nhanh Yến Thô Loại 1">
+                <img src="images/products/yen-tho.jpg" alt="Yến Thô Loại 1" loading="lazy" width="400" height="400" class="product-card__img">
+                <div class="product-card__overlay" aria-hidden="true">
+                  <span class="product-card__qv-label">Xem nhanh</span>
+                </div>
+              </a>
+              <div class="product-card__body">
+                <h2 class="product-card__name"><a href="#">Yến Thô Loại 1</a></h2>
+                <p class="product-card__subtitle">Hộp 100g — Nguyên tổ tự nhiên</p>
+                <div class="product-card__price">
+                  <span class="price-current">1.850.000đ</span>
+                  <span class="price-old">2.200.000đ</span>
+                </div>
+                <button class="btn btn-add-cart" data-product-id="5" data-product-name="Yến Thô Loại 1" data-product-price="1850000" data-product-image="images/products/yen-tho.jpg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                  Thêm vào giỏ
+                </button>
+              </div>
+            </article>
+
+            <!-- Product 6 -->
+            <article class="product-card">
+              <a href="#" class="product-card__img-wrap" data-qv="6" aria-label="Xem nhanh Yến Tinh Chế Tổng Hợp">
+                <img src="images/products/yen-tinh-che.jpg" alt="Yến Tinh Chế Tổng Hợp" loading="lazy" width="400" height="400" class="product-card__img">
+                <span class="product-badge product-badge--gift">Quà tặng</span>
+                <div class="product-card__overlay" aria-hidden="true">
+                  <span class="product-card__qv-label">Xem nhanh</span>
+                </div>
+              </a>
+              <div class="product-card__body">
+                <h2 class="product-card__name"><a href="#">Yến Tinh Chế Tổng Hợp</a></h2>
+                <p class="product-card__subtitle">Hộp quà 100g — Kèm túi vải cao cấp</p>
+                <div class="product-card__price">
+                  <span class="price-current">2.899.000đ</span>
+                  <span class="price-old">3.400.000đ</span>
+                </div>
+                <button class="btn btn-add-cart" data-product-id="6" data-product-name="Yến Tinh Chế Tổng Hợp" data-product-price="2899000" data-product-image="images/products/yen-tinh-che.jpg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                  Thêm vào giỏ
+                </button>
+              </div>
+            </article>
+
+            <!-- Product 7 -->
+            <article class="product-card">
+              <a href="#" class="product-card__img-wrap" data-qv="7" aria-label="Xem nhanh Set Quà Tặng Tết">
+                <img src="images/products/gift-set-tet.jpg" alt="Set Quà Tặng Tết" loading="lazy" width="400" height="400" class="product-card__img">
+                <span class="product-badge product-badge--hot">Tết 2026</span>
+                <div class="product-card__overlay" aria-hidden="true">
+                  <span class="product-card__qv-label">Xem nhanh</span>
+                </div>
+              </a>
+              <div class="product-card__body">
+                <h2 class="product-card__name"><a href="#">Set Quà Tặng Tết Premium</a></h2>
+                <p class="product-card__subtitle">Hộp quà cao cấp — Kèm thiệp cá nhân hóa</p>
+                <div class="product-card__price">
+                  <span class="price-current">3.800.000đ</span>
+                  <span class="price-old">4.500.000đ</span>
+                </div>
+                <button class="btn btn-add-cart" data-product-id="7" data-product-name="Set Quà Tặng Tết Premium" data-product-price="3800000" data-product-image="images/products/gift-set-tet.jpg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                  Thêm vào giỏ
+                </button>
+              </div>
+            </article>
+
+            <!-- Product 8 -->
+            <article class="product-card">
+              <a href="#" class="product-card__img-wrap" data-qv="8" aria-label="Xem nhanh Set Quà Sức Khoẻ">
+                <img src="images/products/gift-set-suckhoue.jpg" alt="Set Quà Sức Khoẻ" loading="lazy" width="400" height="400" class="product-card__img">
+                <span class="product-badge product-badge--new">Mới</span>
+                <div class="product-card__overlay" aria-hidden="true">
+                  <span class="product-card__qv-label">Xem nhanh</span>
+                </div>
+              </a>
+              <div class="product-card__body">
+                <h2 class="product-card__name"><a href="#">Set Quà Sức Khoẻ</a></h2>
+                <p class="product-card__subtitle">Combo dinh dưỡng — Dành cho người thân</p>
+                <div class="product-card__price">
+                  <span class="price-current">2.500.000đ</span>
+                  <span class="price-old">2.950.000đ</span>
+                </div>
+                <button class="btn btn-add-cart" data-product-id="8" data-product-name="Set Quà Sức Khoẻ" data-product-price="2500000" data-product-image="images/products/gift-set-suckhoue.jpg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                  Thêm vào giỏ
+                </button>
+              </div>
+            </article>
+
+          </div><!-- /products-grid -->
+
+          <!-- Pagination thật — nội dung do JS render lại (window.applyRealProductFilters) -->
+          <nav class="pagination" id="pagination-nav" aria-label="Phân trang sản phẩm"></nav>
+
+        </section><!-- /shop-main -->
+      </div><!-- /shop-layout -->
+    </div><!-- /container -->
+  </main>
+
+  <!-- QUICK VIEW MODAL -->
+  <div class="qv-overlay" id="qv-overlay" role="dialog" aria-modal="true" aria-label="Xem nhanh sản phẩm">
+    <div class="qv-panel" id="qv-panel">
+      <button class="qv-close" id="qv-close" aria-label="Đóng">×</button>
+      <img src="" alt="" class="qv-img" id="qv-img" width="430" height="430">
+      <div class="qv-body" id="qv-body">
+        <p class="product-card__subtitle" id="qv-category">Yến Tinh Chế</p>
+        <h2 class="product-card__name" id="qv-name"></h2>
+        <div class="product-card__rating" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#D4AF37"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="product-card__price">
+          <span class="price-current" id="qv-price"></span>
+          <span class="price-old" id="qv-old-price"></span>
+        </div>
+        <p class="qv-desc" id="qv-desc">100% yến thiên nhiên từ hang hoang sơ miền Trung. Chế biến thủ công, không chất bảo quản, không phụ gia. Chứng nhận VSATP. Bao bì sang trọng phù hợp làm quà biếu cao cấp.</p>
+        <div class="qv-qty-row">
+          <label style="font-size:var(--text-sm);font-weight:500;color:var(--color-text-medium);">Số lượng:</label>
+          <div class="qty-ctrl">
+            <button id="qv-qty-minus" aria-label="Giảm số lượng">−</button>
+            <input type="number" id="qv-qty" value="1" min="1" max="99" aria-label="Số lượng">
+            <button id="qv-qty-plus" aria-label="Tăng số lượng">+</button>
+          </div>
+        </div>
+        <div class="qv-actions">
+          <button class="btn btn-primary btn-add-cart" id="qv-add-cart">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span id="qv-add-cart-label">Thêm vào giỏ</span>
+          </button>
+          <a href="gio-hang.html" class="btn btn-gold">Mua ngay</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-divider" aria-hidden="true"></div>
+    <div class="footer-main">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col footer-col--brand">
+            <a href="index.html" class="footer-logo">
+              <img src="images/logo/logo.png" alt="Yến Sào Yến Duyên" class="logo-img logo-img--footer" width="140" height="70">
+            </a>
+            <p class="footer-brand-desc">Tinh hoa yến sào thiên nhiên. Sản phẩm 100% thiên nhiên, chứng nhận an toàn thực phẩm.</p>
+            <div class="footer-social">
+              <a href="https://facebook.com/yensaoyenduyen" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              </a>
+              <a href="https://zalo.me/0986012754" class="social-link" aria-label="Zalo" target="_blank" rel="noopener noreferrer">
+                <svg width="20" height="20" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+              </a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-col-title">Liên kết nhanh</h3>
+            <ul class="footer-links" role="list">
+              <li><a href="index.html">Trang chủ</a></li>
+              <li><a href="san-pham.html">Sản phẩm</a></li>
+              <li><a href="combo-qua-tang.html">Combo quà tặng</a></li>
+              <li><a href="gioi-thieu.html">Về Yến Duyên</a></li>
+              <li><a href="lien-he.html">Liên hệ</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3 class="footer-col-title">Danh mục</h3>
+            <ul class="footer-links" role="list">
+              <li><a href="san-pham.html?category=to-yen-tho">Tổ yến thô</a></li>
+              <li><a href="san-pham.html?category=yen-tinh-che">Yến tinh chế</a></li>
+              <li><a href="san-pham.html?category=yen-chung">Yến chưng sẵn</a></li>
+              <li><a href="combo-qua-tang.html">Set quà biếu</a></li>
+            </ul>
+          </div>
+          <div class="footer-col footer-col--contact">
+            <h3 class="footer-col-title">Liên hệ</h3>
+            <ul class="footer-contact-list" role="list">
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <a href="tel:+840986012754">0986.012.754</a>
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+                <a href="https://zalo.me/0986012754" target="_blank" rel="noopener noreferrer">Zalo: 0986.012.754</a>
+              </li>
+              <li>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <address style="font-style:normal">503 ĐH507, Phước Thành, Hồ Chí Minh, Vietnam</address>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <div class="footer-bottom-inner">
+          <p class="footer-copy">© 2026 Yến Sào Yến Duyên. Bảo lưu mọi quyền.</p>
+          <div class="footer-legal">
+            <a href="chinh-sach.html">Chính sách bảo mật</a>
+            <span aria-hidden="true">·</span>
+            <a href="chinh-sach.html#doi-tra">Đổi trả</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating CTA -->
+  <div class="float-cta" aria-label="Liên hệ nhanh" role="complementary">
+    <a href="tel:+840986012754" class="float-btn float-btn--call" aria-label="Gọi điện ngay">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Gọi ngay</span>
+    </a>
+    <a href="https://zalo.me/0986012754" class="float-btn float-btn--zalo" aria-label="Nhắn Zalo" target="_blank" rel="noopener noreferrer">
+      <svg width="26" height="26" viewBox="0 0 50 50" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.782 0.166016H27.199C33.2653 0.166016 36.8103 1.05701 39.9572 2.74421C43.1041 4.4314 45.5875 6.89585 47.2557 10.0428C48.9429 13.1897 49.8339 16.7347 49.8339 22.801V27.1991C49.8339 33.2654 48.9429 36.8104 47.2557 39.9573C45.5685 43.1042 43.1041 45.5877 39.9572 47.2559C36.8103 48.9431 33.2653 49.8341 27.199 49.8341H22.8009C16.7346 49.8341 13.1896 48.9431 10.0427 47.2559C6.89583 45.5687 4.41243 43.1042 2.7442 39.9573C1.057 36.8104 0.166016 33.2654 0.166016 27.1991V22.801C0.166016 16.7347 1.057 13.1897 2.7442 10.0428C4.43139 6.89585 6.89583 4.41245 10.0427 2.74421C13.1707 1.05701 16.7346 0.166016 22.782 0.166016Z" fill="#0068FF"/><path opacity="0.12" fill-rule="evenodd" clip-rule="evenodd" d="M49.8336 26.4736V27.1994C49.8336 33.2657 48.9427 36.8107 47.2555 39.9576C45.5683 43.1045 43.1038 45.5879 39.9569 47.2562C36.81 48.9434 33.265 49.8344 27.1987 49.8344H22.8007C17.8369 49.8344 14.5612 49.2378 11.8104 48.0966L7.27539 43.4267L49.8336 26.4736Z" fill="#001A33"/><path fill-rule="evenodd" clip-rule="evenodd" d="M7.779 43.5892C10.1019 43.846 13.0061 43.1836 15.0682 42.1825C24.0225 47.1318 38.0197 46.8954 46.4923 41.4732C46.8209 40.9803 47.1279 40.4677 47.4128 39.9363C49.1062 36.7779 50.0004 33.22 50.0004 27.1316V22.7175C50.0004 16.629 49.1062 13.0711 47.4128 9.91273C45.7385 6.75436 43.2461 4.28093 40.0877 2.58758C36.9293 0.894239 33.3714 0 27.283 0H22.8499C17.6644 0 14.2982 0.652754 11.4699 1.89893C11.3153 2.03737 11.1636 2.17818 11.0151 2.32135C2.71734 10.3203 2.08658 27.6593 9.12279 37.0782C9.13064 37.0921 9.13933 37.1061 9.14889 37.1203C10.2334 38.7185 9.18694 41.5154 7.55068 43.1516C7.28431 43.399 7.37944 43.5512 7.779 43.5892Z" fill="white"/><path d="M20.5632 17H10.8382V19.0853H17.5869L10.9329 27.3317C10.7244 27.635 10.5728 27.9194 10.5728 28.5639V29.0947H19.748C20.203 29.0947 20.5822 28.7156 20.5822 28.2606V27.1421H13.4922L19.748 19.2938C19.8428 19.1801 20.0134 18.9716 20.0893 18.8768L20.1272 18.8199C20.4874 18.2891 20.5632 17.8341 20.5632 17.2844V17Z" fill="#0068FF"/><path d="M32.9416 29.0947H34.3255V17H32.2402V28.3933C32.2402 28.7725 32.5435 29.0947 32.9416 29.0947Z" fill="#0068FF"/><path d="M25.814 19.6924C23.1979 19.6924 21.0747 21.8156 21.0747 24.4317C21.0747 27.0478 23.1979 29.171 25.814 29.171C28.4301 29.171 30.5533 27.0478 30.5533 24.4317C30.5723 21.8156 28.4491 19.6924 25.814 19.6924ZM25.814 27.2184C24.2785 27.2184 23.0273 25.9672 23.0273 24.4317C23.0273 22.8962 24.2785 21.645 25.814 21.645C27.3495 21.645 28.6007 22.8962 28.6007 24.4317C28.6007 25.9672 27.3685 27.2184 25.814 27.2184Z" fill="#0068FF"/><path d="M40.4867 19.6162C37.8516 19.6162 35.7095 21.7584 35.7095 24.3934C35.7095 27.0285 37.8516 29.1707 40.4867 29.1707C43.1217 29.1707 45.2639 27.0285 45.2639 24.3934C45.2639 21.7584 43.1217 19.6162 40.4867 19.6162ZM40.4867 27.2181C38.9322 27.2181 37.681 25.9669 37.681 24.4124C37.681 22.8579 38.9322 21.6067 40.4867 21.6067C42.0412 21.6067 43.2924 22.8579 43.2924 24.4124C43.2924 25.9669 42.0412 27.2181 40.4867 27.2181Z" fill="#0068FF"/><path d="M29.4562 29.0944H30.5747V19.957H28.6221V28.2793C28.6221 28.7153 29.0012 29.0944 29.4562 29.0944Z" fill="#0068FF"/></svg>
+      <span>Zalo</span>
+    </a>
+    <a href="https://m.me/yensaoyenduyen" class="float-btn float-btn--fb" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+      <svg width="30" height="30" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#1877F2"/><path fill="#fff" d="M29.9,19.5h-4v-2.6c0-1,0.7-1.2,1.1-1.2c0.5,0,2.8,0,2.8,0v-4.4l-3.9,0c-4.4,0-5.3,3.3-5.3,5.3v2.9h-2.5V24h2.5c0,5.8,0,12.7,0,12.7h5.3c0,0,0-7,0-12.7h3.6L29.9,19.5z"/></svg>
+      <span>Facebook</span>
+    </a>
+  </div>
+
+  <button class="back-to-top" id="back-to-top" aria-label="Về đầu trang" hidden>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- JS -->
+  <script>
+  // ---- QUICK VIEW DATA ----
+  var QV_DATA = {
+    1: { name:'Yến Tinh Chế Kéo Sợi', price:'2.999.000đ', oldPrice:'3.500.000đ', img:'images/products/yen-keo-soi.jpg', id:1, pid:2999000, pimg:'images/products/yen-keo-soi.jpg' },
+    2: { name:'Yến Tinh Chế Hoa Hồng', price:'2.749.000đ', oldPrice:'3.231.000đ', img:'images/products/yen-hoa-hong.jpg', id:2, pid:2749000, pimg:'images/products/yen-hoa-hong.jpg' },
+    3: { name:'Yến Tinh Chế Viên Bi', price:'2.599.000đ', oldPrice:'3.077.000đ', img:'images/products/yen-vien-bi.jpg', id:3, pid:2599000, pimg:'images/products/yen-vien-bi.jpg' },
+    4: { name:'Yến Tinh Chế Sợi Rối', price:'2.599.000đ', oldPrice:'3.077.000đ', img:'images/products/yen-soi-roi.jpg', id:4, pid:2599000, pimg:'images/products/yen-soi-roi.jpg' },
+    5: { name:'Yến Thô Loại 1', price:'1.850.000đ', oldPrice:'2.200.000đ', img:'images/products/yen-tho.jpg', id:5, pid:1850000, pimg:'images/products/yen-tho.jpg' },
+    6: { name:'Yến Tinh Chế Tổng Hợp', price:'2.899.000đ', oldPrice:'3.400.000đ', img:'images/products/yen-tinh-che.jpg', id:6, pid:2899000, pimg:'images/products/yen-tinh-che.jpg' },
+    7: { name:'Set Quà Tặng Tết Premium', price:'3.800.000đ', oldPrice:'4.500.000đ', img:'images/products/gift-set-tet.jpg', id:7, pid:3800000, pimg:'images/products/gift-set-tet.jpg' },
+    8: { name:'Set Quà Sức Khoẻ', price:'2.500.000đ', oldPrice:'2.950.000đ', img:'images/products/gift-set-suckhoue.jpg', id:8, pid:2500000, pimg:'images/products/gift-set-suckhoue.jpg' }
+  };
+
+  // ---- CART ----
+  var cart = JSON.parse(localStorage.getItem('yen-duyen-cart') || '[]');
+  function saveCart(){ localStorage.setItem('yen-duyen-cart', JSON.stringify(cart)); }
+  function getCartCount(){ return cart.reduce(function(s,i){return s+i.qty;},0); }
+  function updateCartBadge(){
+    var c = getCartCount();
+    document.querySelectorAll('.cart-badge').forEach(function(b){ b.textContent = c; b.hidden = c===0; });
+  }
+  // Khoá định danh 1 dòng giỏ hàng — GỒM id sản phẩm + flashSaleItemId, để SP
+  // mua qua Flash Sale không bị gộp nhầm vào dòng giá thường của cùng SP đó.
+  function lineKey(item){ return item.id + (item.flashSaleItemId ? '::fs:' + item.flashSaleItemId : ''); }
+  function addToCart(product){
+    var ex = cart.find(function(i){return lineKey(i)===lineKey(product);});
+    if(ex){ ex.qty += product.qty||1; } else { cart.push(Object.assign({qty:product.qty||1}, product)); }
+    saveCart(); updateCartBadge();
+    showToast('Đã thêm <b>'+product.name+'</b> vào giỏ hàng', 'success');
+  }
+
+  // ---- TOAST ----
+  function showToast(msg, type){
+    var c = document.getElementById('toast-container');
+    if(!c){ c = document.createElement('div'); c.id='toast-container'; c.className='toast-container'; document.body.appendChild(c); }
+    var t = document.createElement('div'); t.className='toast toast--'+(type||'info');
+    t.innerHTML='<span class="toast__msg">'+msg+'</span><button class="toast__close" onclick="this.parentNode.remove()">✕</button>';
+    c.appendChild(t);
+    setTimeout(function(){t.classList.add('toast--visible');},10);
+    setTimeout(function(){t.classList.remove('toast--visible'); setTimeout(function(){t.remove();},300);},3500);
+  }
+
+  // ---- ADD TO CART (grid buttons) ----
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.btn-add-cart');
+    if(!btn || btn.id==='qv-add-cart') return;
+    addToCart({ id:btn.dataset.productId, name:btn.dataset.productName, price:Number(btn.dataset.productPrice), image:btn.dataset.productImage });
+    var orig = btn.innerHTML;
+    btn.innerHTML = '✓ Đã thêm!';
+    btn.style.background = '#22c55e';
+    setTimeout(function(){ btn.innerHTML=orig; btn.style.background=''; }, 2000);
+  });
+
+  // ---- CLICK VÀO BẤT KỲ ĐÂU TRÊN THẺ SẢN PHẨM → TRANG CHI TIẾT ----
+  // (trừ khu vực ảnh — nơi dành cho "Xem nhanh" — và nút "Thêm vào giỏ")
+  document.addEventListener('click', function(e){
+    var card = e.target.closest('.product-card');
+    if(!card || !card.dataset.pid) return;
+    if(e.target.closest('.btn-add-cart')) return;
+    if(e.target.closest('[data-qv]')) return;
+    if(e.target.closest('a')) return; // để thẻ <a> tự điều hướng, tránh double-navigate
+    window.location.href = 'chi-tiet-san-pham.html?id=' + encodeURIComponent(card.dataset.pid);
+  });
+
+  // ---- QUICK VIEW ----
+  var qvOverlay = document.getElementById('qv-overlay');
+  var qvImg     = document.getElementById('qv-img');
+  var qvName    = document.getElementById('qv-name');
+  var qvPrice   = document.getElementById('qv-price');
+  var qvOldPrice= document.getElementById('qv-old-price');
+  var qvQty     = document.getElementById('qv-qty');
+  var currentQV = null;
+
+  document.querySelectorAll('[data-qv]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      var id = Number(el.dataset.qv);
+      var d = QV_DATA[id]; if(!d) return;
+      currentQV = d;
+      qvImg.src = d.img; qvImg.alt = d.name;
+      qvName.textContent = d.name;
+      qvPrice.textContent = d.price;
+      qvOldPrice.textContent = d.oldPrice;
+      qvQty.value = 1;
+      qvOverlay.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  function closeQV(){
+    qvOverlay.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('qv-close').addEventListener('click', closeQV);
+  qvOverlay.addEventListener('click', function(e){ if(e.target===qvOverlay) closeQV(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeQV(); });
+
+  document.getElementById('qv-qty-minus').addEventListener('click', function(){
+    var v = parseInt(qvQty.value)||1; if(v>1) qvQty.value = v-1;
+  });
+  document.getElementById('qv-qty-plus').addEventListener('click', function(){
+    var v = parseInt(qvQty.value)||1; qvQty.value = v+1;
+  });
+
+  document.getElementById('qv-add-cart').addEventListener('click', function(){
+    if(!currentQV) return;
+    addToCart({ id:currentQV.id, name:currentQV.name, price:currentQV.pid, image:currentQV.pimg, qty:parseInt(qvQty.value)||1 });
+    closeQV();
+  });
+
+  // ---- HEADER SCROLL ----
+  var hdr = document.getElementById('site-header');
+  window.addEventListener('scroll', function(){ if(hdr) hdr.classList.toggle('scrolled', scrollY>50); }, {passive:true});
+
+  // ---- MOBILE NAV ----
+  var navToggle = document.getElementById('menu-toggle');
+  var mobileNav = document.getElementById('mobile-nav');
+  if(navToggle && mobileNav){
+    navToggle.addEventListener('click', function(){
+      var open = navToggle.getAttribute('aria-expanded')==='true';
+      navToggle.setAttribute('aria-expanded', String(!open));
+      mobileNav.classList.toggle('is-open', !open);
+      document.body.style.overflow = open?'':'hidden';
+    });
+  }
+
+  // ---- MOBILE FILTER SIDEBAR ----
+  var filterSidebar  = document.getElementById('filter-sidebar');
+  var filterBackdrop = document.getElementById('filter-backdrop');
+  var btnFilterToggle = document.getElementById('btn-filter-toggle');
+  function openFilter(){
+    filterSidebar.classList.add('is-open');
+    filterBackdrop.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    if(btnFilterToggle) btnFilterToggle.setAttribute('aria-expanded','true');
+  }
+  function closeFilter(){
+    filterSidebar.classList.remove('is-open');
+    filterBackdrop.classList.remove('is-open');
+    document.body.style.overflow = '';
+    if(btnFilterToggle) btnFilterToggle.setAttribute('aria-expanded','false');
+  }
+  if(btnFilterToggle) btnFilterToggle.addEventListener('click', openFilter);
+  if(filterBackdrop) filterBackdrop.addEventListener('click', closeFilter);
+
+  // ---- FILTER PANEL COLLAPSE ----
+  document.querySelectorAll('.filter-panel__head').forEach(function(head){
+    head.addEventListener('click', function(){
+      var panel = head.closest('.filter-panel');
+      var expanded = head.getAttribute('aria-expanded') !== 'false';
+      head.setAttribute('aria-expanded', String(!expanded));
+      panel.classList.toggle('is-collapsed', expanded);
+    });
+  });
+
+  // ---- CLEAR FILTERS ----
+  // Danh mục + tìm kiếm là lọc THẬT (xử lý ở script Supabase phía cuối trang, qua
+  // window.applyRealProductFilters) — Giá/Khối lượng/Đánh giá vẫn chỉ demo nên chỉ
+  // cần bỏ tick, không cần lọc lại gì.
+  var btnClear = document.getElementById('btn-clear-filter');
+  if(btnClear){
+    btnClear.addEventListener('click', function(){
+      document.querySelectorAll('.filter-panel input[type="checkbox"]').forEach(function(cb){ cb.checked=false; });
+      document.querySelectorAll('.filter-panel input[type="radio"]').forEach(function(r){ r.checked=false; });
+      var searchBox = document.getElementById('product-search');
+      if(searchBox) searchBox.value = '';
+      var pf = document.getElementById('price-from'); if(pf) pf.value = '';
+      var pt = document.getElementById('price-to'); if(pt) pt.value = '';
+      var wf = document.getElementById('weight-from'); if(wf) wf.value = '';
+      var wt = document.getElementById('weight-to'); if(wt) wt.value = '';
+      if(typeof window.applyRealProductFilters === 'function') window.applyRealProductFilters();
+    });
+  }
+
+  // ---- SORT ----
+  // Toàn bộ 5 lựa chọn đều xử lý thật trong window.applyRealProductFilters.
+  var sortSel = document.getElementById('sort-select');
+  if(sortSel){
+    sortSel.addEventListener('change', function(){
+      if(typeof window.applyRealProductFilters === 'function') window.applyRealProductFilters();
+    });
+  }
+
+  // ---- VIEW TOGGLE ----
+  var gridBtn = document.getElementById('view-grid');
+  var listBtn = document.getElementById('view-list');
+  var pgrid   = document.getElementById('products-grid');
+  if(gridBtn && listBtn){
+    gridBtn.addEventListener('click', function(){
+      gridBtn.classList.add('is-active'); listBtn.classList.remove('is-active');
+      gridBtn.setAttribute('aria-pressed','true'); listBtn.setAttribute('aria-pressed','false');
+      pgrid.classList.remove('products-grid--list');
+    });
+    listBtn.addEventListener('click', function(){
+      listBtn.classList.add('is-active'); gridBtn.classList.remove('is-active');
+      listBtn.setAttribute('aria-pressed','true'); gridBtn.setAttribute('aria-pressed','false');
+      pgrid.classList.add('products-grid--list');
+    });
+  }
+
+  // ---- BACK TO TOP ----
+  var btt = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){ if(btt) btt.classList.toggle('is-visible', scrollY>400); }, {passive:true});
+  if(btt) btt.addEventListener('click', function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+
+  // Init
+  updateCartBadge();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/site-contact.js"></script>
+  <script src="js/auth-widget.js"></script>
+  <script>
+  // ── GĐ 2b: Hiện sản phẩm THẬT từ Supabase vào trang danh sách ──
+  // DB trống/lỗi → giữ nguyên thẻ mẫu sẵn có.
+  (function(){
+    var grid = document.getElementById('products-grid');
+    if(!grid || typeof getSupabase !== 'function') return;
+    // Giữ lại thẻ mẫu tĩnh để phục hồi nếu DB thật sự lỗi/trống — nhưng ẩn ngay
+    // lập tức bằng dòng "Đang tải" để tránh hiện chớp nhoáng 8 sản phẩm demo
+    // cứng trước khi dữ liệu thật kịp tải xong (fetch Supabase mất một chút thời gian).
+    var fallbackHtml = grid.innerHTML;
+    grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#9ca3af;padding:60px 20px">Đang tải sản phẩm…</p>';
+    var BADGE = { hot:'Bán chạy', new:'Mới', gift:'Quà tặng', sale:'Giảm giá' };
+    var STAR = '<svg width="13" height="13" viewBox="0 0 24 24" fill="#D4AF37" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+    var STAR_EMPTY = '<svg width="13" height="13" viewBox="0 0 24 24" fill="#e5e7eb" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+    function fmt(n){ return Number(n||0).toLocaleString('vi-VN') + 'đ'; }
+    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    // Không có đánh giá thật nào → không hiện khối sao (tránh sao giả), không chừa khoảng trắng.
+    function ratingHtml(stats){
+      if(!stats || !stats.count) return '';
+      var filled = Math.round(stats.avg);
+      var stars = '';
+      for(var i=0;i<5;i++) stars += (i<filled ? STAR : STAR_EMPTY);
+      return '<div class="product-card__rating" aria-label="'+filled+' trên 5 sao">'+stars+'<span class="product-card__review-count">('+stats.count+')</span></div>';
+    }
+
+    // Slug trên link (footer/menu/checkbox danh mục) → tên danh mục thật lưu trong Supabase
+    // (4 danh mục yến lưu tên đẹp riêng; 5 danh mục combo lưu thẳng đúng slug — khớp
+    // hệt lựa chọn admin/san-pham.html#p-cat đang tạo sản phẩm combo).
+    var CATEGORY_SLUG_MAP = {
+      'to-yen-tho': 'Tổ yến thô',
+      'yen-tinh-che': 'Yến tinh chế',
+      'yen-chung': 'Yến chưng sẵn',
+      'qua-bieu': 'Set quà tặng',
+      'combo-tet': 'combo-tet',
+      'combo-suc-khoe': 'combo-suc-khoe',
+      'combo-sinh-nhat': 'combo-sinh-nhat',
+      'combo-tham-benh': 'combo-tham-benh',
+      'combo-vip': 'combo-vip'
+    };
+    // Nhãn hiển thị trên chip lọc (khớp đúng chữ khách thấy trên checkbox sidebar)
+    var CATEGORY_LABELS = {
+      'to-yen-tho': 'Tổ Yến Thô',
+      'yen-tinh-che': 'Yến Tinh Chế',
+      'yen-chung': 'Yến Chưng Sẵn',
+      'qua-bieu': 'Set Quà Biếu',
+      'combo-tet': 'Combo - Dịp Tết',
+      'combo-suc-khoe': 'Combo - Sức khoẻ',
+      'combo-sinh-nhat': 'Combo - Sinh nhật',
+      'combo-tham-benh': 'Combo - Thăm bệnh',
+      'combo-vip': 'Combo - VIP'
+    };
+    var categorySlug = new URLSearchParams(window.location.search).get('category');
+    var categoryReal = categorySlug ? CATEGORY_SLUG_MAP[categorySlug] : null;
+
+    var allProducts = [];
+    var ratingStats = {};
+    // ─── PHÂN TRANG THẬT (cùng quy ước PAGE_SIZE/currentPage/renderPagination
+    // như admin/don-hang.html, để sau này bảo trì đồng nhất). Ở đây dữ liệu đã
+    // tải sẵn hết vào allProducts nên chỉ cần cắt mảng theo trang, không cần
+    // gọi lại Supabase (khác admin/don-hang.html dùng .range() vì bảng orders
+    // lớn hơn nhiều và có phân trang phía server).
+    var PAGE_SIZE = 12;
+    var currentPage = 1;
+    var currentFilteredList = [];
+
+    function renderPagination(total){
+      var wrap = document.getElementById('pagination-nav');
+      if(!wrap) return;
+      var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+      if(currentPage > totalPages) currentPage = totalPages;
+      if(totalPages <= 1){ wrap.innerHTML = ''; return; }
+
+      function pageLink(n, label, extraClass, disabled){
+        return '<a href="#" class="page-btn '+(extraClass||'')+'" data-page="'+n+'"'
+          + (disabled ? ' aria-disabled="true" tabindex="-1"' : '')
+          + (n===currentPage ? ' aria-current="page"' : '')
+          + ' aria-label="'+(label||('Trang '+n))+'">'+(label||n)+'</a>';
+      }
+      var prevIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+      var nextIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
+
+      var html = pageLink(currentPage-1, prevIcon, 'page-btn--icon', currentPage<=1);
+      var nums = [];
+      for(var i=1;i<=totalPages;i++){
+        if(i===1 || i===totalPages || Math.abs(i-currentPage)<=1) nums.push(i);
+        else if(nums[nums.length-1] !== '…') nums.push('…');
+      }
+      nums.forEach(function(n){
+        if(n==='…'){ html += '<span class="page-btn" style="border:none;cursor:default;color:var(--color-text-muted)">…</span>'; return; }
+        html += '<a href="#" class="page-btn'+(n===currentPage?' is-active':'')+'" data-page="'+n+'"'+(n===currentPage?' aria-current="page"':'')+' aria-label="Trang '+n+'">'+n+'</a>';
+      });
+      html += pageLink(currentPage+1, nextIcon, 'page-btn--icon', currentPage>=totalPages);
+      wrap.innerHTML = html;
+
+      wrap.querySelectorAll('a.page-btn[data-page]').forEach(function(a){
+        a.addEventListener('click', function(e){
+          e.preventDefault();
+          var n = parseInt(a.dataset.page, 10);
+          if(!n || n < 1 || n > totalPages || n === currentPage) return;
+          currentPage = n;
+          renderCurrentPage();
+          var gridEl = document.getElementById('products-grid');
+          if(gridEl) gridEl.scrollIntoView({behavior:'smooth', block:'start'});
+        });
+      });
+    }
+
+    function renderCurrentPage(){
+      var start = (currentPage - 1) * PAGE_SIZE;
+      renderGrid(currentFilteredList.slice(start, start + PAGE_SIZE));
+      renderPagination(currentFilteredList.length);
+    }
+
+    function buildCard(p){
+      var discount = p.old_price ? Math.round((1 - p.price/p.old_price)*100) : null;
+      var sub = esc(p.description || p.category || '');
+      var badgeHtml = p.badge ? '<span class="product-badge product-badge--'+esc(p.badge)+'">'+esc(BADGE[p.badge]||p.badge)+'</span>' : '';
+      var pctHtml = discount ? '<span class="product-badge product-badge--percent">-'+discount+'%</span>' : '';
+      var oos = Number(p.stock) <= 0;
+      return '<article class="product-card'+(oos?' product-card--soldout':'')+'" data-pid="'+esc(p.id)+'">'
+        + '<a href="chi-tiet-san-pham.html?id='+esc(p.id)+'" class="product-card__img-wrap" data-qv="'+esc(p.id)+'" aria-label="Xem '+esc(p.name)+'">'
+        +   '<img src="'+esc(p.image_url||'')+'" alt="'+esc(p.name)+'" loading="lazy" width="400" height="400" class="product-card__img">'
+        +   badgeHtml + pctHtml
+        + '</a>'
+        + '<div class="product-card__body">'
+        +   '<h2 class="product-card__name"><a href="chi-tiet-san-pham.html?id='+esc(p.id)+'">'+esc(p.name)+'</a></h2>'
+        +   '<p class="product-card__subtitle">'+sub+'</p>'
+        +   ratingHtml(ratingStats[p.id])
+        +   '<div class="product-card__price"><span class="price-current">'+fmt(p.price)+'</span>'+(p.old_price?'<span class="price-old">'+fmt(p.old_price)+'</span>':'')+'</div>'
+        +   '<button class="btn btn-add-cart" data-product-id="'+esc(p.id)+'" data-product-name="'+esc(p.name)+'" data-product-price="'+(p.price||0)+'" data-product-image="'+esc(p.image_url||'')+'"'+(oos?' disabled aria-disabled="true"':'')+'>'
+        +     '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>'
+        +     (oos ? ' Hết hàng' : ' Thêm vào giỏ')
+        +   '</button>'
+        + '</div>'
+        + '</article>';
+    }
+
+    function attachQuickViewListeners(){
+      var ov = document.getElementById('qv-overlay');
+      grid.querySelectorAll('[data-qv]').forEach(function(el){
+        el.addEventListener('click', function(e){
+          e.preventDefault();
+          var d = window.QV_DATA[el.dataset.qv]; if(!d) return;
+          window.currentQV = d;
+          var qi=document.getElementById('qv-img'); if(qi){ qi.src=d.img; qi.alt=d.name; }
+          var qn=document.getElementById('qv-name'); if(qn) qn.textContent=d.name;
+          var qp=document.getElementById('qv-price'); if(qp) qp.textContent=d.price;
+          var qo=document.getElementById('qv-old-price'); if(qo) qo.textContent=d.oldPrice;
+          var qq=document.getElementById('qv-qty'); if(qq) qq.value=1;
+          var oos = Number(d.stock) <= 0;
+          var qBtn = document.getElementById('qv-add-cart');
+          var qMinus = document.getElementById('qv-qty-minus');
+          var qPlus = document.getElementById('qv-qty-plus');
+          if(qBtn){
+            qBtn.disabled = oos;
+            var qBtnLabel = document.getElementById('qv-add-cart-label');
+            if(qBtnLabel) qBtnLabel.textContent = oos ? 'Hết hàng' : 'Thêm vào giỏ';
+          }
+          if(qq) qq.disabled = oos;
+          if(qMinus) qMinus.disabled = oos;
+          if(qPlus) qPlus.disabled = oos;
+          if(ov) ov.classList.add('is-open');
+          document.body.style.overflow='hidden';
+        });
+      });
+    }
+
+    function renderGrid(list){
+      var cnt = document.getElementById('product-count');
+      if(!list.length){
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#9ca3af;padding:40px 20px">Không tìm thấy sản phẩm khớp bộ lọc.</p>';
+        if(cnt) cnt.textContent = '0';
+        return;
+      }
+      grid.innerHTML = list.map(buildCard).join('');
+      if(cnt) cnt.textContent = list.length;
+      attachQuickViewListeners();
+    }
+
+    // Số đếm thật cạnh mỗi checkbox danh mục (chỉ tính trên số sản phẩm ĐÃ TẢI —
+    // nếu vào trang qua link ?category=X thì chỉ đúng category đó có số thật,
+    // các mục còn lại hiện 0 vì chưa tải sản phẩm ngoài category đó).
+    function updateSidebarCounts(list){
+      Object.keys(CATEGORY_SLUG_MAP).forEach(function(slug){
+        var el = document.getElementById('cnt-' + slug);
+        if(!el) return;
+        var name = CATEGORY_SLUG_MAP[slug];
+        el.textContent = list.filter(function(p){ return p.category === name; }).length;
+      });
+      ['10g','25g','50g','100g'].forEach(function(w){
+        var el = document.getElementById('cnt-w-' + w);
+        if(!el) return;
+        el.textContent = list.filter(function(p){ return p.weight === w; }).length;
+      });
+    }
+
+    // Lấy số gram từ chuỗi khối lượng (vd "150g" → 150) — dùng cho lọc khoảng
+    function parseWeightNumber(w){
+      if(!w) return null;
+      var m = /\d+/.exec(w);
+      return m ? Number(m[0]) : null;
+    }
+
+    function renderChips(){
+      var wrap = document.getElementById('active-filters');
+      if(!wrap) return;
+      var chips = [];
+      document.querySelectorAll('input[name="category"]:checked').forEach(function(cb){
+        chips.push({ label: CATEGORY_LABELS[cb.value] || cb.value, remove: function(){ cb.checked = false; applyRealProductFilters(); } });
+      });
+      var searchBox = document.getElementById('product-search');
+      var term = searchBox ? searchBox.value.trim() : '';
+      if(term){
+        chips.push({ label: 'Tìm: "' + term + '"', remove: function(){ searchBox.value = ''; applyRealProductFilters(); } });
+      }
+      var priceFrom = document.getElementById('price-from');
+      var priceTo = document.getElementById('price-to');
+      var fromVal = priceFrom && priceFrom.value ? Number(priceFrom.value) : null;
+      var toVal = priceTo && priceTo.value ? Number(priceTo.value) : null;
+      if(fromVal != null || toVal != null){
+        var priceLabel = 'Giá: ' + (fromVal != null ? fmt(fromVal) : '0') + ' – ' + (toVal != null ? fmt(toVal) : '∞');
+        chips.push({ label: priceLabel, remove: function(){ if(priceFrom) priceFrom.value=''; if(priceTo) priceTo.value=''; applyRealProductFilters(); } });
+      }
+      var ratingChecked = document.querySelector('input[name="rating"]:checked');
+      if(ratingChecked){
+        chips.push({ label: ratingChecked.value + '★ & trên', remove: function(){ ratingChecked.checked = false; applyRealProductFilters(); } });
+      }
+      document.querySelectorAll('input[name="weight"]:checked').forEach(function(cb){
+        chips.push({ label: cb.value, remove: function(){ cb.checked = false; applyRealProductFilters(); } });
+      });
+      var weightFromEl = document.getElementById('weight-from');
+      var weightToEl = document.getElementById('weight-to');
+      var wFrom = weightFromEl && weightFromEl.value !== '' ? Number(weightFromEl.value) : null;
+      var wTo = weightToEl && weightToEl.value !== '' ? Number(weightToEl.value) : null;
+      if(wFrom != null || wTo != null){
+        var weightLabel = 'Khối lượng: ' + (wFrom != null ? wFrom : '0') + 'g – ' + (wTo != null ? wTo : '∞') + 'g';
+        chips.push({ label: weightLabel, remove: function(){ if(weightFromEl) weightFromEl.value=''; if(weightToEl) weightToEl.value=''; applyRealProductFilters(); } });
+      }
+      wrap.innerHTML = chips.map(function(c, i){
+        return '<div class="filter-chip">' + esc(c.label) + '<button type="button" data-chip="' + i + '" aria-label="Bỏ lọc ' + esc(c.label) + '">×</button></div>';
+      }).join('');
+      wrap.querySelectorAll('button[data-chip]').forEach(function(btn){
+        btn.addEventListener('click', function(){ chips[parseInt(btn.dataset.chip, 10)].remove(); });
+      });
+    }
+
+    // Lọc DANH MỤC (checkbox, khớp bất kỳ mục nào được tick) + TÌM KIẾM (theo tên) +
+    // SẮP XẾP (giá/mới nhất) — tất cả xử lý ngay trên danh sách đã tải, không cần
+    // gọi lại Supabase. 'Phổ biến nhất'/'Đánh giá cao nhất' vẫn demo (xem Task.txt).
+    function applyRealProductFilters(){
+      var checkedCats = Array.prototype.map.call(
+        document.querySelectorAll('input[name="category"]:checked'),
+        function(cb){ return CATEGORY_SLUG_MAP[cb.value]; }
+      ).filter(Boolean);
+      var searchBox = document.getElementById('product-search');
+      var term = searchBox ? searchBox.value.trim().toLowerCase() : '';
+      var sortSel = document.getElementById('sort-select');
+      var sortVal = sortSel ? sortSel.value : 'popular';
+
+      var priceFrom = document.getElementById('price-from');
+      var priceTo = document.getElementById('price-to');
+      var fromVal = priceFrom && priceFrom.value !== '' ? Number(priceFrom.value) : null;
+      var toVal = priceTo && priceTo.value !== '' ? Number(priceTo.value) : null;
+      var ratingRadio = document.querySelector('input[name="rating"]:checked');
+      var minRating = ratingRadio ? Number(ratingRadio.value) : null;
+
+      var checkedWeights = Array.prototype.map.call(document.querySelectorAll('input[name="weight"]:checked'), function(cb){ return cb.value; });
+      var weightFromEl = document.getElementById('weight-from');
+      var weightToEl = document.getElementById('weight-to');
+      var wFrom = weightFromEl && weightFromEl.value !== '' ? Number(weightFromEl.value) : null;
+      var wTo = weightToEl && weightToEl.value !== '' ? Number(weightToEl.value) : null;
+      var hasWeightFilter = checkedWeights.length > 0 || wFrom != null || wTo != null;
+
+      var list = allProducts.slice();
+      if(checkedCats.length) list = list.filter(function(p){ return checkedCats.indexOf(p.category) !== -1; });
+      if(term) list = list.filter(function(p){ return (p.name||'').toLowerCase().indexOf(term) !== -1; });
+      if(hasWeightFilter){
+        list = list.filter(function(p){
+          var matchesCheckbox = checkedWeights.length && p.weight && checkedWeights.indexOf(p.weight) !== -1;
+          var n = parseWeightNumber(p.weight);
+          var matchesRange = (wFrom != null || wTo != null) && n != null && (wFrom == null || n >= wFrom) && (wTo == null || n <= wTo);
+          return matchesCheckbox || matchesRange;
+        });
+      }
+      if(fromVal != null) list = list.filter(function(p){ return (p.price||0) >= fromVal; });
+      if(toVal != null) list = list.filter(function(p){ return (p.price||0) <= toVal; });
+      if(minRating != null) list = list.filter(function(p){ return ratingStats[p.id] && ratingStats[p.id].avg >= minRating; });
+
+      if(sortVal === 'price-asc') list.sort(function(a,b){ return (a.price||0) - (b.price||0); });
+      else if(sortVal === 'price-desc') list.sort(function(a,b){ return (b.price||0) - (a.price||0); });
+      else if(sortVal === 'newest') list.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
+      else if(sortVal === 'rating') list.sort(function(a,b){
+        var ra = ratingStats[a.id] ? ratingStats[a.id].avg : -1;
+        var rb = ratingStats[b.id] ? ratingStats[b.id].avg : -1;
+        return rb - ra;
+      });
+      else if(sortVal === 'popular'){
+        // Điểm phổ biến = số đã bán × 5 + số lượt xem × 1 (bán "nặng" hơn xem —
+        // trọng số tạm thời, có thể tinh chỉnh sau tuỳ tình hình thực tế).
+        list.sort(function(a,b){
+          var pa = (a.sold_count||0) * 5 + (a.view_count||0);
+          var pb = (b.sold_count||0) * 5 + (b.view_count||0);
+          return pb - pa;
+        });
+      }
+
+      currentFilteredList = list;
+      currentPage = 1;
+      renderCurrentPage();
+      renderChips();
+    }
+    window.applyRealProductFilters = applyRealProductFilters;
+
+    document.querySelectorAll('input[name="category"]').forEach(function(cb){
+      cb.addEventListener('change', applyRealProductFilters);
+    });
+    var productSearchInput = document.getElementById('product-search');
+    if(productSearchInput) productSearchInput.addEventListener('input', applyRealProductFilters);
+
+    var btnApplyPrice = document.getElementById('btn-apply-price');
+    if(btnApplyPrice) btnApplyPrice.addEventListener('click', applyRealProductFilters);
+    ['price-from','price-to'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); applyRealProductFilters(); } });
+    });
+    document.querySelectorAll('input[name="rating"]').forEach(function(r){
+      r.addEventListener('change', applyRealProductFilters);
+    });
+    document.querySelectorAll('input[name="weight"]').forEach(function(cb){
+      cb.addEventListener('change', applyRealProductFilters);
+    });
+    var btnApplyWeight = document.getElementById('btn-apply-weight');
+    if(btnApplyWeight) btnApplyWeight.addEventListener('click', applyRealProductFilters);
+    ['weight-from','weight-to'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); applyRealProductFilters(); } });
+    });
+
+    var query = getSupabase().from('products').select('*').eq('is_active', true).order('created_at',{ascending:false});
+    if (categoryReal) query = query.eq('category', categoryReal);
+
+    query.then(function(res){
+      if(res.error || !res.data || !res.data.length){
+        if (categoryReal) {
+          grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#9ca3af;padding:40px 20px">Chưa có sản phẩm nào trong danh mục này.</p>';
+          var cntEmpty = document.getElementById('product-count'); if(cntEmpty) cntEmpty.textContent = '0';
+        } else {
+          // DB thật sự lỗi/trống (không phải do lọc danh mục) → phục hồi thẻ mẫu tĩnh
+          grid.innerHTML = fallbackHtml;
+        }
+        return;
+      }
+      allProducts = res.data;
+
+      // Cập nhật dữ liệu "Xem nhanh" theo sản phẩm thật
+      window.QV_DATA = {};
+      allProducts.forEach(function(p){
+        window.QV_DATA[p.id] = {
+          name: p.name, price: fmt(p.price), oldPrice: p.old_price ? fmt(p.old_price) : '',
+          img: p.image_url || '', id: p.id, pid: p.price || 0, pimg: p.image_url || '', stock: p.stock
+        };
+      });
+
+      var ids = allProducts.map(function(p){ return p.id; });
+      getSupabase().from('reviews').select('product_id, rating').in('product_id', ids).eq('is_published', true).then(function(rres){
+        (rres.data || []).forEach(function(r){
+          var s = ratingStats[r.product_id] || (ratingStats[r.product_id] = { sum:0, count:0 });
+          s.sum += (r.rating || 0); s.count++;
+        });
+        Object.keys(ratingStats).forEach(function(id){ ratingStats[id].avg = ratingStats[id].sum / ratingStats[id].count; });
+
+        updateSidebarCounts(allProducts);
+        applyRealProductFilters();
+      });
+    });
+  })();
+  </script>
+  <script src="js/ai-chat-widget.js"></script>
+</body>
+</html>
