@@ -401,8 +401,9 @@
 
     <!-- ===========================
          PRODUCT CATEGORIES
+         Tạm ẩn theo yêu cầu (2026-08-21) — giữ nguyên code, chỉ thêm `hidden`.
     =========================== -->
-    <section class="categories-section section-padding" aria-labelledby="categories-title">
+    <section class="categories-section section-padding" aria-labelledby="categories-title" hidden>
       <div class="container">
         <div class="section-header text-center animate-on-scroll">
           <p class="section-label">Đa dạng lựa chọn</p>
@@ -719,7 +720,7 @@
       <div class="container">
         <div class="section-header text-center animate-on-scroll">
           <p class="section-label">Kiến thức bổ ích</p>
-          <h2 class="section-title" id="blog-title">Cẩm Nang Yến Sào <span class="demo-tag-inline" title="3 bài bên dưới là nội dung mẫu, liên kết chưa hoạt động — bài viết thật xem ở trang Cẩm nang">Demo</span></h2>
+          <h2 class="section-title" id="blog-title">Cẩm Nang Yến Sào</h2>
           <div class="section-divider" aria-hidden="true">
             <span class="divider-line"></span>
             <svg class="divider-bird" viewBox="0 0 40 20" fill="none" aria-hidden="true"><path d="M20 10 C15 2, 5 2, 2 8 C5 6, 10 8, 20 10 C30 8, 35 6, 38 8 C35 2, 25 2, 20 10Z" fill="currentColor"/></svg>
@@ -1132,6 +1133,103 @@
         }).join('');
       });
     });
+  })();
+
+  // ── Cẩm Nang Yến Sào — bài viết THẬT từ Supabase (blog_posts), 3 bài mới nhất.
+  // Nếu chưa có bài nào is_published (hoặc lỗi mạng) → giữ nguyên thẻ mẫu sẵn có.
+  (function(){
+    var grid = document.getElementById('blog-grid');
+    if(!grid || typeof getSupabase !== 'function') return;
+    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString('vi-VN'); } catch(e){ return ''; } }
+    function calcReadTime(html){
+      var text = String(html||'').replace(/<[^>]*>/g, ' ');
+      var words = text.trim().split(/\s+/).filter(Boolean).length;
+      return Math.max(1, Math.ceil(words / 200));
+    }
+    var PLACEHOLDER_IMG = 'images/products/yen-tinh-che.jpg';
+    var fallbackHtml = grid.innerHTML;
+    grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#9ca3af;padding:40px 20px">Đang tải bài viết…</p>';
+    getSupabase().from('blog_posts').select('*').eq('is_published', true).order('created_at', {ascending:false}).limit(3).then(function(res){
+      if(res.error || !res.data || !res.data.length){ grid.innerHTML = fallbackHtml; return; }
+      grid.innerHTML = res.data.map(function(p, i){
+        var img = p.cover_image || PLACEHOLDER_IMG;
+        var link = 'chi-tiet-bai-viet.html?id=' + esc(p.id);
+        var catHtml = p.topic ? '<span class="blog-card__category">'+esc(p.topic)+'</span>' : '';
+        return '<article class="blog-card">'
+          + '<a href="'+link+'" class="blog-card__img-wrap" tabindex="-1">'
+          +   '<img src="'+esc(img)+'" alt="'+esc(p.title)+'" class="blog-card__img" loading="lazy" width="600" height="375">'
+          +   catHtml
+          + '</a>'
+          + '<div class="blog-card__body">'
+          +   '<div class="blog-card__meta"><time>'+fmtDate(p.created_at)+'</time><span>·</span><span>'+calcReadTime(p.content)+' phút đọc</span></div>'
+          +   '<h3 class="blog-card__title"><a href="'+link+'">'+esc(p.title)+'</a></h3>'
+          +   '<p class="blog-card__excerpt">'+esc(p.excerpt||'')+'</p>'
+          +   '<a href="'+link+'" class="blog-card__read-more">Đọc thêm <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'
+          + '</div>'
+          + '</article>';
+      }).join('');
+    });
+  })();
+
+  // ── Danh Mục Sản Phẩm — nối ảnh/tên/mô tả tab vào sản phẩm THẬT mới nhất của
+  // đúng category đó (nếu category chưa có sản phẩm nào → giữ nguyên demo ở tab
+  // đó). Chỉ mutate ảnh/tên/mô tả — KHÔNG đổi bullet "điểm nổi bật" (chưa có dữ
+  // liệu thật cho phần này) và không đụng CSS/bố cục.
+  (function(){
+    if(typeof getSupabase !== 'function') return;
+    var CATEGORY_TAB_MAP = {
+      'Tổ yến thô': 'tab-to-yen',
+      'Yến tinh chế': 'tab-tinh-che',
+      'Yến chưng sẵn': 'tab-yen-chung',
+      'Set quà tặng': 'tab-qua-bieu'
+    };
+    getSupabase().from('products').select('name,category,image_url,description')
+      .eq('is_active', true).in('category', Object.keys(CATEGORY_TAB_MAP))
+      .order('created_at', {ascending:false}).then(function(res){
+        if(res.error || !res.data) return;
+        var newestByCategory = {};
+        res.data.forEach(function(p){ if(!newestByCategory[p.category]) newestByCategory[p.category] = p; });
+        Object.keys(newestByCategory).forEach(function(cat){
+          var p = newestByCategory[cat];
+          var panel = document.getElementById(CATEGORY_TAB_MAP[cat]);
+          if(!panel) return;
+          var img = panel.querySelector('.category-img img');
+          var title = panel.querySelector('.category-content h3');
+          var desc = panel.querySelector('.category-content p');
+          if(img && p.image_url){ img.src = p.image_url; img.alt = p.name; }
+          if(title) title.textContent = p.name;
+          if(desc && p.description) desc.textContent = p.description;
+        });
+      });
+  })();
+
+  // ── Set Quà Biếu Cao Cấp — nối ảnh/tên/mô tả/giá 2 thẻ vào 2 sản phẩm combo/
+  // quà tặng THẬT mới nhất (category combo-* hoặc "Hộp quà tặng"). Không đủ 2
+  // sản phẩm thật thì thẻ còn thiếu giữ nguyên demo. Không đổi bullet "gồm
+  // những gì", tag dịp, hay bố cục.
+  (function(){
+    if(typeof getSupabase !== 'function') return;
+    var GIFT_CATEGORIES = ['combo-tet','combo-suc-khoe','combo-sinh-nhat','combo-tham-benh','combo-vip','Hộp quà tặng'];
+    function fmt(n){ return Number(n||0).toLocaleString('vi-VN') + 'đ'; }
+    getSupabase().from('products').select('name,category,image_url,description,price')
+      .eq('is_active', true).in('category', GIFT_CATEGORIES)
+      .order('created_at', {ascending:false}).limit(2).then(function(res){
+        if(res.error || !res.data || !res.data.length) return;
+        var cards = document.querySelectorAll('.gift-set-card');
+        res.data.forEach(function(p, i){
+          var card = cards[i];
+          if(!card) return;
+          var img = card.querySelector('.gift-set-img img');
+          var title = card.querySelector('.gift-set-content h3');
+          var desc = card.querySelector('.gift-set-content p');
+          var price = card.querySelector('.price-value');
+          if(img && p.image_url){ img.src = p.image_url; img.alt = p.name; }
+          if(title) title.textContent = p.name;
+          if(desc && p.description) desc.textContent = p.description;
+          if(price && p.price) price.textContent = fmt(p.price);
+        });
+      });
   })();
 
   // ── FLASH SALE — đợt sale đang diễn ra (hoặc sắp diễn ra gần nhất), lấy TỪ

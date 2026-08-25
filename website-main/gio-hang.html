@@ -1090,7 +1090,7 @@
         grid.innerHTML = list.map(function(p){
           var badgeHtml = p.badge ? '<span class="product-badge product-badge--'+p.badge+'">'+(BADGE[p.badge]||p.badge)+'</span>' : '';
           var oldHtml = p.old_price ? '<span class="price-old">'+fmtPrice(p.old_price)+'</span>' : '';
-          return '<article class="product-card animate-on-scroll">'
+          return '<article class="product-card">'
             + '<a href="chi-tiet-san-pham.html?id='+p.id+'" class="product-card__img-wrap">'
             +   '<img src="'+(p.image_url||'')+'" alt="'+p.name+'" loading="lazy" width="300" height="300" class="product-card__img">'
             +   badgeHtml
