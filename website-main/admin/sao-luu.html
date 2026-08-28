@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/admin.css">
   <link rel="stylesheet" href="../css/admin-notifications.css">
+  <link rel="stylesheet" href="../css/ai-chat.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-client.js"></script>
   <script src="../js/security-gate.js"></script>
@@ -482,6 +483,10 @@ function downloadAddressesCSV(){
 }
 </script>
 <script src="../js/vendor/xlsx.full.min.js"></script>
+<!-- Trợ lý AI phân tích kinh doanh (chỉ đọc). Nút tự chèn vào .float-cta bởi
+     admin-ai-chat.js, và CHỈ hiện khi xác thực đúng admin. -->
+<div class="float-cta" aria-label="Trợ lý kinh doanh" role="complementary"></div>
 <script src="../js/admin-status.js"></script>
+<script src="../js/admin-ai-chat.js"></script>
 </body>
 </html>

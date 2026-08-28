@@ -1080,7 +1080,7 @@
     var grid = document.getElementById('recommended-grid');
     if(!grid) return;
     var inCartIds = cart.map(function(i){ return i.id; });
-    getSupabase().from('products').select('id,name,price,old_price,image_url,badge')
+    getSupabase().from('products').select('id,name,price,old_price,image_url,badge,sold_count,stock')
       .eq('is_active', true).order('created_at', {ascending:false}).limit(8)
       .then(function(res){
         if(res.error || !res.data || !res.data.length){ grid.innerHTML = ''; return; }
@@ -1090,15 +1090,18 @@
         grid.innerHTML = list.map(function(p){
           var badgeHtml = p.badge ? '<span class="product-badge product-badge--'+p.badge+'">'+(BADGE[p.badge]||p.badge)+'</span>' : '';
           var oldHtml = p.old_price ? '<span class="price-old">'+fmtPrice(p.old_price)+'</span>' : '';
-          return '<article class="product-card">'
+          var oos = Number(p.stock) <= 0;
+          var soldHtml = (Number(p.sold_count)||0) > 0 ? '<div class="product-card__meta"><span class="product-card__sold">Đã bán '+(Number(p.sold_count)||0)+'</span></div>' : '';
+          return '<article class="product-card'+(oos?' product-card--soldout':'')+'" itemscope itemtype="https://schema.org/Product">'
             + '<a href="chi-tiet-san-pham.html?id='+p.id+'" class="product-card__img-wrap">'
-            +   '<img src="'+(p.image_url||'')+'" alt="'+p.name+'" loading="lazy" width="300" height="300" class="product-card__img">'
+            +   '<img src="'+(p.image_url||'')+'" alt="'+p.name+'" loading="lazy" width="300" height="300" class="product-card__img" itemprop="image">'
             +   badgeHtml
             + '</a>'
             + '<div class="product-card__body">'
-            +   '<h3 class="product-card__name"><a href="chi-tiet-san-pham.html?id='+p.id+'">'+p.name+'</a></h3>'
-            +   '<div class="product-card__price"><span class="price-current">'+fmtPrice(p.price)+'</span>'+oldHtml+'</div>'
-            +   '<button class="btn btn-add-cart" data-product-id="'+p.id+'" data-product-name="'+p.name+'" data-product-price="'+(p.price||0)+'" data-product-image="'+(p.image_url||'')+'">Thêm vào giỏ</button>'
+            +   '<h3 class="product-card__name" itemprop="name"><a href="chi-tiet-san-pham.html?id='+p.id+'">'+p.name+'</a></h3>'
+            +   soldHtml
+            +   '<div class="product-card__price" itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span class="price-current" itemprop="price" content="'+(Number(p.price)||0)+'">'+fmtPrice(p.price)+'</span>'+oldHtml+'<meta itemprop="priceCurrency" content="VND"><link itemprop="availability" href="https://schema.org/'+(oos?'OutOfStock':'InStock')+'"></div>'
+            +   '<button class="btn btn-add-cart" data-product-id="'+p.id+'" data-product-name="'+p.name+'" data-product-price="'+(p.price||0)+'" data-product-image="'+(p.image_url||'')+'"'+(oos?' disabled aria-disabled="true"':'')+'>'+(oos?'Hết hàng':'Thêm vào giỏ')+'</button>'
             + '</div></article>';
         }).join('');
       });

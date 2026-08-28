@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/admin.css">
   <link rel="stylesheet" href="../css/admin-notifications.css">
+  <link rel="stylesheet" href="../css/ai-chat.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-client.js"></script>
   <script src="../js/security-gate.js"></script>
@@ -459,24 +460,23 @@ function loadDashboardStats(){
       setStatCard('cancelled', cancelToday, cancelYest, 'Tỉ lệ hủy: ' + cancelRate.toFixed(1) + '%');
     });
 
-  // Khách hàng mới — cần đơn đầu tiên của mỗi khách (theo SĐT) nên phải xem toàn bộ lịch sử
-  sb.from('orders').select('customer_phone,created_at').order('created_at', {ascending:true})
+  // Khách hàng mới — dùng cột profiles.first_order_at (trigger tự set 1 lần
+  // lúc khách có đơn đầu tiên, xem sql/add-first-order-tracking.sql) thay vì
+  // quét toàn bộ orders — tránh bị Supabase "Max Rows" cắt bớt âm thầm khi
+  // đơn hàng tăng nhiều, và chi phí giờ tỉ lệ theo số khách chứ không theo
+  // số đơn.
+  sb.from('profiles').select('first_order_at')
+    .not('first_order_at', 'is', null).gte('first_order_at', monthStart.toISOString())
     .then(function(res){
       if(res.error){ console.warn('Lỗi tải khách hàng mới:', res.error.message); return; }
       var rows = res.data || [];
-      var firstSeen = {};
-      rows.forEach(function(o){
-        var phone = (o.customer_phone || '').replace(/\D/g, '');
-        if(phone && !firstSeen[phone]) firstSeen[phone] = o.created_at;
-      });
-      var newToday = 0, newYest = 0, newMonth = 0;
-      Object.keys(firstSeen).forEach(function(phone){
-        var d = new Date(firstSeen[phone]);
+      var newToday = 0, newYest = 0;
+      rows.forEach(function(p){
+        var d = new Date(p.first_order_at);
         if(d >= todayStart) newToday++;
         else if(d >= yestStart && d < todayStart) newYest++;
-        if(d >= monthStart) newMonth++;
       });
-      setStatCard('customers', newToday, newYest, 'Tháng này: ' + newMonth);
+      setStatCard('customers', newToday, newYest, 'Tháng này: ' + rows.length);
     });
 
   // Số đơn "Đợi xác nhận" toàn hệ thống (chuông thông báo)
@@ -660,6 +660,10 @@ loadRevenueChart('7d');
 loadTopProducts();
 loadRecentOrders();
 </script>
+<!-- Trợ lý AI phân tích kinh doanh (chỉ đọc). Nút tự chèn vào .float-cta bởi
+     admin-ai-chat.js, và CHỈ hiện khi xác thực đúng admin. -->
+<div class="float-cta" aria-label="Trợ lý kinh doanh" role="complementary"></div>
 <script src="../js/admin-status.js"></script>
+<script src="../js/admin-ai-chat.js"></script>
 </body>
 </html>

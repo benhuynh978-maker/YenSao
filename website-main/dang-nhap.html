@@ -370,6 +370,11 @@
               <input class="form-input" type="password" id="reg-password" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password" required>
               <p class="form-error" id="reg-pass-err">Mật khẩu phải có ít nhất 6 ký tự.</p>
             </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-password2">Nhập lại mật khẩu *</label>
+              <input class="form-input" type="password" id="reg-password2" placeholder="Nhập lại mật khẩu ở trên" autocomplete="new-password" required>
+              <p class="form-error" id="reg-pass2-err">Mật khẩu nhập lại không khớp.</p>
+            </div>
             <button type="submit" class="btn-submit" id="btn-register">Tạo tài khoản</button>
           </form>
 
@@ -506,9 +511,11 @@
     clearErrors('reg');
     var name = document.getElementById('reg-name').value.trim();
     var pass = document.getElementById('reg-password').value;
+    var pass2 = document.getElementById('reg-password2').value;
     var ok = true;
     if(!name) { showErr('reg-name-err'); showErr('reg-name', true); ok = false; }
     if(!pass || pass.length < 6) { showErr('reg-pass-err'); showErr('reg-password', true); ok = false; }
+    else if(pass !== pass2) { showErr('reg-pass2-err'); showErr('reg-password2', true); ok = false; }
 
     var signupEmail, phoneVal = '', loginKind;
     if(regMethod === 'email') {

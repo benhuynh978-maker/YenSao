@@ -28,8 +28,12 @@
 }
 
 /* 3-col variant used on san-pham.html */
+/* san-pham.html — lưới KHỚP MẪU: cột co giãn theo bề rộng, mỗi thẻ luôn ≥240px
+   (auto-fill giảm số cột thay vì bóp hẹp thẻ khi khu chính hẹp do có sidebar).
+   Gap 22px như bản mẫu đã duyệt. */
 .products-grid--3col {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px;
 }
 
 /* 2-col variant for related products */
@@ -1577,4 +1581,137 @@
 @media (max-width: 600px) {
   .products-grid--list .product-card { flex-direction: column; }
   .products-grid--list .product-card__img-wrap { width: 100%; height: auto; aspect-ratio: 4/3; }
+}
+
+
+/* ==============================================
+   THẺ SẢN PHẨM — THIẾT KẾ MỚI (chốt 27/08/2026)
+   Port từ bản mẫu đã duyệt (mau-the-san-pham/xem-truoc.html).
+   Đặt CUỐI FILE để override các rule .product-card* phía trên — gom
+   1 chỗ cho dễ soát/hoàn tác. Áp dụng MỌI trang dùng .product-card.
+   Giữ nguyên: quick-view "Xem nhanh" (::after), overlay hết hàng,
+   trạng thái nút .added, chế độ list-view.
+   ============================================== */
+
+/* Khung thẻ: nền trắng, viền vàng nhạt, bo tròn rõ, nhấc cao hơn khi hover */
+.product-card {
+  background: var(--color-white);
+  border: 1px solid rgba(201, 162, 75, 0.22);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(201, 162, 75, 0.5);
+}
+.product-card:hover .product-card__img { transform: scale(1.06); }
+
+/* Badge: bỏ in hoa, gọn hơn, có bóng nhẹ (giữ nguyên màu theo loại) */
+.product-badge {
+  padding: 4px 10px;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Thân thẻ — phân cấp có chủ đích, khoảng cách nhịp nhàng */
+.product-card__body { padding: 16px 16px 18px; gap: 9px; }
+.product-card__name {
+  font-size: 1.06rem;
+  line-height: 1.35;
+  min-height: 2.7em; /* giữ 2 dòng đều nhau giữa các thẻ */
+}
+.product-card__name a:hover { color: var(--color-primary); }
+.product-card__subtitle {
+  font-size: 0.82rem;
+  margin-top: -3px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;   /* mô tả dài chỉ 1 dòng, không vỡ thẻ */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Hàng social proof: sao đánh giá · đã bán (tự ẩn khi builder không sinh ra) */
+.product-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+  min-height: 1.1em;
+}
+.product-card__rating { gap: 3px; color: var(--color-gold); }
+.product-card__rating svg { width: 13px; height: 13px; }
+.product-card__review-count {
+  margin-left: 0;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.product-card__sold { position: relative; font-variant-numeric: tabular-nums; }
+/* Chấm ngăn cách chỉ hiện khi "đã bán" đứng sau phần đánh giá */
+.product-card__meta > .product-card__sold:not(:first-child) { padding-left: 9px; }
+.product-card__meta > .product-card__sold:not(:first-child)::before {
+  content: '';
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 3px; border-radius: 50%;
+  background: var(--color-text-muted);
+}
+
+/* Khối giá — neo đáy; font CHỮ SỐ đổi sang Montserrat + căn đều hàng cho sắc */
+.product-card__price { margin-top: auto; padding-top: 2px; }
+.price-current {
+  font-family: var(--font-body);
+  font-size: 1.28rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.price-old {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Nút thêm giỏ — full width, gradient nâu-cam (khớp mẫu chính xác) */
+.btn-add-cart {
+  margin-top: 12px;
+  padding: 11px 14px;
+  color: var(--color-white);
+  background: var(--gradient-button);
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  letter-spacing: 0;
+}
+.btn-add-cart:hover {
+  background: var(--gradient-button);
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+/* Hết hàng — khớp mẫu:
+   - ảnh xám nhẹ + overlay chữ "Hết hàng" (chữ thường, không in hoa)
+   - nút XÁM ĐẶC (không phải đỏ mờ hồng) */
+.product-card--soldout .product-card__img { filter: grayscale(0.35); }
+.product-card--soldout .product-card__img-wrap::before {
+  background: rgba(43, 36, 32, 0.5);
+  color: var(--color-white);
+  text-transform: none;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.product-card--soldout .btn-add-cart {
+  background: #d8d2c8;
+  color: #8a8378;
+  opacity: 1;
+  filter: none;
+  cursor: not-allowed;
 }

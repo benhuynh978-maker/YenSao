@@ -220,6 +220,24 @@
 }
 .ai-chat-chip:hover { background: var(--color-gold); color: var(--color-white); transform: translateY(-1px); }
 
+/* Nút ẩn thanh gợi ý — đẩy về cuối hàng, kiểu ghost nhẹ. Bấm là ẩn cả thanh
+   (nhớ lựa chọn qua localStorage ở JS). Dùng chung cả 2 widget khách/admin. */
+.ai-chat-suggestions__hide {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted, #8a8378);
+  font-size: .72rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 9px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  transition: background .2s, color .2s;
+}
+.ai-chat-suggestions__hide:hover { background: rgba(0, 0, 0, .06); color: var(--color-brand); }
+.ai-chat-panel__suggestions.is-hidden { display: none; }
+
 /* Ô nhập */
 .ai-chat-panel__input-row {
   display: flex;

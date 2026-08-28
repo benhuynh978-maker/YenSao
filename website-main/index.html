@@ -251,10 +251,10 @@
           <div class="about-images animate-on-scroll" style="animation-delay: 0.2s" aria-hidden="true">
             <div class="about-img-frame">
               <div class="about-img-main">
-                <img src="images/hero/about-main.jpg" alt="Hang yến thiên nhiên" loading="lazy" width="480" height="600">
+                <img src="images/hero/dao-yen-nha-trang-7_1623850078.webp" alt="Hang yến thiên nhiên" loading="lazy" width="480" height="600">
               </div>
               <div class="about-img-thumb">
-                <img src="images/hero/about-product.jpg" alt="Tổ yến tinh chế" loading="lazy" width="200" height="200">
+                <img src="images/products/yen-tinh-che.jpg" alt="Tổ yến tinh chế" loading="lazy" width="200" height="200">
               </div>
               <div class="about-img-ornament about-img-ornament--tl"></div>
               <div class="about-img-ornament about-img-ornament--br"></div>
@@ -552,7 +552,10 @@
     <!-- ===========================
          TESTIMONIALS
     =========================== -->
-    <section class="testimonials section-padding" aria-labelledby="testimonials-title">
+    <!-- Tạm ẩn (27/08) — chưa có review khách hàng thật, tránh hiển thị nội
+         dung mẫu. Giữ nguyên code để bật lại khi có đánh giá thật. Ẩn khu này
+         cũng đồng thời hết lỗi chữ trắng-kem khó đọc trên nền kem. -->
+    <section class="testimonials section-padding" aria-labelledby="testimonials-title" hidden>
       <div class="container">
         <div class="section-header text-center animate-on-scroll">
           <p class="section-label">Tin tưởng từ khách hàng</p>
@@ -651,7 +654,7 @@
       <div class="container">
         <div class="section-header text-center animate-on-scroll">
           <p class="section-label">Dịp đặc biệt</p>
-          <h2 class="section-title" id="gift-sets-title">Set Quà Biếu Cao Cấp <span class="demo-tag-inline" title="Tên/giá minh hoạ, có thể không khớp combo thật hiện có — xem giá chính xác ở trang Combo quà tặng">Demo</span></h2>
+          <h2 class="section-title" id="gift-sets-title">Set Quà Biếu Cao Cấp</h2>
           <div class="section-divider" aria-hidden="true">
             <span class="divider-line"></span>
             <svg class="divider-bird" viewBox="0 0 40 20" fill="none" aria-hidden="true"><path d="M20 10 C15 2, 5 2, 2 8 C5 6, 10 8, 20 10 C30 8, 35 6, 38 8 C35 2, 25 2, 20 10Z" fill="currentColor"/></svg>
@@ -779,8 +782,10 @@
 
     <!-- ===========================
          NEWSLETTER
+         Tạm ẩn (27/08) — form minh hoạ, chưa lưu email vào hệ thống. Giữ code
+         để bật lại khi nối logic thật.
     =========================== -->
-    <section class="newsletter section-padding bg-brand-medium" aria-labelledby="newsletter-title">
+    <section class="newsletter section-padding bg-brand-medium" aria-labelledby="newsletter-title" hidden>
       <div class="container">
         <div class="newsletter-inner animate-on-scroll">
           <div class="newsletter-text">
@@ -1007,8 +1012,12 @@
   var dots  = document.querySelectorAll('#testimonial-dots .carousel-dot');
   var prevBtn = document.getElementById('testimonial-prev');
   var nextBtn = document.getElementById('testimonial-next');
+  // Khu testimonials đang bị ẩn (chưa có review thật) → bỏ qua hẳn carousel +
+  // autoplay để không chạy timer ngầm vô ích. Bật lại khi gỡ 'hidden' ở section.
+  var testimonialsSection = track ? track.closest('.testimonials') : null;
+  var testimonialsHidden = testimonialsSection && testimonialsSection.hidden;
   var current = 0;
-  var total = track ? track.children.length : 0;
+  var total = (track && !testimonialsHidden) ? track.children.length : 0;
   function goTo(idx){
     current = (idx + total) % total;
     if(track) track.style.transform = 'translateX(-'+current*100+'%)';
@@ -1017,8 +1026,8 @@
   if(prevBtn) prevBtn.addEventListener('click', function(){ goTo(current-1); });
   if(nextBtn) nextBtn.addEventListener('click', function(){ goTo(current+1); });
   dots.forEach(function(d){ d.addEventListener('click', function(){ goTo(Number(d.dataset.index)); }); });
-  var autoPlay = setInterval(function(){ goTo(current+1); }, 5000);
-  if(track){
+  if(track && !testimonialsHidden){
+    var autoPlay = setInterval(function(){ goTo(current+1); }, 5000);
     track.addEventListener('mouseenter', function(){ clearInterval(autoPlay); });
     track.addEventListener('mouseleave', function(){ autoPlay = setInterval(function(){ goTo(current+1); }, 5000); });
   }
@@ -1093,6 +1102,25 @@
       for(var i=0;i<5;i++) stars += (i<filled ? STAR : STAR_EMPTY);
       return '<div class="product-card__rating" aria-label="'+filled+' trên 5 sao">'+stars+'<span class="product-card__review-count">('+stats.count+')</span></div>';
     }
+    // Hàng social proof: sao + số lượt · đã bán (tự ẩn khi thiếu). Kèm microdata AggregateRating.
+    function metaHtml(p, stats){
+      var hasRating = stats && stats.count;
+      var sold = Number(p.sold_count) || 0;
+      if(!hasRating && sold <= 0) return '';
+      var html = '', attr = '';
+      if(hasRating){
+        var filled = Math.round(stats.avg);
+        var stars = '';
+        for(var i=0;i<5;i++) stars += (i<filled ? STAR : STAR_EMPTY);
+        var avg = Math.round(stats.avg*10)/10;
+        attr = ' itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating"';
+        html += '<span class="product-card__rating" aria-label="'+filled+' trên 5 sao">'+stars+'</span>'
+             +  '<span class="product-card__review-count">(<span itemprop="reviewCount">'+stats.count+'</span>)</span>'
+             +  '<meta itemprop="ratingValue" content="'+avg+'">';
+      }
+      if(sold > 0) html += '<span class="product-card__sold">Đã bán '+sold+'</span>';
+      return '<div class="product-card__meta"'+attr+'>'+html+'</div>';
+    }
     // Ẩn ngay thẻ mẫu tĩnh bằng dòng "Đang tải" để tránh chớp nhoáng demo cứng
     // trước khi Supabase tải xong (giữ lại để phục hồi nếu DB thật sự lỗi/trống).
     var fallbackHtml = grid.innerHTML;
@@ -1114,19 +1142,25 @@
           var sub = esc(p.description || p.category || '');
           var badgeHtml = p.badge ? '<span class="product-badge product-badge--'+esc(p.badge)+'">'+esc(BADGE[p.badge]||p.badge)+'</span>' : '';
           var pctHtml = discount ? '<span class="product-badge product-badge--percent">-'+discount+'%</span>' : '';
-          return '<article class="product-card">'
+          var oos = Number(p.stock) <= 0;
+          return '<article class="product-card'+(oos?' product-card--soldout':'')+'" itemscope itemtype="https://schema.org/Product">'
             + '<a href="chi-tiet-san-pham.html?id='+esc(p.id)+'" class="product-card__img-wrap">'
-            +   '<img src="'+esc(p.image_url||'')+'" alt="'+esc(p.name)+'" loading="lazy" width="400" height="400" class="product-card__img">'
+            +   '<img src="'+esc(p.image_url||'')+'" alt="'+esc(p.name)+'" loading="lazy" width="400" height="400" class="product-card__img" itemprop="image">'
             +   badgeHtml + pctHtml
             + '</a>'
             + '<div class="product-card__body">'
-            +   '<h3 class="product-card__name"><a href="chi-tiet-san-pham.html?id='+esc(p.id)+'">'+esc(p.name)+'</a></h3>'
-            +   '<p class="product-card__subtitle">'+sub+'</p>'
-            +   ratingHtml(ratingStats[p.id])
-            +   '<div class="product-card__price"><span class="price-current">'+fmt(p.price)+'</span>'+(p.old_price?'<span class="price-old">'+fmt(p.old_price)+'</span>':'')+'</div>'
-            +   '<button class="btn btn-add-cart" data-product-id="'+esc(p.id)+'" data-product-name="'+esc(p.name)+'" data-product-price="'+(p.price||0)+'" data-product-image="'+esc(p.image_url||'')+'">'
+            +   '<h3 class="product-card__name" itemprop="name"><a href="chi-tiet-san-pham.html?id='+esc(p.id)+'">'+esc(p.name)+'</a></h3>'
+            +   '<p class="product-card__subtitle" itemprop="description">'+sub+'</p>'
+            +   metaHtml(p, ratingStats[p.id])
+            +   '<div class="product-card__price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">'
+            +     '<span class="price-current" itemprop="price" content="'+(Number(p.price)||0)+'">'+fmt(p.price)+'</span>'
+            +     (p.old_price?'<span class="price-old">'+fmt(p.old_price)+'</span>':'')
+            +     '<meta itemprop="priceCurrency" content="VND">'
+            +     '<link itemprop="availability" href="https://schema.org/'+(oos?'OutOfStock':'InStock')+'">'
+            +   '</div>'
+            +   '<button class="btn btn-add-cart" data-product-id="'+esc(p.id)+'" data-product-name="'+esc(p.name)+'" data-product-price="'+(p.price||0)+'" data-product-image="'+esc(p.image_url||'')+'"'+(oos?' disabled aria-disabled="true"':'')+'>'
             +     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>'
-            +     ' Thêm vào giỏ'
+            +     (oos ? ' Hết hàng' : ' Thêm vào giỏ')
             +   '</button>'
             + '</div>'
             + '</article>';
