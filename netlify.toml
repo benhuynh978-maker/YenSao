@@ -1,0 +1,28 @@
+# ============================================================
+#  Netlify — cấu hình deploy website Yến Duyên + 2 Netlify Function (relay AI).
+#  - Web tĩnh nằm ở website-main/ (publish).
+#  - Relay AI chạy dưới dạng Function, đọc GEMINI_API_KEY từ ENV Netlify
+#    (Site settings → Environment variables). KHÔNG hardcode key ở đâu cả.
+#  - Widget vẫn gọi /api/chat, /api/admin-chat — redirect (rewrite) bên dưới
+#    trỏ tới function tương ứng, URL giữ nguyên nên khỏi lo CORS.
+# ============================================================
+
+[build]
+  publish = "website-main"
+  functions = "netlify/functions"
+  # Web tĩnh, không có bước build → không cần build command.
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# /api/chat  → function khách hàng (rewrite, status 200 nên URL không đổi)
+[[redirects]]
+  from = "/api/chat"
+  to = "/.netlify/functions/chat"
+  status = 200
+
+# /api/admin-chat → function admin
+[[redirects]]
+  from = "/api/admin-chat"
+  to = "/.netlify/functions/admin-chat"
+  status = 200
