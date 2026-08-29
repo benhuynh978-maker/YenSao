@@ -25,6 +25,12 @@ AI-Chat-Admin-Ke-Hoach.md
 AI-Chat-Nhung-Co-Tool.md
 mau-the-san-pham/
 
+# Repo PUBLIC — chỉ giữ file phục vụ Netlify build. Các mục dev/nhạy cảm dưới
+# đây giữ TRÊN MÁY nhưng KHÔNG đẩy lên repo công khai:
+website-main/ai-chat/     # relay local + demo + system-prompt (production dùng netlify/functions)
+sql/                      # migration DB (giữ máy để dựng lại DB; không cần cho build)
+CLAUDE.md                 # ghi chú kiến trúc bảo mật + lỗ hổng cũ — không public
+
 # OS
 Thumbs.db
 .DS_Store

@@ -27,12 +27,5 @@
   to = "/.netlify/functions/admin-chat"
   status = 200
 
-# CHẶN thư mục ai-chat/ (relay chạy LOCAL + demo + prompt-eval) — nằm trong
-# website-main/ nên Netlify sẽ serve, nhưng đây là code DEV, KHÔNG được để lộ
-# công khai (đặc biệt system-prompt.txt). force=true để đè lên file tĩnh.
-# Production dùng Netlify Functions (netlify/functions), không cần thư mục này.
-[[redirects]]
-  from = "/ai-chat/*"
-  to = "/404.html"
-  status = 404
-  force = true
+# (Thư mục website-main/ai-chat/ đã được gỡ khỏi repo — không còn deploy nên
+# không cần luật chặn nữa.)
